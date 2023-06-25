@@ -1,0 +1,21 @@
+{
+  "name": "note-quick-add",
+  "version": "0.0.1",
+  "description": "A simple app for qucik adding notes to your app.",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "tsc"
+  },
+  "author": "Marek Lewandowski",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "electron": "^25.2.0",
+    "electron-builder": "^24.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  }
+}
