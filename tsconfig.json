@@ -1,15 +1,19 @@
 {
 	"compilerOptions": {
-	  "target": "ES2018",
-	  "module": "commonjs",
-	  "outDir": "./dist",
-	  "strict": true,
-	  "esModuleInterop": true
+		"target": "ES2018",
+		"module": "commonjs",
+		"outDir": "./dist",
+		"strict": true,
+		"esModuleInterop": true,
+		"typeRoots": [
+			"node_modules/@types",
+			"typings"
+		]
 	},
 	"include": [
-	  "src/**/*.ts"
+		"src/**/*.ts"
 	],
 	"exclude": [
-	  "node_modules"
-	]
-  }
+		"node_modules"
+	],
+}

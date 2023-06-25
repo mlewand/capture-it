@@ -1,27 +1,14 @@
-import { app, BrowserWindow, globalShortcut, Tray, Menu } from 'electron';
+import { app, globalShortcut, Tray } from 'electron';
 import * as path from 'path';
-import { CLIENT_RENEG_WINDOW } from 'tls';
-
-class AppMainWindow extends BrowserWindow {
-  _finalClosing: boolean = false;
-
-  public forceClose() {
-    this._finalClosing = true;
-    this.emit('close', { defaultPrevented: false } );
-  }
-}
+import * as electronLocalShortcut from 'electron-localshortcut';
+import AppMainWindow from './AppMainWindow';
+import { getTray } from './helpers';
 
 let mainWindow: AppMainWindow | null;
 let tray: Tray | null;
 
 function createWindow() {
-  mainWindow = new AppMainWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-    },
-  });
+  mainWindow = new AppMainWindow();
 
   mainWindow.loadFile(path.join(__dirname, '../app/index.html'));
 
@@ -29,11 +16,11 @@ function createWindow() {
     mainWindow = null;
   });
 
-  mainWindow.on('close', ( event : any ) => {
-    if ( event && mainWindow && !mainWindow._finalClosing ) {
-
-      event.preventDefault();
-      mainWindow.hide();
+  // Add a hotkey for closing the window.
+  electronLocalShortcut.register(mainWindow, 'Ctrl+Q', () => {
+    if (mainWindow) {
+      mainWindow.forceClose();
+      app.quit();
     }
   });
 }
@@ -42,28 +29,7 @@ app.on('ready', () => {
   createWindow();
 
   // Create system tray
-  tray = new Tray(path.join(__dirname, '..', 'assets', 'icon.png'));
-  tray.setToolTip('Electron app');
-
-  // Create context menu for the tray
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Close',
-      click: () => {
-        if (mainWindow) {
-          mainWindow.forceClose();
-          app.quit();
-        }
-      }
-    }
-  ]);
-  tray.setContextMenu(contextMenu);
-
-  tray.on('click', () => {
-    if (mainWindow) {
-      mainWindow.show();
-    }
-  });
+  tray = getTray(mainWindow!);
 
   // Create global shortcut
   const ret = globalShortcut.register('CommandOrControl+Shift+M', () => {
