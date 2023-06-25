@@ -1,8 +1,9 @@
-import { app, globalShortcut, Tray } from 'electron';
+import { app, globalShortcut, ipcMain, Tray } from 'electron';
 import * as path from 'path';
 import * as electronLocalShortcut from 'electron-localshortcut';
 import AppMainWindow from './AppMainWindow';
 import { getTray } from './helpers';
+import { promises as fs } from 'fs';
 
 let mainWindow: AppMainWindow | null;
 let tray: Tray | null;
@@ -65,4 +66,9 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+ipcMain.handle('getConfig', async () => {
+  // @todo: add handling in case it is missing.
+  return await fs.readFile( path.join( __dirname, '../', 'config.json' ), 'utf-8' );
 });
