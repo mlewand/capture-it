@@ -1,4 +1,4 @@
-import { app, globalShortcut, ipcMain, Tray } from 'electron';
+import { app, globalShortcut, ipcMain, Tray, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as electronLocalShortcut from 'electron-localshortcut';
 import AppMainWindow from './AppMainWindow';
@@ -35,7 +35,7 @@ app.on('ready', () => {
   // Create global shortcut
   const ret = globalShortcut.register('CommandOrControl+Shift+M', () => {
     if (mainWindow) {
-      if (mainWindow.isMinimized() || !mainWindow.isVisible()) {
+      if ( !mainWindow.isFocused() || !mainWindow.isVisible() ) {
         mainWindow.show();
       } else {
         mainWindow.hide();
