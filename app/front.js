@@ -28,6 +28,11 @@ document.getElementById( 'submitButton' ).addEventListener( 'click', () => {
 		notionToken
 	} = config;
 
+	if ( text.strip() === '' ) {
+		console.warn( 'Can\'t send empty item.' );
+		return;
+	}
+
 	if ( dataBaseId ) {
 		appendPageToDatabase( dataBaseId, notionToken, text );
 	} else {
