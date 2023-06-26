@@ -12,7 +12,10 @@ async function asyncInitialization() {
 		config = JSON.parse( config );
 		console.log( 'config fetched', config );
 
-		style="display: none;"
+		style="display: none;";
+		window.requestIdleCallback( () => {
+			setupInitialFocus();
+		} );
 	} catch ( error ) {
 		errorContent = String( error );
 		containerToBeShown = document.getElementById( 'config-missing-tab' );
@@ -41,7 +44,7 @@ document.getElementById( 'submitButton' ).addEventListener( 'click', () => {
 		notionToken
 	} = config;
 
-	if ( text.strip() === '' ) {
+	if ( text.trim() === '' ) {
 		console.warn( 'Can\'t send empty item.' );
 		return;
 	}
@@ -127,10 +130,11 @@ async function appendPageToDatabase( databaseId, apiToken, pageText ) {
 }
 
 
+
+
 document.addEventListener( 'DOMContentLoaded', ( event ) => {
 	const textInput = document.getElementById( 'textInput' );
-
-	textInput.focus();
+	setupInitialFocus();
 
 	textInput.addEventListener( 'keyup', ( event ) => {
 		if ( event.key === 'Enter' && ( !event.shiftKey && !event.altKey ) ) {
@@ -148,3 +152,11 @@ document.addEventListener( 'click', ( event ) => {
 		shell.openExternal( event.target.href );
 	}
 } );
+
+function setupInitialFocus() {
+	const textInput = document.getElementById( 'textInput' );
+
+	if ( textInput ) {
+		textInput.focus();
+	}
+}
