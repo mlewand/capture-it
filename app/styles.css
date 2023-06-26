@@ -1,0 +1,30 @@
+body {
+	font-family: 'Trebuchet MS';
+}
+
+#quick-input-container {
+	display: flex;
+	flex-direction: row;
+	gap: 12px;
+}
+
+#quick-input-container input,
+#quick-input-container button {
+	font-size: 24px;
+	padding: 4px;
+}
+
+#quick-input-container input {
+	flex-grow: 1;
+}
+
+#pro-tip-container {
+	text-align: center;
+	color: #888;
+	font-size: 0.8em;
+}
+
+#reports-container {
+	margin-top: 5px;
+	text-align: center;
+}
