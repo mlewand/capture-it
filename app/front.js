@@ -5,13 +5,26 @@ const {
 let config = undefined;
 
 async function asyncInitialization() {
+	let containerToBeShown = document.getElementById( 'app-tab' );
+	let errorContent = null;
 	try {
 		config = await ipcRenderer.invoke( 'getConfig' );
 		config = JSON.parse( config );
 		console.log( 'config fetched', config );
+
+		style="display: none;"
 	} catch ( error ) {
-		console.error( error );
-		alert( error );
+		errorContent = String( error );
+		containerToBeShown = document.getElementById( 'config-missing-tab' );
+	}
+
+	containerToBeShown.style.display = 'block';
+	if ( errorContent) {
+		console.error( errorContent );
+		window.requestIdleCallback( () => {
+			// Rendering it synchronously would freeze the UI thread. I want error "tab" to be visible in bg.
+			alert( errorContent );
+		} );
 	}
 }
 

@@ -24,6 +24,12 @@ function createWindow() {
       app.quit();
     }
   });
+
+  electronLocalShortcut.register( mainWindow, 'Esc', () => {
+    if ( mainWindow && mainWindow.isFocused() ) {
+      mainWindow.hide();
+    }
+  } );
 }
 
 app.on('ready', () => {

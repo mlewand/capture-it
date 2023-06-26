@@ -1,28 +1,37 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Note quick add app</title>
-        <link rel="stylesheet" href="./styles.css">
-    </head>
 
-    <body>
-        <section id="quick-input-container">
-            <input id="textInput" type="text" />
-            <button id="submitButton">Add todo</button>
-        </section>
+	<head>
+		<meta charset="UTF-8">
+		<title>Note quick add app</title>
+		<link rel="stylesheet" href="./styles.css">
+	</head>
 
-        <section id="pro-tip-container">
+	<body>
+		<section id="app-tab" style="display: none;">
+			<section id="quick-input-container">
+				<input id="textInput" type="text" />
+				<button id="submitButton">Add todo</button>
+			</section>
 
-            <p>ℹ You can use a <kbd>ctrl/cmd</kbd> + <kbd>enter</kbd> hotkey to add the todo item.</p>
-        </section>
+			<section id="pro-tip-container">
 
-        <section id="reports-container">
-            Seeing a bug or thinking about new feature? Report an issue <a
-                href="https://github.com/mlewand/note-quick-add/issues">on GitHub</a>.
-        </section>
+				<p>ℹ You can use a <kbd>ctrl/cmd</kbd> + <kbd>enter</kbd> hotkey to add the todo item.</p>
+			</section>
 
-        <script src="./front.js"></script>
-    </body>
+			<section id="reports-container">
+				Seeing a bug or thinking about new feature? Report an issue <a
+					href="https://github.com/mlewand/note-quick-add/issues">on GitHub</a>.
+			</section>
+		</section>
+
+		<section id="config-missing-tab" style="display: none;">
+			<h1>Config is missing</h1>
+
+			<p>The config should be saved as config.json file in the application directory.</p>
+		</section>
+
+		<script src="./front.js"></script>
+	</body>
 
 </html>
