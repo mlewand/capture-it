@@ -39,7 +39,7 @@ async function asyncInitialization(): Promise<void> {
 
 asyncInitialization();
 
-document.getElementById('submitButton')!.addEventListener('click', () => {
+document.getElementById('submitButton')!.addEventListener('click', clickEvent => {
 	const textInput = document.getElementById('textInput') as HTMLInputElement;
 	const text = textInput.value;
 	textInput.value = '';
@@ -61,8 +61,12 @@ document.getElementById('submitButton')!.addEventListener('click', () => {
 
 	const notification = addNotification( text, 'loading' );
 
-	insertPromise.then( response => {
+	insertPromise.then( (data: any) => {
 			addNotification( text, 'success', notification );
+
+			if ( data.url && clickEvent.altKey ) {
+				shell.openExternal( data.url );
+			}
 		} )
 		.catch( error => {
 			addNotification( `${ text } - ${ error }`, 'error', notification );
@@ -99,7 +103,7 @@ function addNotification( text: string, type: 'success' | 'error' | 'loading', e
 		}, 5000 );
 	}
 
-	document.getElementById( 'notification-area' )?.appendChild( notification );
+	document.getElementById( 'notification-area-container' )?.appendChild( notification );
 
 	return notification;
 }
@@ -145,6 +149,8 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 		} )
 		.then( data => {
 			console.log( 'Paragraph appended successfully:', data );
+
+			return data;
 		} );
 }
 
@@ -181,6 +187,8 @@ async function appendPageToDatabase(databaseId: string, apiToken: string, pageTe
 	} else {
 		throw `Error (${ response.status }, ${ data.code }): ${ data.message }`;
 	}
+
+	return data;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -188,18 +196,26 @@ document.addEventListener('DOMContentLoaded', () => {
 	setupInitialFocus();
 
 	textInput!.addEventListener('keyup', (event: KeyboardEvent) => {
-		if (event.key === 'Enter' && (!event.shiftKey && !event.altKey)) {
+		if (event.key === 'Enter' && !event.shiftKey) {
 			// CTRL / CMD modifiers are allowed. Typically ctrl+enter means confirm an action.
 			event.preventDefault();
-			document.getElementById('submitButton')!.click();
+
+			const clickEvent = new MouseEvent("click", {
+				altKey: event.altKey,
+				ctrlKey: event.ctrlKey,
+				metaKey: event.metaKey
+			} );
+			document.getElementById('submitButton')!.dispatchEvent( clickEvent );
 		}
 	} );
 
-	document.getElementById( 'notification-area' )?.addEventListener( 'click', ( event: MouseEvent ) => {
+	document.getElementById( 'notification-area-container' )?.addEventListener( 'click', ( event: MouseEvent ) => {
 		if ( ( event.target as HTMLElement ).classList.contains( 'button-dismiss' ) ) {
 			( event.target as HTMLElement ).closest( '.notification' )?.remove();
 		}
 	} );
+
+	initializeProTips();
 });
 
 document.addEventListener('click', (event: MouseEvent) => {
@@ -215,5 +231,22 @@ function setupInitialFocus(): void {
 
 	if (textInput) {
 		(textInput as HTMLInputElement).focus();
+	}
+}
+
+function initializeProTips() {
+	const container = document.getElementById( 'pro-tip-container' )!;
+
+	refreshProTip();
+
+	window.setInterval( refreshProTip, 30000 );
+
+	function refreshProTip() {
+		const items = Array.from( container.querySelectorAll( 'p' ) );
+
+		items.map( item => item.classList.remove( 'visible' ) );
+
+		const randomItem = items[ Math.floor( Math.random() * items.length ) ];
+		randomItem.classList.add( 'visible' );
 	}
 }

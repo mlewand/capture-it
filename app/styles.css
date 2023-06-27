@@ -41,6 +41,14 @@ body {
 	font-size: 0.8em;
 }
 
+#pro-tip-container p {
+	display: none;
+}
+
+#pro-tip-container .visible {
+	display: block;
+}
+
 #reports-container {
 	margin-top: var(--spacing-medium);
 	text-align: center;
@@ -55,27 +63,27 @@ body {
 	margin: 0
 }
 
-#notification-area .notification {
+#notification-area-container .notification {
 	padding: var(--spacing-medium);
 	margin-bottom: var(--spacing-medium);
 	border: 1px solid var(--grey);
 }
 
-#notification-area .error {
+#notification-area-container .error {
 	color: var(--red);
 	border-color: var(--red);
 }
 
-#notification-area .error::before {
+#notification-area-container .error::before {
 	content: '😱 '
 }
 
-#notification-area .success {
+#notification-area-container .success {
 	color: var(--green);
 	border-color: var(--green);
 }
 
-#notification-area .success::before {
+#notification-area-container .success::before {
 	content: '✔ '
 }
 
