@@ -134,51 +134,52 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 	};
 
 	return fetch(url, requestOptions)
-		.then(response => response.json())
-		.then(data => {
-			console.log('Paragraph appended successfully:', data);
-		})
-		.catch(error => {
-			console.error('Error appending paragraph:', error);
-		});
+		.then(async ( response ) => {
+			const data = await response.json() as any;
+
+			if ( !response.ok ) {
+				throw `Error (${ response.status }, ${ data.code }): ${ data.message }`;
+			}
+
+			return data;
+		} )
+		.then( data => {
+			console.log( 'Paragraph appended successfully:', data );
+		} );
 }
 
 async function appendPageToDatabase(databaseId: string, apiToken: string, pageText: string): Promise<void> {
-	try {
-		const response = await fetch('https://api.notion.com/v1/pages', {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${apiToken}`,
-				'Content-Type': 'application/json',
-				'Notion-Version': '2021-05-13'
+	const response = await fetch('https://api.notion.com/v1/pages', {
+		method: 'POST',
+		headers: {
+			'Authorization': `Bearer ${apiToken}`,
+			'Content-Type': 'application/json',
+			'Notion-Version': '2021-05-13'
+		},
+		body: JSON.stringify({
+			parent: {
+				database_id: databaseId
 			},
-			body: JSON.stringify({
-				parent: {
-					database_id: databaseId
-				},
-				properties: {
-					Name: {
-						title: [
-							{
-								text: {
-									content: pageText
-								}
+			properties: {
+				Name: {
+					title: [
+						{
+							text: {
+								content: pageText
 							}
-						]
-					}
+						}
+					]
 				}
-			})
-		});
+			}
+		})
+	});
 
-		const data = await response.json();
+	const data = await response.json();
 
-		if (response.ok) {
-			console.log('Page appended successfully:', data);
-		} else {
-			console.error('Error appending page:', data);
-		}
-	} catch (error) {
-		console.error('Error appending page:', error);
+	if (response.ok) {
+		console.log('Page appended successfully:', data);
+	} else {
+		throw `Error (${ response.status }, ${ data.code }): ${ data.message }`;
 	}
 }
 
