@@ -6,6 +6,8 @@ interface Config {
 	pageId?: string;
 	dataBaseId?: string;
 	notionToken: string;
+	invocationHotKey?: string;
+	forceOpenLinksInNotionApp?: boolean;
 }
 
 let config: Config | undefined;
@@ -65,7 +67,8 @@ document.getElementById('submitButton')!.addEventListener('click', clickEvent =>
 			addNotification( text, 'success', notification );
 
 			if ( data.url && clickEvent.altKey ) {
-				shell.openExternal( data.url );
+
+				shell.openExternal( config!.forceOpenLinksInNotionApp ? data.url.replace( /^https:/, 'notion:' ) : data.url  );
 			}
 		} )
 		.catch( error => {
