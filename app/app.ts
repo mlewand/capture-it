@@ -20,10 +20,6 @@ async function asyncInitialization(): Promise<void> {
 
 		window.requestIdleCallback(() => {
 			setupInitialFocus();
-
-			addNotification( 'notification content', 'loading' );
-			addNotification( 'notification content', 'success' );
-			addNotification( 'notification content', 'error' );
 		});
 	} catch (error) {
 		errorContent = String(error);
