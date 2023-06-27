@@ -1,20 +1,22 @@
 import { BrowserWindow } from 'electron';
 import * as path from 'path';
 
+type AppMainWindowOptions = { electronOptions?: Electron.BrowserWindowConstructorOptions, rootPath: string };
+
 export default class AppMainWindow extends BrowserWindow {
 	_finalClosing: boolean = false;
 
-	constructor( options?: Electron.BrowserWindowConstructorOptions ) {
+	constructor( options: AppMainWindowOptions ) {
 		super( Object.assign( {}, {
 			width: 800,
 			height: 200,
 			webPreferences: {
 				nodeIntegration: true,
-				contextIsolation: false, // @todo review if I'm ok with it. It's neeeded by the electron-localshortcut lib.
+				contextIsolation: false, // @todo review if I'm ok with it. It's needed by the electron-localshortcut lib.
 			},
-		}, options ) );
+		}, options.electronOptions || {} ) );
 
-		this.loadFile( path.join( __dirname, '../app/index.html' ) );
+		this.loadFile( path.join( options.rootPath, '..', 'app', 'index.html' ) );
 
 		this.on( 'close', ( event: any ) => {
 			if ( event && !this._finalClosing ) {

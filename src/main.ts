@@ -5,13 +5,15 @@ import AppMainWindow from './AppMainWindow';
 import { getTray } from './helpers';
 import { promises as fs } from 'fs';
 
+const ROOT_DIRECTORY = path.join( __dirname, '..', '..' );
+
 let mainWindow: AppMainWindow | null;
 let tray: Tray | null;
 
 function createWindow() {
-  mainWindow = new AppMainWindow();
+  mainWindow = new AppMainWindow( { rootPath: ROOT_DIRECTORY } );
 
-  mainWindow.loadFile(path.join(__dirname, '../app/index.html'));
+  mainWindow.loadFile( path.join( ROOT_DIRECTORY, 'app', 'index.html' ) );
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -36,7 +38,7 @@ app.on('ready', () => {
   createWindow();
 
   // Create system tray
-  tray = getTray(mainWindow!);
+  tray = getTray( mainWindow!, ROOT_DIRECTORY );
 
   // Create global shortcut
   const ret = globalShortcut.register('CommandOrControl+Shift+M', () => {
@@ -76,5 +78,5 @@ app.on('activate', () => {
 
 ipcMain.handle('getConfig', async () => {
   // @todo: add handling in case it is missing.
-  return await fs.readFile( path.join( __dirname, '../', 'config.json' ), 'utf-8' );
+  return await fs.readFile( path.join( ROOT_DIRECTORY, 'config.json' ), 'utf-8' );
 });
