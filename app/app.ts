@@ -15,7 +15,7 @@ async function asyncInitialization(): Promise<void> {
 	let errorContent: string | null = null;
 
 	try {
-		config = JSON.parse(await ipcRenderer.invoke('getConfig'));
+		config = await ipcRenderer.invoke('getConfig');
 		window.requestIdleCallback(() => {
 			setupInitialFocus();
 		});

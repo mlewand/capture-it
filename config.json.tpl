@@ -1,5 +1,6 @@
 {
 	"pageId": "",
 	"dataBaseId": "",
-	"notionToken": "secret_abcd"
+	"notionToken": "secret_abcd",
+	"invocationHotKey": "CommandOrControl+Shift+M"
 }

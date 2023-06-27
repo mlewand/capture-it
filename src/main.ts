@@ -3,7 +3,10 @@ import * as path from 'path';
 import * as electronLocalShortcut from 'electron-localshortcut';
 import AppMainWindow from './AppMainWindow';
 import { getTray } from './helpers';
-import { promises as fs } from 'fs';
+import { promises as fs, readFileSync } from 'fs';
+
+const config = JSON.parse( readFileSync( path.join( __dirname, '..', '..', 'config.json' ), 'utf-8' ) );
+const INVOCATION_HOT_KEY = config.invocationHotKey || 'CommandOrControl+Shift+M';
 
 const ROOT_DIRECTORY = path.join( __dirname, '..', '..' );
 
@@ -41,7 +44,7 @@ app.on('ready', () => {
   tray = getTray( mainWindow!, ROOT_DIRECTORY );
 
   // Create global shortcut
-  const ret = globalShortcut.register('CommandOrControl+Shift+M', () => {
+  const ret = globalShortcut.register(INVOCATION_HOT_KEY, () => {
     if (mainWindow) {
       if ( !mainWindow.isFocused() || !mainWindow.isVisible() ) {
         mainWindow.show();
@@ -58,7 +61,7 @@ app.on('ready', () => {
 
 app.on('will-quit', () => {
   // Unregister the shortcut.
-  globalShortcut.unregister('CommandOrControl+Shift+M');
+  globalShortcut.unregister(INVOCATION_HOT_KEY);
 
   // Unregister all shortcuts.
   globalShortcut.unregisterAll();
@@ -77,5 +80,5 @@ app.on('activate', () => {
 });
 
 ipcMain.handle('getConfig', async () => {
-  return await fs.readFile( path.join( ROOT_DIRECTORY, 'config.json' ), 'utf-8' );
+  return config;
 });
