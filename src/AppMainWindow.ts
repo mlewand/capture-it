@@ -9,7 +9,7 @@ export default class AppMainWindow extends BrowserWindow {
 	constructor( options: AppMainWindowOptions ) {
 		super( Object.assign( {}, {
 			width: 800,
-			height: 200,
+			height: 250,
 			webPreferences: {
 				nodeIntegration: true,
 				contextIsolation: false, // @todo review if I'm ok with it. It's needed by the electron-localshortcut lib.

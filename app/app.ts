@@ -16,8 +16,6 @@ async function asyncInitialization(): Promise<void> {
 
 	try {
 		config = JSON.parse(await ipcRenderer.invoke('getConfig'));
-		console.log('config fetched', config);
-
 		window.requestIdleCallback(() => {
 			setupInitialFocus();
 		});
@@ -85,11 +83,21 @@ function addNotification( text: string, type: 'success' | 'error' | 'loading', e
 
 	notification.className = `notification ${ type }`;
 
-	if ( type === 'loading' ) {
-		notification.insertAdjacentHTML( 'afterbegin', '<span class="loader"></span>' );
-	}
-
 	notification.insertAdjacentText( 'beforeend', text );
+
+	if ( type === 'error' ) {
+		notification.insertAdjacentHTML( 'beforeend', '<button class="button-dismiss">dismiss</button>' );
+	} else if ( type === 'loading' ) {
+		notification.insertAdjacentHTML( 'afterbegin', '<span class="loader"></span>' );
+	} else if ( type === 'success' ) {
+		// The success notification should be automatically dismissed after 5 seconds, but not if it's hovered.
+		const timerId = window.setInterval( () => {
+			if ( !notification.matches( '.notification:hover' ) ) {
+				notification.remove();
+				window.clearInterval( timerId );
+			}
+		}, 5000 );
+	}
 
 	document.getElementById( 'notification-area' )?.appendChild( notification );
 
@@ -184,7 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			event.preventDefault();
 			document.getElementById('submitButton')!.click();
 		}
-	});
+	} );
+
+	document.getElementById( 'notification-area' )?.addEventListener( 'click', ( event: MouseEvent ) => {
+		if ( ( event.target as HTMLElement ).classList.contains( 'button-dismiss' ) ) {
+			( event.target as HTMLElement ).closest( '.notification' )?.remove();
+		}
+	} );
 });
 
 document.addEventListener('click', (event: MouseEvent) => {
