@@ -77,6 +77,5 @@ app.on('activate', () => {
 });
 
 ipcMain.handle('getConfig', async () => {
-  // @todo: add handling in case it is missing.
   return await fs.readFile( path.join( ROOT_DIRECTORY, 'config.json' ), 'utf-8' );
 });
