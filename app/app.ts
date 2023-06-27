@@ -20,6 +20,10 @@ async function asyncInitialization(): Promise<void> {
 
 		window.requestIdleCallback(() => {
 			setupInitialFocus();
+
+			addNotification( 'notification content', 'loading' );
+			addNotification( 'notification content', 'success' );
+			addNotification( 'notification content', 'error' );
 		});
 	} catch (error) {
 		errorContent = String(error);
@@ -58,12 +62,43 @@ document.getElementById('submitButton')!.addEventListener('click', () => {
 		return;
 	}
 
-	if (dataBaseId) {
-		appendPageToDatabase(dataBaseId, notionToken, text);
-	} else {
-		appendParagraphToNotionPage(pageId!, notionToken, text);
-	}
+	const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, text)
+		: appendParagraphToNotionPage(pageId!, notionToken, text);
+
+	const notification = addNotification( text, 'loading' );
+
+	insertPromise.then( response => {
+			addNotification( text, 'success', notification );
+		} )
+		.catch( error => {
+			addNotification( `${ text } - ${ error }`, 'error', notification );
+			console.error( error );
+		} );
 });
+
+function addNotification( text: string, type: 'success' | 'error' | 'loading', existingNotification?: HTMLElement) {
+
+	if ( existingNotification ) {
+		// If reusing notification, make sure to clear its content.
+		existingNotification.className = '';
+		existingNotification.innerHTML = '';
+	}
+
+	const loadingBox = type === 'loading' ? '<span class="loader"></span>' : '';
+	const notification = document.createElement( 'div' );
+
+	notification.className = `notification ${ type }`;
+
+	if ( type === 'loading' ) {
+		notification.insertAdjacentHTML( 'afterbegin', '<span class="loader"></span>' );
+	}
+
+	notification.insertAdjacentText( 'beforeend', text );
+
+	document.getElementById( 'notification-area' )?.appendChild( notification );
+
+	return notification;
+}
 
 function appendParagraphToNotionPage(pageId: string, notionToken: string, paragraphText: string): Promise<void> {
 	const url = `https://api.notion.com/v1/blocks/${pageId}/children`;
