@@ -13,6 +13,10 @@ body {
 	font-family: 'Trebuchet MS';
 }
 
+kbd, code {
+	font-size: 1.2em;
+}
+
 #quick-input-container {
 	display: flex;
 	flex-direction: row;
