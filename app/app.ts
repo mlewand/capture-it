@@ -20,6 +20,7 @@ async function asyncInitialization(): Promise<void> {
 		config = await ipcRenderer.invoke('getConfig');
 		window.requestIdleCallback(() => {
 			setupInitialFocus();
+			initializeProTips();
 		});
 	} catch (error) {
 		errorContent = String(error);
@@ -217,8 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			( event.target as HTMLElement ).closest( '.notification' )?.remove();
 		}
 	} );
-
-	initializeProTips();
 });
 
 document.addEventListener('click', (event: MouseEvent) => {
@@ -239,6 +238,10 @@ function setupInitialFocus(): void {
 
 function initializeProTips() {
 	const container = document.getElementById( 'pro-tip-container' )!;
+
+	Array.from( container.querySelectorAll( '[data-pro-tip-placeholder=invocation-key]' ) ).map( item => {
+		item.textContent = config!.invocationHotKey || 'CommandOrControl+Shift+M';
+	} );
 
 	refreshProTip();
 
