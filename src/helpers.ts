@@ -10,6 +10,10 @@ export function getTray( app: NoteQuickAdd, rootPath: string ): Tray {
 	// Create context menu for the tray
 	const contextMenu = Menu.buildFromTemplate( [
 		{
+			label: 'Configuration',
+			click: () => app.commands.execute( 'openConfig' )
+		},
+		{
 			label: 'Close',
 			click: () => app.commands.execute( 'quit' )
 		}
@@ -29,10 +33,14 @@ export function getTray( app: NoteQuickAdd, rootPath: string ): Tray {
  * Returns a config object or null if config is missing.
  */
 export function getConfig( rootPath: string ) : any {
-	const configPath = path.join( rootPath, 'config.json' );
+	const configPath = getConfigPath( rootPath );
 	if ( !existsSync(configPath) ) {
 		return null;
 	}
 
 	return JSON.parse( readFileSync( configPath, 'utf-8' ) );
+}
+
+export function getConfigPath( rootPath: string ) : string {
+	return path.join( rootPath, 'config.json' );
 }

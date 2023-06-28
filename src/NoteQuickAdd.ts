@@ -5,6 +5,7 @@ import { getTray, getConfig } from './helpers';
 import type ConfigInterface from './ConfigInterface';
 import QuitCommand from './Command/Quit';
 import HideCommand from './Command/Hide';
+import OpenConfigCommand from './Command/OpenConfig';
 import CommandSet from './Command/CommandSet';
 
 /**
@@ -106,6 +107,7 @@ export default class NoteQuickAdd {
 	private _initCommands() : void {
 		this.commands.add( new QuitCommand( { app: this } ) );
 		this.commands.add( new HideCommand( { app: this } ) );
+		this.commands.add( new OpenConfigCommand( { app: this } ) );
 
 		ipcMain.handle( 'executeCommand', async ( event, commandName ) => this.commands.execute( commandName ) );
 	}
