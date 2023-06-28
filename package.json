@@ -11,8 +11,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "electron": "^25.2.0",
-    "electron-builder": "^24.4.0",
-    "electron-localshortcut": "^3.2.1"
+    "electron-builder": "^24.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",

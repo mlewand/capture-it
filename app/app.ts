@@ -223,7 +223,25 @@ document.addEventListener('DOMContentLoaded', () => {
 			( event.target as HTMLElement ).closest( '.notification' )?.remove();
 		}
 	} );
-});
+} );
+
+document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
+	const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
+	let commandToCall = null;
+
+	if ( event.key === 'Escape' && noModifierKeysPressed ) {
+		// Esc key should hide the window.
+		commandToCall = 'hide';
+	} else if ( event.key === 'q' && event.ctrlKey ) {
+		// Ctrl + Q should quit the app.
+		commandToCall = 'quit';
+	}
+
+	if ( commandToCall ) {
+		ipcRenderer.invoke( 'executeCommand', commandToCall );
+		event.preventDefault();
+	}
+} );
 
 document.addEventListener('click', (event: MouseEvent) => {
 	// Absolute links should open in a browser.

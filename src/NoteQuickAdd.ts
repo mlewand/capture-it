@@ -1,10 +1,12 @@
 import { app as electronApp, globalShortcut, ipcMain, Tray, BrowserWindow } from 'electron';
 import * as path from 'path';
-import * as electronLocalShortcut from 'electron-localshortcut';
 import AppMainWindow from './AppMainWindow';
 import { getTray, getConfig } from './helpers';
 import { promises as fs, readFileSync, existsSync } from 'fs';
 import type ConfigInterface from './ConfigInterface';
+import QuitCommand from './Command/Quit';
+import HideCommand from './Command/Hide';
+import CommandSet from './Command/CommandSet';
 
 /**
  * The top-level API of the application.
@@ -23,18 +25,51 @@ export default class NoteQuickAdd {
 
 	electronApp?: Electron.App;
 
+	commands: CommandSet;
+
 	constructor( rootPath: string ) {
 		this.rootPath = rootPath;
+		this.commands = new CommandSet();
 	}
 
 	async start() {
-		this.config = await getConfig( this.rootPath );
+		await Promise.all( [
+				getConfig( this.rootPath ),
+				this._createElectronApp()
+			] )
+			.then( results => {
+				this.config = results[ 0 ];
+				this.electronApp = results[ 1 ];
 
-		this.electronApp = await this._createElectronApp();
+				this.mainWindow = this._createMainWindow();
+				this._initCommands();
+				this._electronAppReady();
 
-		ipcMain.handle( 'getConfig', async () => {
-			return this.config;
-		} );
+				ipcMain.handle( 'getConfig', async () => {
+					return this.config;
+				} );
+			} );
+	}
+
+	/**
+	 * Immediately closes the app.
+	 */
+	public quit() : void {
+		if (this.mainWindow) {
+			this.mainWindow.forceClose();
+			this.electronApp!.quit();
+		}
+	}
+
+	/**
+	 * Hides any visible windows.
+	 */
+	public hide() : void {
+		const { mainWindow } = this;
+
+		if ( mainWindow && mainWindow.isFocused() ) {
+			mainWindow.hide();
+		}
 	}
 
 	private _createMainWindow() : AppMainWindow {
@@ -46,28 +81,12 @@ export default class NoteQuickAdd {
 			this.mainWindow = undefined;
 		});
 
-		// Add a hotkey for closing the window.
-		electronLocalShortcut.register(mainWindow, 'Ctrl+Q', () => {
-			if (mainWindow) {
-				mainWindow.forceClose();
-				electronApp.quit();
-			}
-		});
-
-		electronLocalShortcut.register( mainWindow, 'Esc', () => {
-			if ( mainWindow && mainWindow.isFocused() ) {
-				mainWindow.hide();
-			}
-		} );
-
 		return mainWindow;
 	}
 
 	private _createElectronApp() : Promise<Electron.App> {
 		return new Promise( ( resolve, reject ) => {
 			electronApp.on( 'ready', () => {
-				this.mainWindow = this._createMainWindow();
-				this._electronAppReady();
 				resolve( electronApp );
 			} );
 
@@ -85,18 +104,25 @@ export default class NoteQuickAdd {
 		} );
 	}
 
+	private _initCommands() : void {
+		this.commands.add( new QuitCommand( { app: this } ) );
+		this.commands.add( new HideCommand( { app: this } ) );
+
+		ipcMain.handle( 'executeCommand', async ( event, commandName ) => this.commands.execute( commandName ) );
+	}
+
 	private _electronAppReady() : void {
 		const { mainWindow } = this;
 
 		if ( mainWindow ) {
-			this._addTrayItem( mainWindow );
+			this._addTrayItem();
 			this._registerHotkeys( mainWindow );
 		}
 
 	}
 
-	_addTrayItem( mainWindow: AppMainWindow ) : void {
-		getTray( mainWindow, this.rootPath );
+	_addTrayItem() : void {
+		getTray( this, this.rootPath );
 	}
 
 	private _registerHotkeys( mainWindow: AppMainWindow ) {

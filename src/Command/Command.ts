@@ -1,7 +1,7 @@
-import type NoteQuickAdd from "./NoteQuickAdd";
+import type NoteQuickAdd from "../NoteQuickAdd";
 
-type CommandConstructorOptions = {
-	name: string,
+export type CommandConstructorOptions = {
+	name?: string,
 	app: NoteQuickAdd
 };
 
@@ -11,6 +11,10 @@ export default class Command {
 	app: NoteQuickAdd;
 
 	constructor( options: CommandConstructorOptions ) {
+		if ( !options.name ) {
+			throw Error( 'Command name is required' );
+		}
+
 		this.name = options.name;
 		this.app = options.app;
 	}
