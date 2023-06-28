@@ -2,13 +2,13 @@ import { app, globalShortcut, ipcMain, Tray, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as electronLocalShortcut from 'electron-localshortcut';
 import AppMainWindow from './AppMainWindow';
-import { getTray } from './helpers';
-import { promises as fs, readFileSync } from 'fs';
+import { getTray, getConfig } from './helpers';
+import { promises as fs, readFileSync, existsSync } from 'fs';
 
-const config = JSON.parse( readFileSync( path.join( __dirname, '..', '..', 'config.json' ), 'utf-8' ) );
-const INVOCATION_HOT_KEY = config.invocationHotKey || 'CommandOrControl+Shift+M';
 
 const ROOT_DIRECTORY = path.join( __dirname, '..', '..' );
+const config = getConfig( ROOT_DIRECTORY );
+const INVOCATION_HOT_KEY = ( config && config.invocationHotKey ) || 'CommandOrControl+Shift+M';
 
 let mainWindow: AppMainWindow | null;
 let tray: Tray | null;

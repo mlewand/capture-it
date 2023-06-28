@@ -18,6 +18,11 @@ async function asyncInitialization(): Promise<void> {
 
 	try {
 		config = await ipcRenderer.invoke('getConfig');
+
+		if ( !config ) {
+			throw new Error( 'The config.json configuration file is missing.' );
+		}
+
 		window.requestIdleCallback(() => {
 			setupInitialFocus();
 			initializeProTips();
