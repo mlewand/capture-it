@@ -16,19 +16,15 @@ async function asyncInitialization(): Promise<void> {
 	let containerToBeShown: HTMLElement | null = document.getElementById('app-tab');
 	let errorContent: string | null = null;
 
-	try {
-		config = await ipcRenderer.invoke('getConfig');
+	config = await ipcRenderer.invoke('getConfig');
 
-		if ( !config ) {
-			throw new Error( 'The config.json configuration file is missing.' );
-		}
-
-		window.requestIdleCallback(() => {
+	if ( config ) {
+		window.requestIdleCallback( () => {
 			setupInitialFocus();
 			initializeProTips();
-		});
-	} catch (error) {
-		errorContent = String(error);
+		} );
+	} else {
+		errorContent = 'The config.json configuration file is missing or invalid.';
 		containerToBeShown = document.getElementById('config-missing-tab');
 	}
 
@@ -38,10 +34,6 @@ async function asyncInitialization(): Promise<void> {
 
 	if (errorContent) {
 		console.error(errorContent);
-		window.requestIdleCallback(() => {
-			// Rendering it synchronously would freeze the UI thread. I want error "tab" to be visible in bg.
-			alert(errorContent);
-		});
 	}
 }
 
@@ -222,6 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		if ( ( event.target as HTMLElement ).classList.contains( 'button-dismiss' ) ) {
 			( event.target as HTMLElement ).closest( '.notification' )?.remove();
 		}
+	} );
+
+	document.getElementById( 'create-missing-config-button' )?.addEventListener( 'click', () => {
+		ipcRenderer.invoke( 'executeCommand', 'openConfig' );
 	} );
 } );
 

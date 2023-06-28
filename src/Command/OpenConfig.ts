@@ -15,9 +15,14 @@ export default class OpenConfigCommand extends Command {
 
 	public async execute(): Promise<any> {
 		const expectedConfigPath = getConfigPath( this.app.rootPath );
-		const stat = await fs.stat( expectedConfigPath );
 
-		if ( !stat.isFile() ) {
+		try {
+			const stat = await fs.stat( expectedConfigPath );
+
+			if ( !stat.isFile() ) {
+				throw new Error( 'Config is not a file' );
+			}
+		} catch ( error ) {
 			await fs.copyFile( path.join( this.app.rootPath, 'config.json.tpl' ), expectedConfigPath );
 		}
 
