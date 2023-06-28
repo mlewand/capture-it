@@ -17,6 +17,10 @@ kbd, code {
 	font-size: 1.2em;
 }
 
+p {
+	margin: var(--spacing-large) 0;
+}
+
 #quick-input-container {
 	display: flex;
 	flex-direction: row;

@@ -1,5 +1,6 @@
 import { Tray, Menu } from 'electron';
 import * as path from 'path';
+import { homedir } from 'os';
 import { promises as fs, readFileSync, existsSync } from 'fs';
 import type NoteQuickAdd from './NoteQuickAdd';
 
@@ -42,5 +43,5 @@ export function getConfig( rootPath: string ) : any {
 }
 
 export function getConfigPath( rootPath: string ) : string {
-	return path.join( rootPath, 'config.json' );
+	return path.join( homedir(), '.note-quick-add-config.json' );
 }

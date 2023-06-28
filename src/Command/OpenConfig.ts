@@ -23,7 +23,7 @@ export default class OpenConfigCommand extends Command {
 				throw new Error( 'Config is not a file' );
 			}
 		} catch ( error ) {
-			await fs.copyFile( path.join( this.app.rootPath, 'config.json.tpl' ), expectedConfigPath );
+			await fs.copyFile( path.join( this.app.rootPath, '.note-quick-add-config.json.tpl' ), expectedConfigPath );
 		}
 
 		return open( expectedConfigPath, { wait: true } );

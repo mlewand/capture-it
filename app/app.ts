@@ -24,7 +24,7 @@ async function asyncInitialization(): Promise<void> {
 			initializeProTips();
 		} );
 	} else {
-		errorContent = 'The config.json configuration file is missing or invalid.';
+		errorContent = 'The .note-quick-add-config.json configuration file is missing or invalid.';
 		containerToBeShown = document.getElementById('config-missing-tab');
 	}
 
