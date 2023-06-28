@@ -1,9 +1,9 @@
-import { app, Tray, Menu } from 'electron';
+import { Tray, Menu } from 'electron';
 import * as path from 'path';
-import type AppMainWindow from './AppMainWindow';
 import { promises as fs, readFileSync, existsSync } from 'fs';
+import type NoteQuickAdd from './NoteQuickAdd';
 
-export function getTray( mainWindow: AppMainWindow, rootPath: string ): Tray {
+export function getTray( app: NoteQuickAdd, rootPath: string ): Tray {
 	let tray = new Tray( path.join( rootPath, 'assets', 'icon.png' ) );
 	tray.setToolTip( 'Electron app' );
 
@@ -11,19 +11,14 @@ export function getTray( mainWindow: AppMainWindow, rootPath: string ): Tray {
 	const contextMenu = Menu.buildFromTemplate( [
 		{
 			label: 'Close',
-			click: () => {
-				if ( mainWindow ) {
-					mainWindow.forceClose();
-					app.quit();
-				}
-			}
+			click: () => app.commands.execute( 'quit' )
 		}
 	] );
 	tray.setContextMenu( contextMenu );
 
 	tray.on( 'click', () => {
-		if ( mainWindow ) {
-			mainWindow.show();
+		if ( app.mainWindow ) {
+			app.mainWindow.show();
 		}
 	} );
 

@@ -1,8 +1,7 @@
-import { app as electronApp, globalShortcut, ipcMain, Tray, BrowserWindow } from 'electron';
+import { app as electronApp, globalShortcut, ipcMain } from 'electron';
 import * as path from 'path';
 import AppMainWindow from './AppMainWindow';
 import { getTray, getConfig } from './helpers';
-import { promises as fs, readFileSync, existsSync } from 'fs';
 import type ConfigInterface from './ConfigInterface';
 import QuitCommand from './Command/Quit';
 import HideCommand from './Command/Hide';
