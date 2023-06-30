@@ -1,6 +1,25 @@
-const {
-	ipcRenderer, shell
-} = require( 'electron' );
+interface ElectronBridge {
+	receive: ( channel: string, func: ( ...args: any[] ) => void ) => void;
+	invoke: ( channel: string, ...args: any[] ) => Promise<any>;
+	send: ( channel: string, ...args: any[] ) => void;
+}
+
+const electronBridge: ElectronBridge = ( window as any ).electron;
+
+// window.addEventListener( 'DOMContentLoaded', () => {
+// 	electronBridge.send( 'renderer-ready' );
+// } );
+
+// electronBridge.receive( 'message', ( message: string ) => {
+// 	console.log( message ); // prints 'foo bar'
+// 	alert( 'msg' + message );
+// } );
+
+// electronBridge.receive( 'configChanged', ( message: string ) => {
+// 	console.log( message ); // prints 'foo bar'
+// 	alert( 'configChanged: ' + message );
+// } );
+
 
 interface Config {
 	pageId?: string;
@@ -16,7 +35,7 @@ async function asyncInitialization(): Promise<void> {
 	let containerToBeShown: HTMLElement | null = document.getElementById('app-tab');
 	let errorContent: string | null = null;
 
-	config = await ipcRenderer.invoke('getConfig');
+	config = (await electronBridge.invoke('getConfig')) as any;
 
 	if ( config ) {
 		window.requestIdleCallback( () => {
@@ -37,7 +56,10 @@ async function asyncInitialization(): Promise<void> {
 	}
 }
 
-asyncInitialization();
+electronBridge.receive('configChanged', (event: any, newConfig: any) => {
+	alert( 'Config changed' );
+	console.log(newConfig);
+} );
 
 document.getElementById('submitButton')!.addEventListener('click', clickEvent => {
 	const textInput = document.getElementById('textInput') as HTMLInputElement;
@@ -66,7 +88,8 @@ document.getElementById('submitButton')!.addEventListener('click', clickEvent =>
 
 			if ( data.url && clickEvent.altKey ) {
 
-				shell.openExternal( config!.forceOpenLinksInNotionApp ? data.url.replace( /^https:/, 'notion:' ) : data.url  );
+				// shell.openExternal( config!.forceOpenLinksInNotionApp ? data.url.replace( /^https:/, 'notion:' ) : data.url  );
+				console.log( 'shell call', config!.forceOpenLinksInNotionApp ? data.url.replace( /^https:/, 'notion:' ) : data.url  );
 			}
 		} )
 		.catch( error => {
@@ -192,7 +215,9 @@ async function appendPageToDatabase(databaseId: string, apiToken: string, pageTe
 	return data;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+	await asyncInitialization();
+
 	const textInput = document.getElementById('textInput');
 	setupInitialFocus();
 
@@ -217,7 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	} );
 
 	document.getElementById( 'create-missing-config-button' )?.addEventListener( 'click', () => {
-		ipcRenderer.invoke( 'executeCommand', 'openConfig' );
+		// ipcRenderer.invoke( 'executeCommand', 'openConfig' );
+		electronBridge.send( 'executeCommand', 'openConfig' );
 	} );
 } );
 
@@ -234,7 +260,8 @@ document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
 	}
 
 	if ( commandToCall ) {
-		ipcRenderer.invoke( 'executeCommand', commandToCall );
+		// ipcRenderer.invoke( 'executeCommand', commandToCall );
+		electronBridge.send( 'executeCommand', commandToCall );
 		event.preventDefault();
 	}
 } );
@@ -243,7 +270,8 @@ document.addEventListener('click', (event: MouseEvent) => {
 	// Absolute links should open in a browser.
 	if ((event.target as Element).tagName === 'A' && (event.target as HTMLAnchorElement).href.startsWith('http')) {
 		event.preventDefault();
-		shell.openExternal((event.target as HTMLAnchorElement).href);
+		// shell.openExternal((event.target as HTMLAnchorElement).href);
+		console.log( 'shell call',(event.target as HTMLAnchorElement).href);
 	}
 });
 

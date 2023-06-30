@@ -11,8 +11,7 @@ export default class AppMainWindow extends BrowserWindow {
 			width: 800,
 			height: 250,
 			webPreferences: {
-				nodeIntegration: true,
-				contextIsolation: false, // @todo review if I'm ok with it. It's needed by the electron-localshortcut lib.
+				preload: path.join( options.rootPath, 'src', 'preload.js' ),
 			},
 		}, options.electronOptions || {} ) );
 

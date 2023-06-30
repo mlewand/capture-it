@@ -1,4 +1,4 @@
-import { app as electronApp, globalShortcut, ipcMain } from 'electron';
+import { app as electronApp, globalShortcut, ipcMain, ipcRenderer } from 'electron';
 import * as path from 'path';
 import AppMainWindow from './AppMainWindow';
 import { getTray, getConfig } from './helpers';
@@ -7,6 +7,21 @@ import QuitCommand from './Command/Quit';
 import HideCommand from './Command/Hide';
 import OpenConfigCommand from './Command/OpenConfig';
 import CommandSet from './Command/CommandSet';
+import Config from './Config';
+import { CLIENT_RENEG_WINDOW } from 'tls';
+
+ipcMain.on( 'renderer-ready', ( event ) => {
+	console.log('renderer ready sending back');
+
+	// console.log(event.sender);
+
+	// event.sender.send( 'configChanged', 'foo bar' );
+	// event.sender.send( 'message', 'baz baz' );
+
+	// console.log('equal?');
+	// console.log( wnd ? wnd.webContents === event.sender : 'wnd is null' );
+
+} );
 
 /**
  * The top-level API of the application.
@@ -21,7 +36,7 @@ export default class NoteQuickAdd {
 
 	rootPath: string;
 
-	config?: ConfigInterface;
+	config?: Config;
 
 	electronApp?: Electron.App;
 
@@ -33,22 +48,55 @@ export default class NoteQuickAdd {
 	}
 
 	async start() {
+		const configWrapper = async () => {
+			try {
+				return await Config.loadFromUserDirectory();
+			} catch ( e ) {
+				console.error( e );
+				return undefined;
+			}
+		}
+
+		console.log('App.start');
+
+
+		ipcMain.handle( 'getConfig', async () => {
+			return this.config || null;
+		} );
+
 		await Promise.all( [
-				getConfig( this.rootPath ),
+				configWrapper(),
 				this._createElectronApp()
 			] )
-			.then( results => {
+			.then( async (results) => {
 				this.config = results[ 0 ];
 				this.electronApp = results[ 1 ];
 
-				this.mainWindow = this._createMainWindow();
+				this.mainWindow = await this._createMainWindow();
+
 				this._initCommands();
 				this._electronAppReady();
 
-				ipcMain.handle( 'getConfig', async () => {
-					return this.config;
-				} );
+				console.log('wrapping app ready');
+
+				// if ( this.config ) {
+				// 	this.config.emitConfigChanged();
+				// }
+
+				this.send( 'configChanged', this.config );
 			} );
+	}
+
+	/**
+	 * Sends a message to renderer.
+	 *
+	 * @param channel
+	 * @param args
+	 */
+	public send( channel : string, ...args : any[] ) {
+		if ( this.mainWindow ) {
+			this.mainWindow.webContents.send( channel, ...args );
+		}
 	}
 
 	/**
@@ -72,7 +120,7 @@ export default class NoteQuickAdd {
 		}
 	}
 
-	private _createMainWindow() : AppMainWindow {
+	private async _createMainWindow() : Promise<AppMainWindow> {
 		const mainWindow = new AppMainWindow( { rootPath: this.rootPath } );
 
 		mainWindow.loadFile( path.join( this.rootPath, 'app', 'index.html' ) );
@@ -81,7 +129,11 @@ export default class NoteQuickAdd {
 			this.mainWindow = undefined;
 		});
 
-		return mainWindow;
+		return new Promise( ( resolve, reject ) => {
+			mainWindow.webContents.once( 'dom-ready', () => {
+				resolve( mainWindow );
+			} );
+		} );
 	}
 
 	private _createElectronApp() : Promise<Electron.App> {
@@ -96,9 +148,9 @@ export default class NoteQuickAdd {
 				}
 			} );
 
-			electronApp.on( 'activate', () => {
+			electronApp.on( 'activate', async () => {
 				if ( this.mainWindow === undefined ) {
-					this.mainWindow = this._createMainWindow();
+					this.mainWindow = await this._createMainWindow();
 				}
 			} );
 		} );

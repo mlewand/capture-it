@@ -1,7 +1,7 @@
 import Command from './Command';
 import type { CommandConstructorOptions } from './Command';
 import { promises as fs } from 'fs';
-import { getConfigPath } from '../helpers';
+import Config from '../Config';
 import * as path from 'path';
 import open from 'open';
 
@@ -14,7 +14,7 @@ export default class OpenConfigCommand extends Command {
 	}
 
 	public async execute(): Promise<any> {
-		const expectedConfigPath = getConfigPath( this.app.rootPath );
+		const expectedConfigPath = Config.getUserConfigPath();
 
 		try {
 			const stat = await fs.stat( expectedConfigPath );
