@@ -28,10 +28,6 @@ export default class Config {
 		this.forceOpenLinksInNotionApp = options.forceOpenLinksInNotionApp;
 	}
 
-	public emitConfigChanged() {
-		ipcMain.emit( 'configChanged', this );
-	}
-
 	public static async loadFromUserDirectory(): Promise<Config> {
 		const configPath = this.getUserConfigPath();
 		const stat = await fs.stat( configPath );

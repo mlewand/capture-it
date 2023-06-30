@@ -1,27 +1,12 @@
-import { app as electronApp, globalShortcut, ipcMain, ipcRenderer } from 'electron';
+import { app as electronApp, globalShortcut, ipcMain } from 'electron';
 import * as path from 'path';
 import AppMainWindow from './AppMainWindow';
-import { getTray, getConfig } from './helpers';
-import type ConfigInterface from './ConfigInterface';
+import { getTray } from './helpers';
 import QuitCommand from './Command/Quit';
 import HideCommand from './Command/Hide';
 import OpenConfigCommand from './Command/OpenConfig';
 import CommandSet from './Command/CommandSet';
 import Config from './Config';
-import { CLIENT_RENEG_WINDOW } from 'tls';
-
-ipcMain.on( 'renderer-ready', ( event ) => {
-	console.log('renderer ready sending back');
-
-	// console.log(event.sender);
-
-	// event.sender.send( 'configChanged', 'foo bar' );
-	// event.sender.send( 'message', 'baz baz' );
-
-	// console.log('equal?');
-	// console.log( wnd ? wnd.webContents === event.sender : 'wnd is null' );
-
-} );
 
 /**
  * The top-level API of the application.
@@ -78,10 +63,6 @@ export default class NoteQuickAdd {
 				this._electronAppReady();
 
 				console.log('wrapping app ready');
-
-				// if ( this.config ) {
-				// 	this.config.emitConfigChanged();
-				// }
 
 				this.send( 'configChanged', this.config );
 			} );

@@ -4,23 +4,6 @@ interface ElectronBridge {
 	send: ( channel: string, ...args: any[] ) => void;
 }
 
-const electronBridge: ElectronBridge = ( window as any ).electron;
-
-// window.addEventListener( 'DOMContentLoaded', () => {
-// 	electronBridge.send( 'renderer-ready' );
-// } );
-
-// electronBridge.receive( 'message', ( message: string ) => {
-// 	console.log( message ); // prints 'foo bar'
-// 	alert( 'msg' + message );
-// } );
-
-// electronBridge.receive( 'configChanged', ( message: string ) => {
-// 	console.log( message ); // prints 'foo bar'
-// 	alert( 'configChanged: ' + message );
-// } );
-
-
 interface Config {
 	pageId?: string;
 	dataBaseId?: string;
@@ -29,6 +12,7 @@ interface Config {
 	forceOpenLinksInNotionApp?: boolean;
 }
 
+const electronBridge: ElectronBridge = ( window as any ).electron;
 let config: Config | undefined;
 
 async function asyncInitialization(): Promise<void> {
