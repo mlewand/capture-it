@@ -5,6 +5,8 @@
 	--grey: #888;
 	--red: #e00;
 	--green: #0ba50b;
+	--tab-text-color: #222222;
+	--white-text: #f1f1f1;
 
 	--notification-spinner-size: 20px;
 }
@@ -13,7 +15,8 @@ body {
 	font-family: 'Trebuchet MS';
 }
 
-kbd, code {
+kbd,
+code {
 	font-size: 1.2em;
 }
 
@@ -115,4 +118,23 @@ p {
 	100% {
 		transform: rotate(360deg);
 	}
+}
+
+#workspaces-bar {
+	display: flex;
+	flex-direction: row;
+	gap: var(--spacing-large);
+	margin-bottom: var(--spacing-medium)
+}
+
+#workspaces-bar a {
+	outline: 2px solid var(--tab-text-color);
+	padding: 3px;
+	text-decoration: none;
+	color: var(--tab-text-color);
+}
+
+#workspaces-bar a.active {
+	color: var(--white-text);
+	background-color: var(--tab-text-color);
 }

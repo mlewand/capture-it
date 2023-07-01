@@ -1,12 +1,16 @@
 import { join } from 'path';
 import { homedir } from 'os';
 import { promises as fs } from 'fs';
-import { ipcMain } from 'electron';
 
-export interface ConfigFileInterface {
+export interface WorkspaceInfo {
+	name?: string;
 	pageId: string;
 	dataBaseId: string;
 	notionToken: string;
+}
+
+export interface ConfigFileInterface {
+	workspaces: WorkspaceInfo[];
 	invocationHotKey: string;
 	forceOpenLinksInNotionApp: boolean;
 }
@@ -14,16 +18,13 @@ export interface ConfigFileInterface {
 
 export default class Config {
 	// @todo: config file could emit events when changed
-	pageId: string;
-	dataBaseId: string;
-	notionToken: string;
 	invocationHotKey: string;
 	forceOpenLinksInNotionApp: boolean;
 
+	workspaces: WorkspaceInfo[];
+
 	constructor( options: ConfigFileInterface ) {
-		this.pageId = options.pageId;
-		this.dataBaseId = options.dataBaseId;
-		this.notionToken = options.notionToken;
+		this.workspaces = options.workspaces;
 		this.invocationHotKey = options.invocationHotKey;
 		this.forceOpenLinksInNotionApp = options.forceOpenLinksInNotionApp;
 	}
@@ -37,6 +38,11 @@ export default class Config {
 		}
 
 		const parsedData = JSON.parse( await fs.readFile(  configPath, 'utf-8' ) );
+
+		if ( !parsedData.workspaces ) {
+			throw new Error( 'Configuration file is missing workspaces' );
+		}
+
 		return new Config( parsedData );
 	}
 

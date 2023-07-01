@@ -9,6 +9,7 @@ import OpenNotionPageCommand from './Command/OpenNotionPage';
 import OpenBrowserCommand from './Command/OpenBrowser';
 import CommandSet from './Command/CommandSet';
 import Config from './Config';
+import type { WorkspaceInfo } from './Config';
 
 /**
  * The top-level API of the application.
@@ -28,6 +29,8 @@ export default class NoteQuickAdd {
 	electronApp?: Electron.App;
 
 	commands: CommandSet;
+
+	activeWorkspace?: WorkspaceInfo;
 
 	constructor( rootPath: string ) {
 		this.rootPath = rootPath;
@@ -67,7 +70,31 @@ export default class NoteQuickAdd {
 				console.log('wrapping app ready');
 
 				this.send( 'configChanged', this.config );
+				this.setActiveWorkspace( 0 );
 			} );
+	}
+
+	public setActiveWorkspace( index: number | 'next' | 'previous' ) {
+		const workspaces = this.config!.workspaces;
+		const currentIndex = workspaces.indexOf( this.activeWorkspace! );
+
+		if ( index === 'next' || index === 'previous' ) {
+			index = currentIndex + ( index === 'next' ? 1 : -1 );
+			if ( index >= workspaces.length ) {
+				index = 0;
+			} else if ( index < 0 ) {
+				index = workspaces.length - 1;
+			}
+		}
+
+		if ( currentIndex == index ) {
+			return;
+		}
+
+		this.activeWorkspace = workspaces[ index ];
+
+		this.send( 'activeWorkspaceChanged', this.activeWorkspace );
+		this.send( 'activeWorkspaceIndexChanged', index );
 	}
 
 	/**
@@ -146,8 +173,15 @@ export default class NoteQuickAdd {
 		this.commands.add( new OpenConfigCommand( { app: this } ) );
 		this.commands.add( new OpenBrowserCommand( { app: this } ) );
 
-		ipcMain.handle( 'executeCommand', async ( event, commandName: string, ...args: Array<any> ) =>
-			this.commands.execute( commandName, ...args ) );
+		ipcMain.handle( 'executeCommand', async ( event, commandName: string, ...args: Array<any> ) =>{
+			if ( commandName == 'setWorkspace' ) {
+				console.log('setting setWorkspace');
+				this.setActiveWorkspace( args[ 0 ] );
+				return;
+			}
+
+			return this.commands.execute( commandName, ...args )
+		} );
 	}
 
 	private _electronAppReady() : void {
@@ -172,6 +206,7 @@ export default class NoteQuickAdd {
 			if ( mainWindow ) {
 				if ( !mainWindow.isFocused() || !mainWindow.isVisible() ) {
 					mainWindow.show();
+					this.send( 'globalHotkeyFocus' );
 				} else {
 					mainWindow.hide();
 				}

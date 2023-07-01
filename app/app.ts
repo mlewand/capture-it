@@ -4,27 +4,49 @@ interface ElectronBridge {
 	send: ( channel: string, ...args: any[] ) => void;
 }
 
-interface Config {
-	pageId?: string;
-	dataBaseId?: string;
+interface WorkspaceInfo {
+	name?: string;
+	pageId: string;
+	dataBaseId: string;
 	notionToken: string;
-	invocationHotKey?: string;
-	forceOpenLinksInNotionApp?: boolean;
+}
+
+interface ConfigFileInterface {
+	workspaces: WorkspaceInfo[];
+	invocationHotKey: string;
+	forceOpenLinksInNotionApp: boolean;
 }
 
 const electronBridge: ElectronBridge = ( window as any ).electron;
-let config: Config | undefined;
+let config: ConfigFileInterface | undefined;
+let activeWorkspaceIndex: number | undefined;
 
-const configPromise = new Promise<Config>( (resolve, reject) => {
+const configPromise = new Promise<ConfigFileInterface>( (resolve, reject) => {
 	electronBridge.invoke( 'getConfig' )
 		.then( resolve )
 		.catch( reject );
 } );
 
-electronBridge.receive('configChanged', (event: any, newConfig: any) => {
-	alert( 'Config changed' );
-	console.log(newConfig);
+electronBridge.receive('configChanged', (newConfig: any) => {
+	// @todo handle it more dynamically.
+	console.log('newcfg', newConfig);
 } );
+
+electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number ) => {
+	console.log('activeWorkspaceIndexChanged', index);
+	activeWorkspaceIndex = index;
+	updateWorkspacesBar();
+} );
+
+electronBridge.receive('globalHotkeyFocus', () => {
+	setupInitialFocus();
+} );
+
+function getActiveWorkspace(): WorkspaceInfo | undefined {
+	if ( activeWorkspaceIndex !== undefined ) {
+		return config!.workspaces[ activeWorkspaceIndex ];
+	}
+}
 
 function appendParagraphToNotionPage(pageId: string, notionToken: string, paragraphText: string): Promise<void> {
 	const url = `https://api.notion.com/v1/blocks/${pageId}/children`;
@@ -67,6 +89,9 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 		} )
 		.then( data => {
 			console.log( 'Paragraph appended successfully:', data );
+
+			// Unfortunately this kind of operation doesn't return the page URL so we need to do it manually.
+			data.url = 'https://www.notion.so/' + pageId;
 
 			return data;
 		} );
@@ -119,6 +144,7 @@ async function asyncInitialization(): Promise<boolean> {
 		window.requestIdleCallback( () => {
 			setupInitialFocus();
 			initializeProTips();
+			initializeWorkspacesBar();
 		} );
 	} else {
 		errorContent = 'The .note-quick-add-config.json configuration file is missing or invalid.';
@@ -179,6 +205,7 @@ function addListeners() {
 	document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
 		const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
 		let commandToCall = null;
+		let extraArgs: any[] = [];
 
 		if ( event.key === 'Escape' && noModifierKeysPressed ) {
 			// Esc key should hide the window.
@@ -186,10 +213,14 @@ function addListeners() {
 		} else if ( event.key === 'q' && event.ctrlKey ) {
 			// Ctrl + Q should quit the app.
 			commandToCall = 'quit';
+		} else if ( event.key == 'Tab' && ( event.ctrlKey || event.metaKey ) ) {
+			commandToCall = 'setWorkspace';
+
+			extraArgs.push( event.shiftKey ? 'previous' : 'next' );
 		}
 
 		if ( commandToCall ) {
-			electronBridge.invoke( 'executeCommand', commandToCall );
+			electronBridge.invoke( 'executeCommand', commandToCall, ...extraArgs );
 			event.preventDefault();
 		}
 	} );
@@ -220,12 +251,14 @@ function setupInitialFocus(): void {
 }
 
 function submitNote( text: string, openPage = false ) : void {
-	if ( !config ) {
-		console.error( 'Configuration not loaded' );
+	const activeWorkspace = getActiveWorkspace();
+
+	if ( !activeWorkspace ) {
+		console.error( 'Configuration not loaded or no active workspace is set' );
 		return;
 	}
 
-	const { pageId, dataBaseId, notionToken } = config;
+	const { pageId, dataBaseId, notionToken } = activeWorkspace;
 
 	if ( text.trim() === '' ) {
 		console.warn( "Can't send empty item." );
@@ -302,4 +335,33 @@ function addNotification( text: string, type: 'success' | 'error' | 'loading', e
 	document.getElementById( 'notification-area-container' )?.appendChild( notification );
 
 	return notification;
+}
+
+function initializeWorkspacesBar() {
+	const workspacesBar = document.getElementById( 'workspaces-bar' )!;
+
+	workspacesBar.addEventListener( 'click', event => {
+		const target = event.target as HTMLElement;
+		const workspaceKey = target.dataset.workspaceKey;
+
+		if ( workspaceKey ) {
+			electronBridge.invoke( 'executeCommand', 'setWorkspace', parseInt( workspaceKey ) );
+		}
+	} );
+}
+
+function updateWorkspacesBar() {
+	const activeWorkspace = getActiveWorkspace();
+	const workspaces = config!.workspaces;
+	let innerHTML = '';
+
+	for (let index = 0; index < workspaces.length; index++) {
+		const curWorkspace = workspaces[ index ];
+		const isActive = index === activeWorkspaceIndex;
+		const name = curWorkspace.name || `Workspace ${ index + 1 }`;
+
+		innerHTML += `<a href="#" data-workspace-key="${ index }" class="${ isActive ? 'active' : '' }">${ name }</a>`;
+	}
+
+	document.getElementById( 'workspaces-bar' )!.innerHTML = innerHTML;
 }
