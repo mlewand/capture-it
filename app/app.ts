@@ -26,40 +26,6 @@ electronBridge.receive('configChanged', (event: any, newConfig: any) => {
 	console.log(newConfig);
 } );
 
-function addNotification( text: string, type: 'success' | 'error' | 'loading', existingNotification?: HTMLElement) {
-
-	if ( existingNotification ) {
-		// If reusing notification, make sure to clear its content.
-		existingNotification.className = '';
-		existingNotification.innerHTML = '';
-	}
-
-	const loadingBox = type === 'loading' ? '<span class="loader"></span>' : '';
-	const notification = document.createElement( 'div' );
-
-	notification.className = `notification ${ type }`;
-
-	notification.insertAdjacentText( 'beforeend', text );
-
-	if ( type === 'error' ) {
-		notification.insertAdjacentHTML( 'beforeend', '<button class="button-dismiss">dismiss</button>' );
-	} else if ( type === 'loading' ) {
-		notification.insertAdjacentHTML( 'afterbegin', '<span class="loader"></span>' );
-	} else if ( type === 'success' ) {
-		// The success notification should be automatically dismissed after 5 seconds, but not if it's hovered.
-		const timerId = window.setInterval( () => {
-			if ( !notification.matches( '.notification:hover' ) ) {
-				notification.remove();
-				window.clearInterval( timerId );
-			}
-		}, 5000 );
-	}
-
-	document.getElementById( 'notification-area-container' )?.appendChild( notification );
-
-	return notification;
-}
-
 function appendParagraphToNotionPage(pageId: string, notionToken: string, paragraphText: string): Promise<void> {
 	const url = `https://api.notion.com/v1/blocks/${pageId}/children`;
 	const requestOptions: RequestInit = {
@@ -241,34 +207,7 @@ function addListeners() {
 		const text = textInput.value;
 		textInput.value = '';
 
-		if (!config) {
-			console.error('Configuration not loaded');
-			return;
-		}
-
-		const { pageId, dataBaseId, notionToken } = config;
-
-		if (text.trim() === '') {
-			console.warn("Can't send empty item.");
-			return;
-		}
-
-		const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, text)
-			: appendParagraphToNotionPage(pageId!, notionToken, text);
-
-		const notification = addNotification( text, 'loading' );
-
-		insertPromise.then( (data: any) => {
-				addNotification( text, 'success', notification );
-
-				if ( data.url && clickEvent.altKey ) {
-					electronBridge.invoke( 'executeCommand', 'openNotionPage', data.url )
-				}
-			} )
-			.catch( error => {
-				addNotification( `${ text } - ${ error }`, 'error', notification );
-				console.error( error );
-			} );
+		submitNote( text, clickEvent.altKey );
 	});
 }
 
@@ -278,6 +217,37 @@ function setupInitialFocus(): void {
 	if (textInput) {
 		(textInput as HTMLInputElement).focus();
 	}
+}
+
+function submitNote( text: string, openPage = false ) : void {
+	if ( !config ) {
+		console.error( 'Configuration not loaded' );
+		return;
+	}
+
+	const { pageId, dataBaseId, notionToken } = config;
+
+	if ( text.trim() === '' ) {
+		console.warn( "Can't send empty item." );
+		return;
+	}
+
+	const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, text)
+		: appendParagraphToNotionPage(pageId!, notionToken, text);
+
+	const notification = addNotification( text, 'loading' );
+
+	insertPromise.then( (data: any) => {
+			addNotification( text, 'success', notification );
+
+			if ( data.url && openPage ) {
+				electronBridge.invoke( 'executeCommand', 'openNotionPage', data.url )
+			}
+		} )
+		.catch( error => {
+			addNotification( `${ text } - ${ error }`, 'error', notification );
+			console.error( error );
+		} );
 }
 
 function initializeProTips() {
@@ -299,4 +269,37 @@ function initializeProTips() {
 		const randomItem = items[ Math.floor( Math.random() * items.length ) ];
 		randomItem.classList.add( 'visible' );
 	}
+}
+
+function addNotification( text: string, type: 'success' | 'error' | 'loading', existingNotification?: HTMLElement) {
+	if ( existingNotification ) {
+		// If reusing notification, make sure to clear its content.
+		existingNotification.className = '';
+		existingNotification.innerHTML = '';
+	}
+
+	const loadingBox = type === 'loading' ? '<span class="loader"></span>' : '';
+	const notification = document.createElement( 'div' );
+
+	notification.className = `notification ${ type }`;
+
+	notification.insertAdjacentText( 'beforeend', text );
+
+	if ( type === 'error' ) {
+		notification.insertAdjacentHTML( 'beforeend', '<button class="button-dismiss">dismiss</button>' );
+	} else if ( type === 'loading' ) {
+		notification.insertAdjacentHTML( 'afterbegin', '<span class="loader"></span>' );
+	} else if ( type === 'success' ) {
+		// The success notification should be automatically dismissed after 5 seconds, but not if it's hovered.
+		const timerId = window.setInterval( () => {
+			if ( !notification.matches( '.notification:hover' ) ) {
+				notification.remove();
+				window.clearInterval( timerId );
+			}
+		}, 5000 );
+	}
+
+	document.getElementById( 'notification-area-container' )?.appendChild( notification );
+
+	return notification;
 }
