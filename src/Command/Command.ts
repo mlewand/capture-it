@@ -19,7 +19,7 @@ export default class Command {
 		this.app = options.app;
 	}
 
-	public async execute(): Promise<any> {
+	public async execute( ...args: Array<any> ): Promise<any> {
 		throw new Error( `Command ${ this.name } is not implemented` );
 	}
 }

@@ -5,6 +5,8 @@ import { getTray } from './helpers';
 import QuitCommand from './Command/Quit';
 import HideCommand from './Command/Hide';
 import OpenConfigCommand from './Command/OpenConfig';
+import OpenNotionPageCommand from './Command/OpenNotionPage';
+import OpenBrowserCommand from './Command/OpenBrowser';
 import CommandSet from './Command/CommandSet';
 import Config from './Config';
 
@@ -140,9 +142,12 @@ export default class NoteQuickAdd {
 	private _initCommands() : void {
 		this.commands.add( new QuitCommand( { app: this } ) );
 		this.commands.add( new HideCommand( { app: this } ) );
+		this.commands.add( new OpenNotionPageCommand( { app: this } ) );
 		this.commands.add( new OpenConfigCommand( { app: this } ) );
+		this.commands.add( new OpenBrowserCommand( { app: this } ) );
 
-		ipcMain.handle( 'executeCommand', async ( event, commandName ) => this.commands.execute( commandName ) );
+		ipcMain.handle( 'executeCommand', async ( event, commandName: string, ...args: Array<any> ) =>
+			this.commands.execute( commandName, ...args ) );
 	}
 
 	private _electronAppReady() : void {

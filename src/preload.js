@@ -21,12 +21,12 @@ contextBridge.exposeInMainWorld(
 			// }
 			ipcRenderer.send( channel, data );
 		},
-		invoke: ( channel, data ) => {
+		invoke: ( channel, data, ...args ) => {
 			// let validChannels = [ 'renderer-ready' ];
 			// if ( !validChannels.includes( channel ) ) {
 			// 	return;
 			// }
-			return ipcRenderer.invoke( channel, data );
+			return ipcRenderer.invoke( channel, data, ...args );
 		}
 	}
 );

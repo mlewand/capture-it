@@ -15,72 +15,16 @@ interface Config {
 const electronBridge: ElectronBridge = ( window as any ).electron;
 let config: Config | undefined;
 
-async function asyncInitialization(): Promise<void> {
-	let containerToBeShown: HTMLElement | null = document.getElementById('app-tab');
-	let errorContent: string | null = null;
-
-	config = (await electronBridge.invoke('getConfig')) as any;
-
-	if ( config ) {
-		window.requestIdleCallback( () => {
-			setupInitialFocus();
-			initializeProTips();
-		} );
-	} else {
-		errorContent = 'The .note-quick-add-config.json configuration file is missing or invalid.';
-		containerToBeShown = document.getElementById('config-missing-tab');
-	}
-
-	if (containerToBeShown) {
-		containerToBeShown.style.display = 'block';
-	}
-
-	if (errorContent) {
-		console.error(errorContent);
-	}
-}
+const configPromise = new Promise<Config>( (resolve, reject) => {
+	electronBridge.invoke( 'getConfig' )
+		.then( resolve )
+		.catch( reject );
+} );
 
 electronBridge.receive('configChanged', (event: any, newConfig: any) => {
 	alert( 'Config changed' );
 	console.log(newConfig);
 } );
-
-document.getElementById('submitButton')!.addEventListener('click', clickEvent => {
-	const textInput = document.getElementById('textInput') as HTMLInputElement;
-	const text = textInput.value;
-	textInput.value = '';
-
-	if (!config) {
-		console.error('Configuration not loaded');
-		return;
-	}
-
-	const { pageId, dataBaseId, notionToken } = config;
-
-	if (text.trim() === '') {
-		console.warn("Can't send empty item.");
-		return;
-	}
-
-	const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, text)
-		: appendParagraphToNotionPage(pageId!, notionToken, text);
-
-	const notification = addNotification( text, 'loading' );
-
-	insertPromise.then( (data: any) => {
-			addNotification( text, 'success', notification );
-
-			if ( data.url && clickEvent.altKey ) {
-
-				// shell.openExternal( config!.forceOpenLinksInNotionApp ? data.url.replace( /^https:/, 'notion:' ) : data.url  );
-				console.log( 'shell call', config!.forceOpenLinksInNotionApp ? data.url.replace( /^https:/, 'notion:' ) : data.url  );
-			}
-		} )
-		.catch( error => {
-			addNotification( `${ text } - ${ error }`, 'error', notification );
-			console.error( error );
-		} );
-});
 
 function addNotification( text: string, type: 'success' | 'error' | 'loading', existingNotification?: HTMLElement) {
 
@@ -199,11 +143,48 @@ async function appendPageToDatabase(databaseId: string, apiToken: string, pageTe
 	return data;
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-	await asyncInitialization();
+async function asyncInitialization(): Promise<boolean> {
+	let containerToBeShown: HTMLElement | null = document.getElementById('app-tab');
+	let errorContent: string | null = null;
 
-	const textInput = document.getElementById('textInput');
+	config = (await electronBridge.invoke('getConfig')) as any;
+
+	if ( config ) {
+		window.requestIdleCallback( () => {
+			setupInitialFocus();
+			initializeProTips();
+		} );
+	} else {
+		errorContent = 'The .note-quick-add-config.json configuration file is missing or invalid.';
+		containerToBeShown = document.getElementById('config-missing-tab');
+	}
+
+	if (containerToBeShown) {
+		containerToBeShown.style.display = 'block';
+	}
+
+	if (errorContent) {
+		console.error(errorContent);
+	}
+
+	return errorContent === null;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+	addListeners();
+
+	if( !await asyncInitialization() ) {
+		console.log('initialization failed');
+		return;
+	}
+	console.log('initialization went fine');
+
 	setupInitialFocus();
+
+} );
+
+function addListeners() {
+	const textInput = document.getElementById('textInput');
 
 	textInput!.addEventListener('keyup', (event: KeyboardEvent) => {
 		if (event.key === 'Enter' && !event.shiftKey) {
@@ -226,38 +207,70 @@ document.addEventListener('DOMContentLoaded', async () => {
 	} );
 
 	document.getElementById( 'create-missing-config-button' )?.addEventListener( 'click', () => {
-		// ipcRenderer.invoke( 'executeCommand', 'openConfig' );
-		electronBridge.send( 'executeCommand', 'openConfig' );
+		electronBridge.invoke( 'executeCommand', 'openConfig' );
 	} );
-} );
 
-document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
-	const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
-	let commandToCall = null;
+	document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
+		const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
+		let commandToCall = null;
 
-	if ( event.key === 'Escape' && noModifierKeysPressed ) {
-		// Esc key should hide the window.
-		commandToCall = 'hide';
-	} else if ( event.key === 'q' && event.ctrlKey ) {
-		// Ctrl + Q should quit the app.
-		commandToCall = 'quit';
-	}
+		if ( event.key === 'Escape' && noModifierKeysPressed ) {
+			// Esc key should hide the window.
+			commandToCall = 'hide';
+		} else if ( event.key === 'q' && event.ctrlKey ) {
+			// Ctrl + Q should quit the app.
+			commandToCall = 'quit';
+		}
 
-	if ( commandToCall ) {
-		// ipcRenderer.invoke( 'executeCommand', commandToCall );
-		electronBridge.send( 'executeCommand', commandToCall );
-		event.preventDefault();
-	}
-} );
+		if ( commandToCall ) {
+			electronBridge.invoke( 'executeCommand', commandToCall );
+			event.preventDefault();
+		}
+	} );
 
-document.addEventListener('click', (event: MouseEvent) => {
-	// Absolute links should open in a browser.
-	if ((event.target as Element).tagName === 'A' && (event.target as HTMLAnchorElement).href.startsWith('http')) {
-		event.preventDefault();
-		// shell.openExternal((event.target as HTMLAnchorElement).href);
-		console.log( 'shell call',(event.target as HTMLAnchorElement).href);
-	}
-});
+	document.addEventListener('click', (event: MouseEvent) => {
+		// Absolute links should open in a browser.
+		if ((event.target as Element).tagName === 'A' && (event.target as HTMLAnchorElement).href.startsWith('http')) {
+			event.preventDefault();
+			electronBridge.invoke( 'executeCommand', 'openBrowser', (event.target as HTMLAnchorElement).href );
+		}
+	});
+
+	document.getElementById('submitButton')!.addEventListener('click', clickEvent => {
+		const textInput = document.getElementById('textInput') as HTMLInputElement;
+		const text = textInput.value;
+		textInput.value = '';
+
+		if (!config) {
+			console.error('Configuration not loaded');
+			return;
+		}
+
+		const { pageId, dataBaseId, notionToken } = config;
+
+		if (text.trim() === '') {
+			console.warn("Can't send empty item.");
+			return;
+		}
+
+		const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, text)
+			: appendParagraphToNotionPage(pageId!, notionToken, text);
+
+		const notification = addNotification( text, 'loading' );
+
+		insertPromise.then( (data: any) => {
+				addNotification( text, 'success', notification );
+
+				if ( data.url && clickEvent.altKey ) {
+					electronBridge.invoke( 'executeCommand', 'openNotionPage', data.url )
+				}
+			} )
+			.catch( error => {
+				addNotification( `${ text } - ${ error }`, 'error', notification );
+				console.error( error );
+			} );
+	});
+}
 
 function setupInitialFocus(): void {
 	const textInput = document.getElementById('textInput');

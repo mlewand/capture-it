@@ -11,11 +11,11 @@ export default class CommandSet extends Set<Command> {
 		return null;
 	}
 
-	public async execute( name: string ) : Promise<any> {
+	public async execute( name: string, ...args: Array<any> ) : Promise<any> {
 		const cmd = this.find( name );
 
 		if ( cmd ) {
-			return cmd.execute();
+			return cmd.execute( ...args );
 		} else {
 			throw new Error( `Command ${ name } was not found` );
 		}
