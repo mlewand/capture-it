@@ -33,7 +33,6 @@ electronBridge.receive('configChanged', (newConfig: any) => {
 } );
 
 electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number ) => {
-	console.log('activeWorkspaceIndexChanged', index);
 	activeWorkspaceIndex = index;
 	updateWorkspacesBar();
 } );
@@ -340,6 +339,10 @@ function addNotification( text: string, type: 'success' | 'error' | 'loading', e
 function initializeWorkspacesBar() {
 	const workspacesBar = document.getElementById( 'workspaces-bar' )!;
 
+	const cssClassMethod = config!.workspaces.length <= 2 ? 'add' : 'remove';
+	document.getElementById('workspaces-bar')!.classList[ cssClassMethod ]('hidden');
+
+
 	workspacesBar.addEventListener( 'click', event => {
 		const target = event.target as HTMLElement;
 		const workspaceKey = target.dataset.workspaceKey;
@@ -354,6 +357,9 @@ function updateWorkspacesBar() {
 	const activeWorkspace = getActiveWorkspace();
 	const workspaces = config!.workspaces;
 	let innerHTML = '';
+
+	const cssClassMethod = workspaces.length <= 2 ? 'add' : 'remove';
+	document.getElementById('workspaces-bar')!.classList[ cssClassMethod ]('hidden');
 
 	for (let index = 0; index < workspaces.length; index++) {
 		const curWorkspace = workspaces[ index ];

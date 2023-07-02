@@ -11,6 +11,10 @@
 	--notification-spinner-size: 20px;
 }
 
+.hidden {
+	display: none !important;
+}
+
 body {
 	font-family: 'Trebuchet MS';
 }
