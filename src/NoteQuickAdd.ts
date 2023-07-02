@@ -7,9 +7,12 @@ import HideCommand from './Command/Hide';
 import OpenConfigCommand from './Command/OpenConfig';
 import OpenNotionPageCommand from './Command/OpenNotionPage';
 import OpenBrowserCommand from './Command/OpenBrowser';
+import SetWorkspaceCommand from './Command/SetWorkspace';
 import CommandSet from './Command/CommandSet';
 import Config from './Config';
 import type { WorkspaceInfo } from './Config';
+
+export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
 
 /**
  * The top-level API of the application.
@@ -74,7 +77,7 @@ export default class NoteQuickAdd {
 			} );
 	}
 
-	public setActiveWorkspace( index: number | 'next' | 'previous' ) {
+	public setActiveWorkspace( index: SetActiveWorkspaceParameter ) {
 		const workspaces = this.config!.workspaces;
 		const currentIndex = workspaces.indexOf( this.activeWorkspace! );
 
@@ -172,14 +175,9 @@ export default class NoteQuickAdd {
 		this.commands.add( new OpenNotionPageCommand( { app: this } ) );
 		this.commands.add( new OpenConfigCommand( { app: this } ) );
 		this.commands.add( new OpenBrowserCommand( { app: this } ) );
+		this.commands.add( new SetWorkspaceCommand( { app: this } ) );
 
 		ipcMain.handle( 'executeCommand', async ( event, commandName: string, ...args: Array<any> ) =>{
-			if ( commandName == 'setWorkspace' ) {
-				console.log('setting setWorkspace');
-				this.setActiveWorkspace( args[ 0 ] );
-				return;
-			}
-
 			return this.commands.execute( commandName, ...args )
 		} );
 	}

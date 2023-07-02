@@ -216,6 +216,10 @@ function addListeners() {
 			commandToCall = 'setWorkspace';
 
 			extraArgs.push( event.shiftKey ? 'previous' : 'next' );
+		} else if ( ( event.code.startsWith( 'Digit' ) && event.code != 'Digit0' ) && event.shiftKey && event.altKey ) {
+			// alt + shift + 1 - 9 handing to change the workspace.
+			commandToCall = 'setWorkspace';
+			extraArgs = [ parseInt( event.code.substr( 5 ) ) - 1 ];
 		}
 
 		if ( commandToCall ) {
