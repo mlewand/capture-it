@@ -11,6 +11,7 @@ import SetWorkspaceCommand from './Command/SetWorkspace';
 import CommandSet from './Command/CommandSet';
 import Config from './Config';
 import type { WorkspaceInfo } from './Config';
+import { v4 as uuid4 } from 'uuid';
 
 export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
 
@@ -69,6 +70,10 @@ export default class NoteQuickAdd {
 				this.config = results[ 0 ];
 				this.electronApp = results[ 1 ];
 
+				console.log('waiting');
+				await wait( 1000 );
+				console.log('the wait is done!');
+
 				this.mainWindow = await this._createMainWindow();
 
 				this._initCommands();
@@ -117,10 +122,14 @@ export default class NoteQuickAdd {
 	}
 
 	public addPromisedIpcListener( channel : string, listener : any ) {
-		ipcMain.on( `promised/call/${ channel }`, ( event: any, ...args ) => {
+		const promiseChannel = `promised/call/${ channel }`;
+		console.log('adding a listener for ' + promiseChannel);
+
+		ipcMain.handle( promiseChannel, ( event: any, ...args ) => {
 			console.log( `MAIN: got promise request (${channel} channel)` );
 
 			const ret = listener( event, ...args );
+			const uniqueId = uuid4();
 
 			if ( !ret.then ) {
 				throw new Error( 'Promised IPC listener must return a promise' );
@@ -128,11 +137,18 @@ export default class NoteQuickAdd {
 
 			ret
 				.then( ( result : any ) => {
-					this.send( `promised/then/${ channel }`, result );
+
+					setTimeout(() => {
+						console.log('sending to ', `promised/then/${ channel }/${uniqueId}`);
+
+						this.send( `promised/then/${ channel }/${uniqueId}`, result );
+					}, 2000);
 				} )
 				.catch( ( error : any ) => {
-					this.send( `promised/catch/${ channel }`, error );
+					this.send( `promised/catch/${ channel }/${uniqueId}`, error );
 				} );
+
+			return uniqueId;
 		} );
 	}
 
@@ -247,4 +263,12 @@ export default class NoteQuickAdd {
 			console.log( 'Global shortcut registration failed' );
 		}
 	}
+}
+
+function wait( howLong = 1000 ) {
+	return new Promise<void>( ( resolve, reject ) => {
+		setTimeout( () => {
+			resolve();
+		}, howLong );
+	} )
 }

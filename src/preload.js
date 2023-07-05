@@ -32,14 +32,19 @@ contextBridge.exposeInMainWorld(
 			if ( !channel ) {
 				throw new Error( 'Missing channel name' );
 			}
-			const PROMISE_TIMEOUT_TIME = 30000;
+			const PROMISE_TIMEOUT_TIME = 5000;
+			// const PROMISE_TIMEOUT_TIME = 30000;
 
 			return new Promise( ( resolve, reject ) => {
-				console.log("frontend: sending a promise");
+				console.log("frontend: sending a promise", `promised/call/${ channel }`);
+
+				// const uniqueId = await ipcRenderer.invoke( `promised/call/${ channel }`, ...args );
+				const uniqueId = ipcRenderer.sendSync( `promised/call/${ channel }`, ...args );
+
 				// @todo add a timeout to reject the promise if it takes too long.
 				const cleanup = () => {
-					ipcRenderer.removeListener( `promised/then/${ channel }`, thenCallback );
-					ipcRenderer.removeListener( `promised/catch/${ channel }`, catchCallback );
+					ipcRenderer.removeListener( `promised/then/${ channel }/${ uniqueId }`, thenCallback );
+					ipcRenderer.removeListener( `promised/catch/${ channel }/${ uniqueId }`, catchCallback );
 					clearTimeout( timeoutHandler );
 				}
 
@@ -57,10 +62,12 @@ contextBridge.exposeInMainWorld(
 					reject( ...args );
 				};
 
-				ipcRenderer.once( `promised/then/${ channel }`, thenCallback );
-				ipcRenderer.once( `promised/catch/${ channel }`, catchCallback );
+				console.log( 'frontend, received id: ', uniqueId );
 
-				ipcRenderer.send( `promised/call/${ channel }`, ...args );
+				console.log('listening to ', `promised/then/${ channel }/${ uniqueId }`);
+
+				ipcRenderer.once( `promised/then/${ channel }/${ uniqueId }`, thenCallback );
+				ipcRenderer.once( `promised/catch/${ channel }/${ uniqueId }`, catchCallback );
 			} );
 		}
 	}
