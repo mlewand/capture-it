@@ -7,26 +7,29 @@ export interface WorkspaceInfo {
 	pageId: string;
 	dataBaseId: string;
 	notionToken: string;
+	tags?: { [key: string]: string };
 }
 
 export interface ConfigFileInterface {
 	workspaces: WorkspaceInfo[];
 	invocationHotKey: string;
 	forceOpenLinksInNotionApp: boolean;
+	tags?: { [key: string]: string };
 }
 
 
-export default class Config {
-	// @todo: config file could emit events when changed
+export default class Config implements ConfigFileInterface {
+	workspaces: WorkspaceInfo[];
 	invocationHotKey: string;
 	forceOpenLinksInNotionApp: boolean;
+	tags?: { [key: string]: string };
 
-	workspaces: WorkspaceInfo[];
-
+	// @todo: config file could emit events when changed
 	constructor( options: ConfigFileInterface ) {
 		this.workspaces = options.workspaces;
 		this.invocationHotKey = options.invocationHotKey;
 		this.forceOpenLinksInNotionApp = options.forceOpenLinksInNotionApp;
+		this.tags = options.tags;
 	}
 
 	public static async loadFromUserDirectory(): Promise<Config> {

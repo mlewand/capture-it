@@ -1,6 +1,8 @@
 import Command from './Command';
 import type { CommandConstructorOptions } from './Command';
 
+import { escapeRegExp } from 'lodash';
+
 export default class CaptureItemCommand extends Command {
 	constructor( options: CommandConstructorOptions ) {
 
@@ -10,7 +12,6 @@ export default class CaptureItemCommand extends Command {
 	}
 
 	public async execute( noteText: string ): Promise<any> {
-		// const activeWorkspace = getActiveWorkspace();
 		const activeWorkspace = this.app.activeWorkspace;
 
 		if ( !activeWorkspace ) {
@@ -23,22 +24,55 @@ export default class CaptureItemCommand extends Command {
 			throw new Error( "Can't send an empty item." );
 		}
 
-		const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, noteText)
-			: appendParagraphToNotionPage(pageId!, notionToken, noteText);
+		// Check for known tags.
+		const tagsMapping = Object.assign( {}, this.app.config!.tags || {}, activeWorkspace.tags || {} );
+		const { sanitizedText, tags } = extractTags( noteText, tagsMapping );
+		console.log('found tags: ', Array.from( tags ) );
+
+		const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, sanitizedText, tags)
+			: appendParagraphToNotionPage(pageId!, notionToken, sanitizedText, tags);
 
 
-		return await insertPromise;
+		const ret = ( await insertPromise ) as any;
+
+		ret.sanitizedText = sanitizedText;
+		ret.originalText = noteText;
+
+		console.log('returning', ret);
+
+		return ret;
 	}
 }
 
-function appendParagraphToNotionPage(pageId: string, notionToken: string, paragraphText: string): Promise<void> {
+function extractTags( noteText: string, tagsMapping?: { [ key: string ]: string | string[] } ): { sanitizedText: string, tags: Set<string> } {
+	if ( !tagsMapping ) {
+		return { sanitizedText: noteText, tags: new Set() };
+	}
+	const tags: Set<string> = new Set();
+	let sanitizedText = noteText;
+
+	for ( const [ key, mappingValue ] of Object.entries( tagsMapping ) ) {
+		const matchInfo = sanitizedText.match( new RegExp( `(\\s+${escapeRegExp( key )})([\\s]|$)`, 'i' ) )
+		if ( matchInfo ) {
+			sanitizedText = sanitizedText.replace( matchInfo[ 1 ], '' );
+
+			for (const tagString of Array.isArray( mappingValue ) ? mappingValue : [ mappingValue ]) {
+				tags.add( tagString );
+			}
+		}
+	}
+
+	return { sanitizedText, tags };
+}
+
+function appendParagraphToNotionPage(pageId: string, notionToken: string, paragraphText: string, tags: Set<string> ): Promise<void> {
 	const url = `https://api.notion.com/v1/blocks/${pageId}/children`;
 	const requestOptions: RequestInit = {
 		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': `Bearer ${notionToken}`,
-			'Notion-Version': '2021-05-13' // Replace with the desired Notion API version
+			'Notion-Version': '2021-05-13'
 		},
 		body: JSON.stringify({
 			children: [
@@ -56,7 +90,13 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 						]
 					}
 				}
-			]
+			],
+			properties: {
+				Tags: {
+					type: 'multi_select',
+					multi_select: tagsToNotionFormat( tags )
+				}
+			}
 		})
 	};
 
@@ -80,7 +120,7 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 		} );
 }
 
-async function appendPageToDatabase(databaseId: string, apiToken: string, pageText: string): Promise<void> {
+async function appendPageToDatabase(databaseId: string, apiToken: string, pageText: string, tags: Set<string> ): Promise<void> {
 	const response = await fetch('https://api.notion.com/v1/pages', {
 		method: 'POST',
 		headers: {
@@ -101,6 +141,10 @@ async function appendPageToDatabase(databaseId: string, apiToken: string, pageTe
 							}
 						}
 					]
+				},
+				Tags: {
+					type: 'multi_select',
+					multi_select: tagsToNotionFormat( tags )
 				}
 			}
 		})
@@ -115,4 +159,8 @@ async function appendPageToDatabase(databaseId: string, apiToken: string, pageTe
 	}
 
 	return data;
+}
+
+function tagsToNotionFormat( tags: Set<string> ) {
+	return Array.from( tags ).map( tag => ( { name: tag } ) );
 }

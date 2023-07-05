@@ -12,10 +12,12 @@
   "dependencies": {
     "electron": "^25.2.0",
     "electron-builder": "^24.4.0",
+    "lodash": "^4.17.21",
     "open": "8.1.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/lodash": "4.14.195",
     "@types/node": "^20.3.1",
     "@types/uuid": "^9.0.2",
     "ts-node": "^10.9.1",
