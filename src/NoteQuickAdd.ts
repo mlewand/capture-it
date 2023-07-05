@@ -117,7 +117,7 @@ export default class NoteQuickAdd {
 	}
 
 	public addPromisedIpcListener( channel : string, listener : any ) {
-		ipcMain.on( `${ channel }-promised`, ( event: any, ...args ) => {
+		ipcMain.on( `promised/call/${ channel }`, ( event: any, ...args ) => {
 			console.log( `MAIN: got promise request (${channel} channel)` );
 
 			const ret = listener( event, ...args );
@@ -128,10 +128,10 @@ export default class NoteQuickAdd {
 
 			ret
 				.then( ( result : any ) => {
-					this.send( `${ channel }-then`, result );
+					this.send( `promised/then/${ channel }`, result );
 				} )
 				.catch( ( error : any ) => {
-					this.send( `${ channel }-catch`, error );
+					this.send( `promised/catch/${ channel }`, error );
 				} );
 		} );
 	}

@@ -30,18 +30,16 @@ contextBridge.exposeInMainWorld(
 		},
 		experiment: ( channel, ...args ) => {
 			if ( !channel ) {
-				channel = 'experiment';
-				// @todo the method should be picky.
-				// throw new Error( 'Missing channel name' );
+				throw new Error( 'Missing channel name' );
 			}
-			const PROMISE_TIMEOUT_TIME = 5000;
+			const PROMISE_TIMEOUT_TIME = 30000;
 
 			return new Promise( ( resolve, reject ) => {
 				console.log("frontend: sending a promise");
 				// @todo add a timeout to reject the promise if it takes too long.
 				const cleanup = () => {
-					ipcRenderer.removeListener( 'experiment-then', thenCallback );
-					ipcRenderer.removeListener( 'experiment-catch', catchCallback );
+					ipcRenderer.removeListener( `promised/then/${ channel }`, thenCallback );
+					ipcRenderer.removeListener( `promised/catch/${ channel }`, catchCallback );
 					clearTimeout( timeoutHandler );
 				}
 
@@ -59,10 +57,10 @@ contextBridge.exposeInMainWorld(
 					reject( ...args );
 				};
 
-				ipcRenderer.once( 'experiment-then', thenCallback );
-				ipcRenderer.once( 'experiment-catch', catchCallback );
+				ipcRenderer.once( `promised/then/${ channel }`, thenCallback );
+				ipcRenderer.once( `promised/catch/${ channel }`, catchCallback );
 
-				ipcRenderer.send( `${ channel }-promised`, ...args );
+				ipcRenderer.send( `promised/call/${ channel }`, ...args );
 			} );
 		}
 	}
