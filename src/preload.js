@@ -32,16 +32,12 @@ contextBridge.exposeInMainWorld(
 			if ( !channel ) {
 				throw new Error( 'Missing channel name' );
 			}
-			const PROMISE_TIMEOUT_TIME = 5000;
-			// const PROMISE_TIMEOUT_TIME = 30000;
+			// const PROMISE_TIMEOUT_TIME = 5000;
+			const PROMISE_TIMEOUT_TIME = 30000;
 
-			return new Promise( ( resolve, reject ) => {
-				console.log("frontend: sending a promise", `promised/call/${ channel }`);
+			return new Promise( async ( resolve, reject ) => {
+				const uniqueId = await ipcRenderer.invoke( `promised/call/${ channel }`, ...args );
 
-				// const uniqueId = await ipcRenderer.invoke( `promised/call/${ channel }`, ...args );
-				const uniqueId = ipcRenderer.sendSync( `promised/call/${ channel }`, ...args );
-
-				// @todo add a timeout to reject the promise if it takes too long.
 				const cleanup = () => {
 					ipcRenderer.removeListener( `promised/then/${ channel }/${ uniqueId }`, thenCallback );
 					ipcRenderer.removeListener( `promised/catch/${ channel }/${ uniqueId }`, catchCallback );

@@ -137,15 +137,19 @@ export default class NoteQuickAdd {
 
 			ret
 				.then( ( result : any ) => {
-
+					// Timeout is added because:
+					// The renderer didn't yet get the uniqueId response, thus it has no `promised/then/${ channel }/${uniqueId}` listener.
+					// If the resolution is called too early, it will not get registered by the renderer.
+					// Surely there's a nicer way to do this.
 					setTimeout(() => {
 						console.log('sending to ', `promised/then/${ channel }/${uniqueId}`);
-
 						this.send( `promised/then/${ channel }/${uniqueId}`, result );
-					}, 2000);
+					}, 0);
 				} )
 				.catch( ( error : any ) => {
-					this.send( `promised/catch/${ channel }/${uniqueId}`, error );
+					setTimeout(() => {
+						this.send( `promised/catch/${ channel }/${uniqueId}`, error );
+					} );
 				} );
 
 			return uniqueId;
