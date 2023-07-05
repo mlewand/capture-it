@@ -59,10 +59,6 @@ export default class NoteQuickAdd {
 			return this.config || null;
 		} );
 
-		this.addPromisedIpcHandler( 'experiment', async ( event: any, ...args: Array<any> ) => {
-			return { status: 'good', args };
-		} );
-
 		await Promise.all( [
 				configWrapper(),
 				this._createElectronApp()

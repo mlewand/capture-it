@@ -173,14 +173,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	setupInitialFocus();
 
-	console.log('DOMContentLoaded: sending experiment');
-
+	console.log('DOMContentLoaded: sending sample capture command');
 	electronBridge.promisedInvoke( 'executeCommandAsync', 'captureItem', 'lorem ipsum param' )
 		.then( res => console.log('DOMContentLoaded: RESOLVED', res ) )
 		.catch( err => console.log('DOMContentLoaded: REJECTED', err ) );
-	// electronBridge.promisedInvoke( 'experiment' )
-	// 	.then( res => console.log('DOMContentLoaded: RESOLVED', res ) )
-	// 	.catch( err => console.log('DOMContentLoaded: REJECTED', err ) );
 } );
 
 function addListeners() {
