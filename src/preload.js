@@ -28,11 +28,15 @@ contextBridge.exposeInMainWorld(
 			// }
 			return ipcRenderer.invoke( channel, data, ...args );
 		},
-		experiment: ( channel, ...args ) => {
+
+		// A custom implementation of invoke, that returns a promise.
+		// This promise will resolve if main's process promise resolved or get rejected accordingly.
+		// It has a 30 sec timeout.
+		promisedInvoke: ( channel, ...args ) => {
 			if ( !channel ) {
 				throw new Error( 'Missing channel name' );
 			}
-			// const PROMISE_TIMEOUT_TIME = 5000;
+
 			const PROMISE_TIMEOUT_TIME = 30000;
 
 			return new Promise( async ( resolve, reject ) => {

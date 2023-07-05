@@ -8,6 +8,7 @@ import OpenConfigCommand from './Command/OpenConfig';
 import OpenNotionPageCommand from './Command/OpenNotionPage';
 import OpenBrowserCommand from './Command/OpenBrowser';
 import SetWorkspaceCommand from './Command/SetWorkspace';
+import CaptureItemCommand from './Command/CaptureItem';
 import CommandSet from './Command/CommandSet';
 import Config from './Config';
 import type { WorkspaceInfo } from './Config';
@@ -58,7 +59,7 @@ export default class NoteQuickAdd {
 			return this.config || null;
 		} );
 
-		this.addPromisedIpcListener( 'experiment', async ( event: any, ...args: Array<any> ) => {
+		this.addPromisedIpcHandler( 'experiment', async ( event: any, ...args: Array<any> ) => {
 			return { status: 'good', args };
 		} );
 
@@ -121,21 +122,27 @@ export default class NoteQuickAdd {
 		}
 	}
 
-	public addPromisedIpcListener( channel : string, listener : any ) {
+	/**
+	 * My custom flavored IPC handler that supports promises.
+	 *
+	 * @param channel
+	 * @param listener
+	 */
+	public addPromisedIpcHandler( channel : string, listener : any ) {
 		const promiseChannel = `promised/call/${ channel }`;
 		console.log('adding a listener for ' + promiseChannel);
 
 		ipcMain.handle( promiseChannel, ( event: any, ...args ) => {
 			console.log( `MAIN: got promise request (${channel} channel)` );
 
-			const ret = listener( event, ...args );
+			const resultPromise = listener( event, ...args );
 			const uniqueId = uuid4();
 
-			if ( !ret.then ) {
+			if ( !resultPromise.then ) {
 				throw new Error( 'Promised IPC listener must return a promise' );
 			}
 
-			ret
+			resultPromise
 				.then( ( result : any ) => {
 					// Timeout is added because:
 					// The renderer didn't yet get the uniqueId response, thus it has no `promised/then/${ channel }/${uniqueId}` listener.
@@ -220,6 +227,11 @@ export default class NoteQuickAdd {
 		this.commands.add( new OpenConfigCommand( { app: this } ) );
 		this.commands.add( new OpenBrowserCommand( { app: this } ) );
 		this.commands.add( new SetWorkspaceCommand( { app: this } ) );
+		this.commands.add( new CaptureItemCommand( { app: this } ) );
+
+		this.addPromisedIpcHandler( 'executeCommandAsync', ( event: any, commandName: string, ...args: Array<any> ) =>{
+			return this.commands.execute( commandName, ...args );
+		} );
 
 		ipcMain.handle( 'executeCommand', async ( event, commandName: string, ...args: Array<any> ) =>{
 			return this.commands.execute( commandName, ...args )
