@@ -57,6 +57,10 @@ export default class NoteQuickAdd {
 			return this.config || null;
 		} );
 
+		this.addPromisedIpcListener( 'experiment', async ( event: any, ...args: Array<any> ) => {
+			return { status: 'good', args };
+		} );
+
 		await Promise.all( [
 				configWrapper(),
 				this._createElectronApp()
@@ -110,6 +114,26 @@ export default class NoteQuickAdd {
 		if ( this.mainWindow ) {
 			this.mainWindow.webContents.send( channel, ...args );
 		}
+	}
+
+	public addPromisedIpcListener( channel : string, listener : any ) {
+		ipcMain.on( `${ channel }-promised`, ( event: any, ...args ) => {
+			console.log( `MAIN: got promise request (${channel} channel)` );
+
+			const ret = listener( event, ...args );
+
+			if ( !ret.then ) {
+				throw new Error( 'Promised IPC listener must return a promise' );
+			}
+
+			ret
+				.then( ( result : any ) => {
+					this.send( `${ channel }-then`, result );
+				} )
+				.catch( ( error : any ) => {
+					this.send( `${ channel }-catch`, error );
+				} );
+		} );
 	}
 
 	/**

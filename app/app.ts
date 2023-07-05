@@ -2,6 +2,7 @@ interface ElectronBridge {
 	receive: ( channel: string, func: ( ...args: any[] ) => void ) => void;
 	invoke: ( channel: string, ...args: any[] ) => Promise<any>;
 	send: ( channel: string, ...args: any[] ) => void;
+	experiment: ( channel: string, ...args: any[] ) => Promise<any>;
 }
 
 interface WorkspaceInfo {
@@ -172,6 +173,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	setupInitialFocus();
 
+	console.log('DOMContentLoaded: sending experiment');
+
+	electronBridge.receive( 'experiment-then', ( res: any ) => console.log( 'independent listener: experiment-then', res ) );
+
+	electronBridge.experiment( 'experiment' )
+		.then( res => console.log('DOMContentLoaded: RESOLVED', res ) )
+		.catch( err => console.log('DOMContentLoaded: REJECTED', err ) );
 } );
 
 function addListeners() {
