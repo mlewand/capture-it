@@ -2,9 +2,9 @@ import { Tray, Menu } from 'electron';
 import * as path from 'path';
 import { homedir } from 'os';
 import { promises as fs, readFileSync, existsSync } from 'fs';
-import type NoteQuickAdd from './NoteQuickAdd';
+import type CaptureIt from './CaptureIt';
 
-export function getTray( app: NoteQuickAdd, rootPath: string ): Tray {
+export function getTray( app: CaptureIt, rootPath: string ): Tray {
 	let tray = new Tray( path.join( rootPath, 'assets', 'icon.png' ) );
 	tray.setToolTip( 'Capture It' );
 

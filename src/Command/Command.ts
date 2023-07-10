@@ -1,14 +1,14 @@
-import type NoteQuickAdd from "../NoteQuickAdd";
+import type CaptureIt from "../CaptureIt";
 
 export type CommandConstructorOptions = {
 	name?: string,
-	app: NoteQuickAdd
+	app: CaptureIt
 };
 
 export default class Command {
 	name: string;
 
-	app: NoteQuickAdd;
+	app: CaptureIt;
 
 	constructor( options: CommandConstructorOptions ) {
 		if ( !options.name ) {

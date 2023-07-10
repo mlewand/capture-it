@@ -23,7 +23,7 @@ export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
  *
  * In future should also be entry point for model operations.
  */
-export default class NoteQuickAdd {
+export default class CaptureIt {
 
 	mainWindow?: AppMainWindow;
 

@@ -4,8 +4,8 @@
   "description": "A simple app for quick adding notes to your app.",
   "main": "dist/src/main.js",
   "scripts": {
-    "start": "tsc && electron .",
-    "build": "tsc",
+    "start": "cross-env NODE_ENV=development tsc && electron .",
+    "build": "cross-env NODE_ENV=production tsc",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "postinstall": "electron-builder install-app-deps"
