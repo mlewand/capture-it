@@ -2,4 +2,4 @@ dist
 release
 node_modules
 yarn-error.log
-.note-quick-add-config.json
+.capture-it-config.json

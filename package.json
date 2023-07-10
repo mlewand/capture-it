@@ -1,7 +1,7 @@
 {
-  "name": "note-quick-add",
+  "name": "capture-it",
   "version": "0.0.1",
-  "description": "A simple app for qucik adding notes to your app.",
+  "description": "A simple app for quick adding notes to your app.",
   "main": "dist/src/main.js",
   "scripts": {
     "start": "tsc && electron .",

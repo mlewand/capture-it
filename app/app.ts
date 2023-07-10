@@ -61,7 +61,7 @@ async function asyncInitialization(): Promise<boolean> {
 			initializeWorkspacesBar();
 		} );
 	} else {
-		errorContent = 'The .note-quick-add-config.json configuration file is missing or invalid.';
+		errorContent = 'The .capture-it-config.json configuration file is missing or invalid.';
 		containerToBeShown = document.getElementById('config-missing-tab');
 	}
 

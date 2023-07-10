@@ -50,6 +50,6 @@ export default class Config implements ConfigFileInterface {
 	}
 
 	public static getUserConfigPath(): string {
-		return join( homedir(), '.note-quick-add-config.json' );
+		return join( homedir(), '.capture-it-config.json' );
 	}
 }

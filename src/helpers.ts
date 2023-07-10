@@ -6,7 +6,7 @@ import type NoteQuickAdd from './NoteQuickAdd';
 
 export function getTray( app: NoteQuickAdd, rootPath: string ): Tray {
 	let tray = new Tray( path.join( rootPath, 'assets', 'icon.png' ) );
-	tray.setToolTip( 'Electron app' );
+	tray.setToolTip( 'Capture It' );
 
 	// Create context menu for the tray
 	const contextMenu = Menu.buildFromTemplate( [
@@ -43,5 +43,5 @@ export function getConfig( rootPath: string ) : any {
 }
 
 export function getConfigPath( rootPath: string ) : string {
-	return path.join( homedir(), '.note-quick-add-config.json' );
+	return path.join( homedir(), '.capture-it-config.json' );
 }
