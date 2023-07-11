@@ -1,5 +1,9 @@
 # Capture It
 
+A simple app to instantly add notes to your todo list.
+
+![Capture It screenshot](assets/screenshot.png)
+
 ## Configuration
 
 During the first run you'll have to provide the configuration.
