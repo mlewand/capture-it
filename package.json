@@ -12,9 +12,14 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
-    "appId": "com.mlewand.capture-it",
+    "productName": "Capture It",
+    "appId": "org.capture-it",
     "mac": {
       "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "assets/icon_512.ico"
     },
     "directories": {
       "output": "release"
