@@ -61,7 +61,7 @@ async function asyncInitialization(): Promise<boolean> {
 			initializeWorkspacesBar();
 		} );
 	} else {
-		errorContent = 'The .note-quick-add-config.json configuration file is missing or invalid.';
+		errorContent = 'The .capture-it-config.json configuration file is missing or invalid.';
 		containerToBeShown = document.getElementById('config-missing-tab');
 	}
 
@@ -241,7 +241,7 @@ function addNotification( text: string, type: 'success' | 'error' | 'loading', e
 function initializeWorkspacesBar() {
 	const workspacesBar = document.getElementById( 'workspaces-bar' )!;
 
-	const cssClassMethod = config!.workspaces.length <= 2 ? 'add' : 'remove';
+	const cssClassMethod = config!.workspaces.length <= 1 ? 'add' : 'remove';
 	document.getElementById('workspaces-bar')!.classList[ cssClassMethod ]('hidden');
 
 
@@ -260,7 +260,7 @@ function updateWorkspacesBar() {
 	const workspaces = config!.workspaces;
 	let innerHTML = '';
 
-	const cssClassMethod = workspaces.length <= 2 ? 'add' : 'remove';
+	const cssClassMethod = workspaces.length <= 1 ? 'add' : 'remove';
 	document.getElementById('workspaces-bar')!.classList[ cssClassMethod ]('hidden');
 
 	for (let index = 0; index < workspaces.length; index++) {

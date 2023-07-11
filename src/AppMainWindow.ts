@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, Menu } from 'electron';
 import * as path from 'path';
 
 type AppMainWindowOptions = { electronOptions?: Electron.BrowserWindowConstructorOptions, rootPath: string };
@@ -6,14 +6,19 @@ type AppMainWindowOptions = { electronOptions?: Electron.BrowserWindowConstructo
 export default class AppMainWindow extends BrowserWindow {
 	_finalClosing: boolean = false;
 
-	constructor( options: AppMainWindowOptions ) {
+	constructor( options: AppMainWindowOptions, productionBuild: boolean ) {
 		super( Object.assign( {}, {
 			width: 800,
 			height: 270,
 			webPreferences: {
 				preload: path.join( options.rootPath, 'src', 'preload.js' ),
+				devTools: !productionBuild
 			},
 		}, options.electronOptions || {} ) );
+
+		if ( productionBuild ) {
+			Menu.setApplicationMenu( null );
+		}
 
 		this.loadFile( path.join( options.rootPath, '..', 'app', 'index.html' ) );
 

@@ -1,17 +1,28 @@
 {
-  "name": "note-quick-add",
+  "name": "capture-it",
   "version": "0.0.1",
-  "description": "A simple app for qucik adding notes to your app.",
+  "description": "A simple app to instantly add notes to your todo list.",
   "main": "dist/src/main.js",
   "scripts": {
     "start": "tsc && electron .",
-    "build": "tsc"
+    "start:dev": "tsc && cross-env NODE_ENV=development electron .",
+    "build": "tsc",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.mlewand.capture-it",
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "directories": {
+      "output": "release"
+    }
   },
   "author": "Marek Lewandowski",
   "license": "UNLICENSED",
   "dependencies": {
-    "electron": "^25.2.0",
-    "electron-builder": "^24.4.0",
     "lodash": "^4.17.21",
     "open": "8.1.0",
     "uuid": "^9.0.0"
@@ -20,6 +31,9 @@
     "@types/lodash": "4.14.195",
     "@types/node": "^20.3.1",
     "@types/uuid": "^9.0.2",
+    "cross-env": "^7.0.3",
+    "electron": "^25.2.0",
+    "electron-builder": "^24.4.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }

@@ -1,6 +1,6 @@
 import Command from './Command';
 import type { CommandConstructorOptions } from './Command';
-import type { SetActiveWorkspaceParameter } from '../NoteQuickAdd';
+import type { SetActiveWorkspaceParameter } from '../CaptureIt';
 
 export default class SetWorkspaceCommand extends Command {
 	constructor( options: CommandConstructorOptions ) {

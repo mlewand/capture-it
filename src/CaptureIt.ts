@@ -23,7 +23,8 @@ export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
  *
  * In future should also be entry point for model operations.
  */
-export default class NoteQuickAdd {
+export default class CaptureIt {
+	productionBuild = process.env.NODE_ENV != 'development';
 
 	mainWindow?: AppMainWindow;
 
@@ -181,7 +182,7 @@ export default class NoteQuickAdd {
 	}
 
 	private async _createMainWindow() : Promise<AppMainWindow> {
-		const mainWindow = new AppMainWindow( { rootPath: this.rootPath } );
+		const mainWindow = new AppMainWindow( { rootPath: this.rootPath }, this.productionBuild );
 
 		mainWindow.loadFile( path.join( this.rootPath, 'app', 'index.html' ) );
 

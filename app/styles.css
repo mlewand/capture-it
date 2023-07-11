@@ -5,8 +5,11 @@
 	--grey: #888;
 	--red: #e00;
 	--green: #0ba50b;
-	--tab-text-color: #222222;
-	--white-text: #f1f1f1;
+	--black: #010101;
+	--light-black: #222222;
+	--white: #f1f1f1;
+	--tab-text-color: var(--light-black);
+	--white-text: var(--white);
 
 	--notification-spinner-size: 20px;
 }
@@ -28,6 +31,10 @@ p {
 	margin: var(--spacing-large) 0;
 }
 
+:focus {
+	outline-color: var(--light-black);
+}
+
 #quick-input-container {
 	display: flex;
 	flex-direction: row;
@@ -42,8 +49,7 @@ p {
 
 #quick-input-container input:focus,
 #quick-input-container button:focus {
-	outline: 2px solid white;
-	box-shadow: 0px 0px 10px 0 var(--blue);
+  	box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--blue);
 }
 
 #quick-input-container input {
@@ -128,7 +134,7 @@ p {
 	display: flex;
 	flex-direction: row;
 	gap: var(--spacing-large);
-	margin-bottom: var(--spacing-medium)
+	margin-bottom: var(--spacing-large)
 }
 
 #workspaces-bar a {
