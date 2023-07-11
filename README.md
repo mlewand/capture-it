@@ -16,7 +16,7 @@ Clone the repo and go for:
 git clone git@github.com:mlewand/capture-it.git
 cd capture-it
 yarn
-yarn start
+yarn start:dev
 ```
 
 ## Distribution
