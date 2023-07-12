@@ -14,6 +14,8 @@ import Config from './Config';
 import type { WorkspaceInfo } from './Config';
 import { v4 as uuid4 } from 'uuid';
 
+import { authenticate, exchangeCodeForToken } from './Auth/Notion';
+
 export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
 
 /**
@@ -58,6 +60,11 @@ export default class CaptureIt {
 
 		ipcMain.handle( 'getConfig', async () => {
 			return this.config || null;
+		} );
+
+		ipcMain.handle( 'signIn', async () => {
+			const token = await authenticate( this.mainWindow );
+			console.log( 'token obtained:', token );
 		} );
 
 		await Promise.all( [

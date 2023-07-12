@@ -1,4 +1,7 @@
 
+import { config } from 'dotenv';
+config();
+
 import { join } from 'path';
 import NoteQuickAdd from './CaptureIt';
 

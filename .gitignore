@@ -3,3 +3,4 @@ release
 node_modules
 yarn-error.log
 .capture-it-config.json
+.env

@@ -157,6 +157,10 @@ function addListeners() {
 
 		submitNote( text, clickEvent.altKey );
 	});
+
+	document.getElementById( 'sign-in-link' )!.addEventListener( 'click', async () => {
+		electronBridge.invoke( 'signIn' );
+	} );
 }
 
 function setupInitialFocus(): void {

@@ -28,6 +28,8 @@
   "author": "Marek Lewandowski",
   "license": "UNLICENSED",
   "dependencies": {
+    "dotenv": "^16.3.1",
+    "electron-store": "^8.1.0",
     "lodash": "^4.17.21",
     "open": "8.1.0",
     "uuid": "^9.0.0"
