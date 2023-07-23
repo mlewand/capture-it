@@ -8,7 +8,10 @@ import { NotionTarget } from '../Target';
 import { BrowserWindow } from 'electron';
 import path from 'path';
 
-type PageInfoExtended = PageInfo & { knownWorkspace?: string };
+type PageInfoExtended = PageInfo & {
+	knownWorkspace?: string,
+	idPropertyName: 'dataBaseId' | 'pageId'
+};
 
 export default class AddNotionTargetCommand extends Command {
 	constructor( options: CommandConstructorOptions ) {
@@ -24,6 +27,17 @@ export default class AddNotionTargetCommand extends Command {
 		console.log( `Command AddNotionTarget executed with targetName: ${name}` );
 		if ( !name ) {
 			openNewWindow( this.app, 'new-notion-target.html' );
+		} else if ( name && targetInfo?.notionToken && ( targetInfo?.pageId || targetInfo?.dataBaseId ) ) {
+			// All the necessary info is given, we can add it.
+			const newWorkspace: WorkspaceInfo = {
+				name: name,
+				notionToken: targetInfo.notionToken,
+				pageId: targetInfo.pageId || '', // @todo - the property can be simply skipped if not present.
+				dataBaseId: targetInfo.dataBaseId || ''
+			};
+
+			console.log( 'adding a workspace :TADA:' );
+			this.app.config!.addWorkspace( newWorkspace );
 		} else {
 			try {
 				const token = await authenticate( this.app.mainWindow );
@@ -36,7 +50,7 @@ export default class AddNotionTargetCommand extends Command {
 				const pages = await getPages( token ) as PageInfoExtended[];
 				let selectedEntity = null;
 
-				this._markKnownPages( pages );
+				this._decoratePagesInfo( pages );
 				const unknownPages = pages.filter( page => !page.knownWorkspace );
 
 				if ( unknownPages.length === 1 ) {
@@ -51,14 +65,14 @@ export default class AddNotionTargetCommand extends Command {
 					const confirmWnd = await openNewWindow( this.app, 'confirm-notion-target.html' );
 
 					confirmWnd.webContents.on( 'did-finish-load', () => {
-						confirmWnd.webContents.send( 'confirmationState', { name, token, pages } );
+						confirmWnd.webContents.send( 'confirmationState', { name, notionToken: token, pages } );
 					} );
 
 					// selectedEntity = 'foo?'; // todo
 					selectedEntity = unknownPages[ 0 ]; // mock
 				}
 
-				target[ selectedEntity.object == 'database' ? 'dataBaseId' : 'pageId' ] = selectedEntity.id;
+				target[ selectedEntity.idPropertyName ] = selectedEntity.id;
 
 				// Add it to the config.
 				// Save the config.
@@ -70,7 +84,8 @@ export default class AddNotionTargetCommand extends Command {
 		}
 	}
 
-	_markKnownPages( pages: PageInfoExtended[] ) {
+	// Adds information such as the name of matched workspace (if any) or the name of id property.
+	_decoratePagesInfo( pages: PageInfoExtended[] ) {
 		const knownPageIds = new Map();
 		for (const workspace of this.app.config!.workspaces ) {
 			if ( workspace.pageId ) {
@@ -83,11 +98,13 @@ export default class AddNotionTargetCommand extends Command {
 		}
 
 		for ( const page of pages ) {
-				const unifiedPageId = this._unifyNotionPageId( page.id );
+			const unifiedPageId = this._unifyNotionPageId( page.id );
 
-				if ( knownPageIds.has( unifiedPageId ) ) {
-					page.knownWorkspace = knownPageIds.get( unifiedPageId );
-				}
+			if ( knownPageIds.has( unifiedPageId ) ) {
+				page.knownWorkspace = knownPageIds.get( unifiedPageId );
+			}
+
+			page.idPropertyName = page.object == 'database' ? 'dataBaseId' : 'pageId';
 		}
 	}
 

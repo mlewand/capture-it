@@ -93,6 +93,12 @@ export default class CaptureIt {
 				this.setActiveWorkspace( 0 );
 
 				this.commands.execute( 'addNotionTarget' );
+
+				this.config!.on( 'changed', () => {
+					console.log( '--------------- config changed---------------' );
+					// Poor man's solution to sanitize object of unserialable data 🙈
+					this.send( 'configChanged', JSON.parse( JSON.stringify( this.config ) ) );
+				} );
 			} );
 	}
 

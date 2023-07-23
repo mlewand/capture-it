@@ -2,6 +2,8 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { promises as fs } from 'fs';
 
+import { EventEmitter } from 'events';
+
 export interface WorkspaceInfo {
 	name?: string;
 	pageId: string;
@@ -18,7 +20,7 @@ export interface ConfigFileInterface {
 }
 
 
-export default class Config implements ConfigFileInterface {
+export default class Config extends EventEmitter implements ConfigFileInterface {
 	workspaces: WorkspaceInfo[];
 	invocationHotKey: string;
 	forceOpenLinksInNotionApp: boolean;
@@ -26,6 +28,7 @@ export default class Config implements ConfigFileInterface {
 
 	// @todo: config file could emit events when changed
 	constructor( options: ConfigFileInterface ) {
+		super();
 		this.workspaces = options.workspaces;
 		this.invocationHotKey = options.invocationHotKey;
 		this.forceOpenLinksInNotionApp = options.forceOpenLinksInNotionApp;
@@ -51,5 +54,19 @@ export default class Config implements ConfigFileInterface {
 
 	public static getUserConfigPath(): string {
 		return join( homedir(), '.capture-it-config.json' );
+	}
+
+	public addWorkspace( workspace: WorkspaceInfo ): void {
+		this.workspaces.push( workspace );
+
+		this.emit( 'changed' );
+
+		// Update the file.
+		this._saveFile();
+
+	}
+
+	private _saveFile(): void {
+		// todo
 	}
 }

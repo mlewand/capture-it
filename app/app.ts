@@ -28,9 +28,11 @@ const configPromise = new Promise<ConfigFileInterface>( (resolve, reject) => {
 		.catch( reject );
 } );
 
-electronBridge.receive('configChanged', (newConfig: any) => {
-	// @todo handle it more dynamically.
-	console.log('newcfg', newConfig);
+electronBridge.receive( 'configChanged', ( newConfig: any ) => {
+	console.log( 'configChanged', newConfig );
+	config = newConfig;
+
+	updateWorkspacesBar();
 } );
 
 electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number ) => {

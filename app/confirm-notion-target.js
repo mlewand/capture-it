@@ -49,7 +49,7 @@ electronBridge.receive( 'confirmationState', ( state ) => {
 		}
 
 		pagePickerContainer.insertAdjacentHTML( 'beforeend', `<div class="${ containerClasses }">
-				<input type="radio" name="page_id" id="${ checkboxId }" value="${ id }" ${ knownWorkspace ? ' disabled="true"' : '' }>
+				<input type="radio" name="page_id" id="${ checkboxId }" value="${ id }" data-id-property="${ page.idPropertyName }" ${ knownWorkspace ? ' disabled="true"' : '' }>
 				<label for="${ checkboxId }">${ title } (${ object + workspaceDescription })</label>
 			</div>` );
 	}
@@ -66,12 +66,25 @@ function addListeners() {
 		}
 
 		const pageRadioInputs = Array.from( document.querySelectorAll( 'input[type="radio"][name="page_id"]' ) );
+		const checkedPageRadio = pageRadioInputs.find( ( { checked } ) => checked );
 
-		if ( !pageRadioInputs.find( ( { checked } ) => checked ) ) {
+		if ( !checkedPageRadio ) {
 			alert( 'Please select a database or page.' );
 		}
 
-		electronBridge.invoke( 'executeCommand', 'addNotionTarget', { name: targetNameInput.value } );
+		const state = window.confirmationState;
+
+		// console.log( 'calling executeCommand', {
+		// 	name: targetNameInput.value,
+		// 	notionToken: state.notionToken,
+		// 	[ checkedPageRadio.dataset[ 'idProperty' ] ]: checkedPageRadio.value,
+		// } );
+
+		electronBridge.invoke( 'executeCommand', 'addNotionTarget', {
+			name: targetNameInput.value,
+			notionToken: state.notionToken,
+			[ checkedPageRadio.dataset[ 'idProperty' ] ]: checkedPageRadio.value,
+		} );
 		window.close();
 	} );
 
