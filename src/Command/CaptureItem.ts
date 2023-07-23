@@ -1,5 +1,6 @@
 import Command from './Command';
 import type { CommandConstructorOptions } from './Command';
+import { unifyNotionPageId } from './AddNotionTarget';
 
 import { escapeRegExp } from 'lodash';
 
@@ -114,7 +115,7 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 			console.log( 'Paragraph appended successfully:', data );
 
 			// Unfortunately this kind of operation doesn't return the page URL so we need to do it manually.
-			data.url = 'https://www.notion.so/' + pageId;
+			data.redirect_url = 'https://www.notion.so/' + unifyNotionPageId( data.id );
 
 			return data;
 		} );
@@ -157,6 +158,8 @@ async function appendPageToDatabase(databaseId: string, apiToken: string, pageTe
 	} else {
 		throw `Error (${ response.status }, ${ data.code }): ${ data.message }`;
 	}
+
+	data.redirect_url = data.url;
 
 	return data;
 }

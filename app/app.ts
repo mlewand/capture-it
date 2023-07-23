@@ -180,8 +180,8 @@ function submitNote( text: string, openPage = false ) : void {
 	insertPromise.then( (data: any) => {
 			addNotification( text, 'success', notification );
 
-			if ( data.url && openPage ) {
-				electronBridge.invoke( 'executeCommand', 'openNotionPage', data.url )
+			if ( data.redirect_url && openPage ) {
+				electronBridge.invoke( 'executeCommand', 'openNotionPage', data.redirect_url );
 			}
 		} )
 		.catch( error => {

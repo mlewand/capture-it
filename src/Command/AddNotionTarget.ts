@@ -90,16 +90,16 @@ export default class AddNotionTargetCommand extends Command {
 		const knownPageIds = new Map();
 		for (const workspace of this.app.config!.workspaces ) {
 			if ( workspace.pageId ) {
-				knownPageIds.set( this._unifyNotionPageId( workspace.pageId ), workspace.name );
+				knownPageIds.set( unifyNotionPageId( workspace.pageId ), workspace.name );
 			}
 
 			if ( workspace.dataBaseId ) {
-				knownPageIds.set( this._unifyNotionPageId( workspace.dataBaseId ), workspace.name );
+				knownPageIds.set( unifyNotionPageId( workspace.dataBaseId ), workspace.name );
 			}
 		}
 
 		for ( const page of pages ) {
-			const unifiedPageId = this._unifyNotionPageId( page.id );
+			const unifiedPageId = unifyNotionPageId( page.id );
 
 			if ( knownPageIds.has( unifiedPageId ) ) {
 				page.knownWorkspace = knownPageIds.get( unifiedPageId );
@@ -108,11 +108,11 @@ export default class AddNotionTargetCommand extends Command {
 			page.idPropertyName = page.object == 'database' ? 'dataBaseId' : 'pageId';
 		}
 	}
+}
 
-	_unifyNotionPageId( id: string ) {
-		// Notion page ID may but doesn't have to include dashes.
-		return id.replace( /-/g, '' ).toLowerCase();
-	}
+export function unifyNotionPageId( id : string ) {
+	// Notion page ID may but doesn't have to include dashes.
+	return id.replace( /-/g, '' ).toLowerCase();
 }
 
 async function openNewWindow( app: CaptureIt, htmlFileName: string ) {
