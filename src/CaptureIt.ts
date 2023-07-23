@@ -65,11 +65,6 @@ export default class CaptureIt {
 			return this.config || null;
 		} );
 
-		ipcMain.handle( 'signIn', async () => {
-			const token = await authenticate( this.mainWindow );
-			console.log( 'token obtained:', token );
-		} );
-
 		await Promise.all( [
 				configWrapper(),
 				this._createElectronApp()
@@ -91,8 +86,6 @@ export default class CaptureIt {
 
 				this.send( 'configChanged', this.config );
 				this.setActiveWorkspace( 0 );
-
-				this.commands.execute( 'addNotionTarget' );
 
 				this.config!.on( 'changed', () => {
 					console.log( '--------------- config changed---------------' );

@@ -161,7 +161,7 @@ function addListeners() {
 	});
 
 	document.getElementById( 'sign-in-link' )!.addEventListener( 'click', async () => {
-		electronBridge.invoke( 'signIn' );
+		electronBridge.invoke( 'executeCommand', 'addNotionTarget' );
 	} );
 }
 
