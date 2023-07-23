@@ -15,16 +15,18 @@ export default class AddNotionTargetCommand extends Command {
 		super( options );
 	}
 
-	public async execute( targetName?: string ): Promise<any> {
-		console.log( `Command AddNotionTarget executed with targetName: ${targetName}` );
-		if ( !targetName ) {
+	// todo, should take an object with potential id
+	public async execute( targetInfo? : NotionTarget ): Promise<any> {
+		const name = targetInfo?.name || null;
+		console.log( `Command AddNotionTarget executed with targetName: ${name}` );
+		if ( !name ) {
 			openNewWindow( this.app, 'new-notion-target.html' );
 		} else {
 			try {
 				const token = await authenticate( this.app.mainWindow );
 
 				const target: NotionTarget = {
-					name: targetName,
+					name: name,
 					notionToken: token
 				};
 
@@ -43,7 +45,7 @@ export default class AddNotionTargetCommand extends Command {
 					const confirmWnd = await openNewWindow( this.app, 'confirm-notion-target.html' );
 
 					confirmWnd.webContents.on( 'did-finish-load', () => {
-						confirmWnd.webContents.send( 'confirmationState', { targetName, token, pages } );
+						confirmWnd.webContents.send( 'confirmationState', { name, token, pages } );
 					} );
 
 					// selectedEntity = 'foo?'; // todo
@@ -52,7 +54,8 @@ export default class AddNotionTargetCommand extends Command {
 
 				target[ selectedEntity.object == 'database' ? 'dataBaseId' : 'pageId' ] = selectedEntity.id;
 
-				// target.dataBaseId = '1';
+				// Add it to the config.
+				// Save the config.
 			} catch ( e ) {
 				alert( e );
 				// @todo: set the input for a target name to targetName.

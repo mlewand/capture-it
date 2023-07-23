@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 electronBridge.receive( 'confirmationState', ( state ) => {
 	window.confirmationState = state;
 	console.log(state);
-	document.getElementById( 'targetName' ).value = state.targetName;
+	document.getElementById( 'targetName' ).value = state.name;
 
 	const pagePickerContainer = document.getElementById( 'playground' );
 
@@ -44,6 +44,12 @@ function addListeners() {
 	document.getElementById( 'save-button' ).addEventListener( 'click', async () => {
 		if ( targetNameInput.reportValidity() !== true ) {
 			return;
+		}
+
+		const pageRadioInputs = Array.from( document.querySelectorAll( 'input[type="radio"][name="page_id"]' ) );
+
+		if ( !pageRadioInputs.find( ( { checked } ) => checked ) ) {
+			alert( 'Please select a database or page.' );
 		}
 
 		electronBridge.invoke( 'executeCommand', 'addNotionTarget', targetNameInput.value );
