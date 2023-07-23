@@ -112,20 +112,82 @@ export async function exchangeCodeForToken( code : string ) {
 	return data.access_token;
 }
 
-ipcMain.handle( 'get-pages', async () => {
-	const notionToken = store.get( 'notionToken' );
-	const response = await fetch( 'https://www.notion.so/api/v3/loadUserContent', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${notionToken}`
-		},
-		body: JSON.stringify( {} )
-	} );
-	const data = await response.json();
-	const pages = Object.values( data.recordMap.block )
-		.filter( (block: any) => block.value.type === 'page' )
-		.map( (block: any) => ( { id: block.id, title: block.value.properties.title } ) );
+export async function getPages( token?: string ) {
+	const notionToken = token || store.get( 'notionToken' );
 
-	return pages;
-} );
+	// Databases are preferred.
+	const databases = await requestNotionResources( 'database' );
+
+	if ( databases.length ) {
+		return databases;
+	} else {
+		return requestNotionResources( 'page' );
+	}
+
+	async function requestNotionResources( resourceType: 'database' | 'page' ) {
+		const options = {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${ token }`,
+				'Notion-Version': '2022-06-28',
+				'content-type': 'application/json'
+			},
+			body: JSON.stringify( {
+				filter: {
+					property: 'object',
+					value: resourceType
+				},
+				sort: {
+					direction: 'descending',
+					timestamp: 'last_edited_time'
+				},
+				page_size: 10
+			} )
+		};
+
+		return fetch( 'https://api.notion.com/v1/search', options )
+			.then( response => { return response.json(); } )
+			.then( data => {
+					console.log('data retrieved', data);
+					console.log(data.results[ 0 ].properties);
+					return data.results.map( ( result: any ) => {
+						return {
+							id: result.id,
+							object: result.object,
+							icon: result.icon,
+							title: simplifyNotionName( result )
+						};
+					} );
+				}
+			);
+	}
+
+	function simplifyNotionName( notionPage : any ) {
+		let titleSource = notionPage.title;
+
+		// page has a different interface :(
+		if ( !titleSource ) {
+			for ( const entry of Object.entries( notionPage.properties ) ) {
+				const value = entry[ 1 ] as any;
+
+				if ( value.type === 'title' ) {
+					titleSource = value.title;
+					break;
+				}
+			}
+
+			if ( !titleSource ) {
+				return 'none none';
+			}
+
+		}
+
+		return titleSource.reduce( ( acc: string, title: any ) => {
+			if ( title.type === 'text' ) {
+				return acc + title.text.content;
+			}
+
+			return acc;
+		}, '' ) || 'Missing title';
+	}
+};
