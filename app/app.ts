@@ -98,14 +98,16 @@ function addListeners() {
 	const textInput = document.getElementById('textInput');
 
 	textInput!.addEventListener('keyup', (event: KeyboardEvent) => {
-		if (event.key === 'Enter' && !event.shiftKey) {
+		// The only allowed shift combination is shift + alt for now.
+		if ( event.key === 'Enter' && ( !event.shiftKey || event.altKey ) ) {
 			// CTRL / CMD modifiers are allowed. Typically ctrl+enter means confirm an action.
 			event.preventDefault();
 
 			const clickEvent = new MouseEvent("click", {
 				altKey: event.altKey,
 				ctrlKey: event.ctrlKey,
-				metaKey: event.metaKey
+				metaKey: event.metaKey,
+				shiftKey: event.shiftKey
 			} );
 			document.getElementById('submitButton')!.dispatchEvent( clickEvent );
 		}
@@ -156,13 +158,13 @@ function addListeners() {
 		}
 	});
 
-	document.getElementById('submitButton')!.addEventListener('click', clickEvent => {
-		const textInput = document.getElementById('textInput') as HTMLInputElement;
+	document.getElementById( 'submitButton' )!.addEventListener( 'click', clickEvent => {
+		const textInput = document.getElementById( 'textInput' ) as HTMLInputElement;
 		const text = textInput.value;
 		textInput.value = '';
 
-		submitNote( text, clickEvent.altKey );
-	});
+		submitNote( text, clickEvent.altKey && !clickEvent.shiftKey, clickEvent.altKey && clickEvent.shiftKey );
+	} );
 
 	document.getElementById( 'sign-in-link' )!.addEventListener( 'click', async () => {
 		electronBridge.invoke( 'executeCommand', 'addNotionTarget' );
@@ -177,14 +179,16 @@ function setupInitialFocus(): void {
 	}
 }
 
-function submitNote( text: string, openPage = false ) : void {
+function submitNote( text: string, openPage = false, copyToClipboard = false ) : void {
 	const insertPromise = electronBridge.promisedInvoke( 'executeCommandAsync', 'captureItem', text );
 	const notification = addNotification( text, 'loading' );
 
 	insertPromise.then( (data: any) => {
 			addNotification( text, 'success', notification );
 
-			if ( data.redirect_url && openPage ) {
+			if ( data.redirect_url && copyToClipboard ) {
+				navigator.clipboard.writeText( data.redirect_url );
+			} else if ( data.redirect_url && openPage ) {
 				electronBridge.invoke( 'executeCommand', 'openNotionPage', data.redirect_url );
 			}
 		} )
