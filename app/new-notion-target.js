@@ -16,7 +16,7 @@ function addListeners() {
 			return;
 		}
 
-		electronBridge.invoke( 'executeCommand', 'addNotionTarget', targetNameInput.value );
+		electronBridge.invoke( 'executeCommand', 'addNotionTarget', { name: targetNameInput.value } );
 		window.close();
 	} );
 

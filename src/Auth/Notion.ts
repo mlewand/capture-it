@@ -3,6 +3,16 @@ import type { BrowserWindow as BrowserWindowType } from 'electron';
 import { stringify } from 'querystring';
 import Store from 'electron-store';
 
+export interface PageInfo {
+	id: string;
+	object: string;
+	icon?: {
+		type?: string;
+		emoji?: string;
+	};
+	title: string;
+}
+
 const store = new Store();
 
 if ( !process.env.NOTION_AUTH_CLIENT_ID ) {
@@ -112,7 +122,7 @@ export async function exchangeCodeForToken( code : string ) {
 	return data.access_token;
 }
 
-export async function getPages( token?: string ) {
+export async function getPages( token?: string ) : Promise<PageInfo[]> {
 	const notionToken = token || store.get( 'notionToken' );
 
 	// Databases are preferred.

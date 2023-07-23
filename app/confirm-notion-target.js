@@ -16,7 +16,17 @@ electronBridge.receive( 'confirmationState', ( state ) => {
 
 	const pagePickerContainer = document.getElementById( 'playground' );
 
-	for (const page of state.pages ) {
+	const sortedPages = state.pages.sort( ( a, b ) => {
+		if ( !a.knownWorkspace && b.knownWorkspace ) {
+			return -1;
+		} else if ( a.knownWorkspace && !b.knownWorkspace ) {
+			return 1;
+		} else {
+			return 0;
+		}
+	} );
+
+	for (const page of sortedPages ) {
 		addPage( page );
 	}
 
@@ -25,13 +35,22 @@ electronBridge.receive( 'confirmationState', ( state ) => {
 			id,
 			object,
 			icon,
-			title
+			title,
+			knownWorkspace
 		} = page;
 
 		const checkboxId = `page_value_${ id }`;
+		let containerClasses = 'item'
+		let workspaceDescription = '';
 
-		pagePickerContainer.insertAdjacentHTML( 'beforeend', `<div class="item">
-				<input type="radio" name="page_id" id="${ checkboxId }" value="${ id }"> <label for="${ checkboxId }">${ title } (${ object })</label>
+		if ( knownWorkspace ) {
+			containerClasses += ' item-known';
+			workspaceDescription = ` - added already to &quot;${ knownWorkspace }&quot; workspace`;
+		}
+
+		pagePickerContainer.insertAdjacentHTML( 'beforeend', `<div class="${ containerClasses }">
+				<input type="radio" name="page_id" id="${ checkboxId }" value="${ id }" ${ knownWorkspace ? ' disabled="true"' : '' }>
+				<label for="${ checkboxId }">${ title } (${ object + workspaceDescription })</label>
 			</div>` );
 	}
 } );
@@ -52,7 +71,7 @@ function addListeners() {
 			alert( 'Please select a database or page.' );
 		}
 
-		electronBridge.invoke( 'executeCommand', 'addNotionTarget', targetNameInput.value );
+		electronBridge.invoke( 'executeCommand', 'addNotionTarget', { name: targetNameInput.value } );
 		window.close();
 	} );
 

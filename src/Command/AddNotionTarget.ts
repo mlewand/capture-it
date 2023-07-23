@@ -2,10 +2,13 @@ import type { CommandConstructorOptions } from './Command';
 import type CaptureIt from '../CaptureIt';
 import Command from './Command';
 import { authenticate, getPages } from '../Auth/Notion';
+import type { PageInfo } from '../Auth/Notion';
 import { NotionTarget } from '../Target';
 
 import { BrowserWindow } from 'electron';
 import path from 'path';
+
+type PageInfoExtended = PageInfo & { knownWorkspace?: string };
 
 export default class AddNotionTargetCommand extends Command {
 	constructor( options: CommandConstructorOptions ) {
@@ -30,13 +33,16 @@ export default class AddNotionTargetCommand extends Command {
 					notionToken: token
 				};
 
-				const pages = await getPages( token );
+				const pages = await getPages( token ) as PageInfoExtended[];
 				let selectedEntity = null;
 
-				if ( pages.length === 1 ) {
+				this._markKnownPages( pages );
+				const unknownPages = pages.filter( page => !page.knownWorkspace );
+
+				if ( unknownPages.length === 1 ) {
 					console.log('---- got one page');
-					selectedEntity = pages[ 0 ];
-				} else if ( pages.length === 0 ) {
+					selectedEntity = unknownPages[ 0 ];
+				} else if ( unknownPages.length === 0 ) {
 					console.log('---- got no page');
 					throw new Error( 'No pages or databases were shared with the integration. You need to select at least one item when granting permissions.' )
 				} else {
@@ -49,7 +55,7 @@ export default class AddNotionTargetCommand extends Command {
 					} );
 
 					// selectedEntity = 'foo?'; // todo
-					selectedEntity = pages[ 0 ]; // mock
+					selectedEntity = unknownPages[ 0 ]; // mock
 				}
 
 				target[ selectedEntity.object == 'database' ? 'dataBaseId' : 'pageId' ] = selectedEntity.id;
@@ -62,6 +68,32 @@ export default class AddNotionTargetCommand extends Command {
 				openNewWindow( this.app, 'new-notion-target.html' );
 			}
 		}
+	}
+
+	_markKnownPages( pages: PageInfoExtended[] ) {
+		const knownPageIds = new Map();
+		for (const workspace of this.app.config!.workspaces ) {
+			if ( workspace.pageId ) {
+				knownPageIds.set( workspace.pageId, workspace.name );
+			}
+
+			if ( workspace.dataBaseId ) {
+				knownPageIds.set( workspace.dataBaseId, workspace.name );
+			}
+		}
+
+		for ( const page of pages ) {
+				const unifiedPageId = this._unifyNotionPageId( page.id );
+
+				if ( knownPageIds.has( unifiedPageId ) ) {
+					page.knownWorkspace = knownPageIds.get( unifiedPageId );
+				}
+		}
+	}
+
+	_unifyNotionPageId( id: string ) {
+		// Notion page ID may but doesn't have to include dashes.
+		return id.replace( /-/g, '' );
 	}
 }
 
