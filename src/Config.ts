@@ -63,10 +63,10 @@ export default class Config extends EventEmitter implements ConfigFileInterface 
 
 		// Update the file.
 		this._saveFile();
-
 	}
 
-	private _saveFile(): void {
-		// todo
+	private _saveFile(): Promise<boolean> {
+		return fs.writeFile( Config.getUserConfigPath(), JSON.stringify( this, null, '\t' ), { encoding: 'utf8' } )
+			.then( () => true )
 	}
 }
