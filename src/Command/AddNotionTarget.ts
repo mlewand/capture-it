@@ -4,6 +4,7 @@ import Command from './Command';
 import { authenticate, getPages } from '../Auth/Notion';
 import type { PageInfo } from '../Auth/Notion';
 import { NotionTarget } from '../Target';
+import type { WorkspaceInfo } from '../Config';
 
 import { BrowserWindow } from 'electron';
 import path from 'path';
@@ -89,11 +90,11 @@ export default class AddNotionTargetCommand extends Command {
 		const knownPageIds = new Map();
 		for (const workspace of this.app.config!.workspaces ) {
 			if ( workspace.pageId ) {
-				knownPageIds.set( workspace.pageId, workspace.name );
+				knownPageIds.set( this._unifyNotionPageId( workspace.pageId ), workspace.name );
 			}
 
 			if ( workspace.dataBaseId ) {
-				knownPageIds.set( workspace.dataBaseId, workspace.name );
+				knownPageIds.set( this._unifyNotionPageId( workspace.dataBaseId ), workspace.name );
 			}
 		}
 
@@ -110,7 +111,7 @@ export default class AddNotionTargetCommand extends Command {
 
 	_unifyNotionPageId( id: string ) {
 		// Notion page ID may but doesn't have to include dashes.
-		return id.replace( /-/g, '' );
+		return id.replace( /-/g, '' ).toLowerCase();
 	}
 }
 
