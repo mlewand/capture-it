@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Capture It - Adding Notion target</title>
+		<link rel="stylesheet" href="./styles.css">
+	</head>
+
+	<body>
+		<section id="app-new-target-tab" class="new-notion-target">
+			<h1>Confirm Notion target</h1>
+
+			<p>You're just one step away from adding the workspace!</p>
+
+			<div>
+				<div>
+					<label for="targetName">Target name:</label>
+					<input type="text" id="targetName">
+				</div>
+				<div class="description">
+					This is the text that will be displayed in the tab (in case there's more than one target tab).
+				</div>
+			</div>
+
+			<p>Select a database/page that you want to associate with your workspace. Currently only one entry per workspace is allowed.</p>
+
+			<div id="playground">
+				<!-- <div class="item">
+					<input type="radio" name="page_id" value="page-uid-value-abcd"> page name (type)
+				</div> -->
+			</div>
+
+			<div>
+				<button id="save-button">Save</button>
+			</div>
+		</section>
+		<script src="./confirm-notion-target.js"></script>
+	</body>
+
+</html>

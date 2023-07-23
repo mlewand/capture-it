@@ -92,7 +92,7 @@ export default class CaptureIt {
 				this.send( 'configChanged', this.config );
 				this.setActiveWorkspace( 0 );
 
-				// this.commands.execute( 'addNotionTarget' );
+				this.commands.execute( 'addNotionTarget' );
 			} );
 	}
 
