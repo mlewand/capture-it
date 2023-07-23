@@ -78,7 +78,7 @@ export default class AddNotionTargetCommand extends Command {
 				// Add it to the config.
 				// Save the config.
 			} catch ( e ) {
-				alert( e );
+				this.app.send( 'alert', String( e ) );
 				// @todo: set the input for a target name to targetName.
 				openNewWindow( this.app, 'new-notion-target.html' );
 			}

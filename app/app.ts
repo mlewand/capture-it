@@ -28,6 +28,10 @@ const configPromise = new Promise<ConfigFileInterface>( (resolve, reject) => {
 		.catch( reject );
 } );
 
+electronBridge.receive( 'alert', ( message: string ) => {
+	alert( message );
+} );
+
 electronBridge.receive( 'configChanged', ( newConfig: any ) => {
 	console.log( 'configChanged', newConfig );
 	config = newConfig;
