@@ -125,14 +125,10 @@ export async function exchangeCodeForToken( code : string ) {
 export async function getPages( token?: string ) : Promise<PageInfo[]> {
 	const notionToken = token || store.get( 'notionToken' );
 
-	// Databases are preferred.
-	const databases = await requestNotionResources( 'database' );
-
-	if ( databases.length ) {
-		return databases;
-	} else {
-		return requestNotionResources( 'page' );
-	}
+	return Promise.all( [ requestNotionResources( 'database' ), requestNotionResources( 'page' ) ] )
+		.then( ( [ databases, pages ] ) => {
+			return databases.concat( pages );
+		} );
 
 	async function requestNotionResources( resourceType: 'database' | 'page' ) {
 		const options = {
@@ -151,7 +147,7 @@ export async function getPages( token?: string ) : Promise<PageInfo[]> {
 					direction: 'descending',
 					timestamp: 'last_edited_time'
 				},
-				page_size: 10
+				page_size: 20
 			} )
 		};
 
