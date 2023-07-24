@@ -791,6 +791,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
+css-loading-spinners@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/css-loading-spinners/-/css-loading-spinners-0.2.0.tgz#d8021d5850e664d904007114914e8750e297b927"
+  integrity sha512-a1mzhc23emVJ3ab3Q5wxJq46lFAe0o3W6/Z+2G8bLE4dGYlsM31SUlX66uwZWzLPmyioZMhHt6QRF11Xf26oMg==
+
 debounce-fn@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/debounce-fn/-/debounce-fn-4.0.0.tgz#ed76d206d8a50e60de0dd66d494d82835ffe61c7"

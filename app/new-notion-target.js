@@ -11,6 +11,9 @@ function addListeners() {
 
 	targetNameInput.addEventListener( 'input', () => checkValidity() );
 
+	// Force adding validity check synchronously.
+	checkValidity();
+
 	document.getElementById( 'sign-in-link' ).addEventListener( 'click', async () => {
 		if ( targetNameInput.reportValidity() !== true ) {
 			return;

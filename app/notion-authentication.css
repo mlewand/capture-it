@@ -1,0 +1,16 @@
+:root {
+	/* settings for the spinner */
+	--cls-color: var(--blue);
+	--cls-sec-color: var(--white);
+	--cls-size: 3rem;
+	--cls-margin: 1rem;
+	--cls-speed: 2.5s; /* time halved for flip-flop and signal animation */
+}
+
+#playground .item-known label {
+	opacity: 0.6;
+}
+
+#page-loader {
+	text-align: center;
+}

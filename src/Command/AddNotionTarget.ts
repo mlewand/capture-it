@@ -48,6 +48,13 @@ export default class AddNotionTargetCommand extends Command {
 					notionToken: token
 				};
 
+				const confirmWnd = await openNewWindow( this.app, 'confirm-notion-target.html' );
+
+				const onConfirmWindowLoaded = new Promise( ( resolve, reject ) => {
+					confirmWnd.webContents.on( 'did-finish-load', resolve );
+					confirmWnd.on( 'closed', reject );
+				} );
+
 				const pages = await getPages( token ) as PageInfoExtended[];
 				let selectedEntity = null;
 
@@ -63,9 +70,8 @@ export default class AddNotionTargetCommand extends Command {
 				} else {
 					console.log('---- got multiple pages');
 					// Multiple pages were selected.
-					const confirmWnd = await openNewWindow( this.app, 'confirm-notion-target.html' );
 
-					confirmWnd.webContents.on( 'did-finish-load', () => {
+					onConfirmWindowLoaded.then( () => {
 						confirmWnd.webContents.send( 'confirmationState', { name, notionToken: token, pages } );
 					} );
 

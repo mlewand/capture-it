@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 electronBridge.receive( 'confirmationState', ( state ) => {
 	window.confirmationState = state;
 	console.log(state);
+	document.getElementById( 'page-loader' ).classList.add( 'hidden' );
+	document.getElementById( 'app-new-target-tab' ).classList.remove( 'hidden' );
 	document.getElementById( 'targetName' ).value = state.name;
 
 	const pagePickerContainer = document.getElementById( 'playground' );
@@ -59,6 +61,9 @@ function addListeners() {
 	const targetNameInput = document.getElementById( 'targetName' );
 
 	targetNameInput.addEventListener( 'input', () => checkValidity() );
+
+	// Force adding validity check synchronously.
+	checkValidity();
 
 	document.getElementById( 'save-button' ).addEventListener( 'click', async () => {
 		if ( targetNameInput.reportValidity() !== true ) {
