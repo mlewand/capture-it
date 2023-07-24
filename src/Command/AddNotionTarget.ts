@@ -74,15 +74,7 @@ export default class AddNotionTargetCommand extends Command {
 					onConfirmWindowLoaded.then( () => {
 						confirmWnd.webContents.send( 'confirmationState', { name, notionToken: token, pages } );
 					} );
-
-					// selectedEntity = 'foo?'; // todo
-					selectedEntity = unknownPages[ 0 ]; // mock
 				}
-
-				target[ selectedEntity.idPropertyName ] = selectedEntity.id;
-
-				// Add it to the config.
-				// Save the config.
 			} catch ( e ) {
 				this.app.send( 'alert', String( e ) );
 				// @todo: set the input for a target name to targetName.
