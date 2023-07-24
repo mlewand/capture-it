@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 	addListeners();
 } );
 
+electronBridge.receive( 'alert', ( message ) => {
+	alert( message );
+} );
+
 electronBridge.receive( 'confirmationState', ( state ) => {
 	window.confirmationState = state;
 	console.log(state);

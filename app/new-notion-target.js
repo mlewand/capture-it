@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 	addListeners();
 } );
 
+electronBridge.receive( 'alert', ( message ) => {
+	alert( message );
+} );
+
 function addListeners() {
 	const targetNameInput = document.getElementById( 'targetName' );
 

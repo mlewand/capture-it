@@ -40,6 +40,7 @@ export default class AddNotionTargetCommand extends Command {
 			console.log( 'adding a workspace :TADA:' );
 			this.app.config!.addWorkspace( newWorkspace );
 		} else {
+			let confirmWnd: BrowserWindow | null = null;
 			try {
 				const token = await authenticate( this.app.mainWindow );
 
@@ -48,11 +49,11 @@ export default class AddNotionTargetCommand extends Command {
 					notionToken: token
 				};
 
-				const confirmWnd = await openNewWindow( this.app, 'confirm-notion-target.html' );
+				confirmWnd = await openNewWindow( this.app, 'confirm-notion-target.html' );
 
 				const onConfirmWindowLoaded = new Promise( ( resolve, reject ) => {
-					confirmWnd.webContents.on( 'did-finish-load', resolve );
-					confirmWnd.on( 'closed', reject );
+					confirmWnd!.webContents.on( 'did-finish-load', resolve );
+					confirmWnd!.on( 'closed', reject );
 				} );
 
 				const pages = await getPages( token ) as PageInfoExtended[];
@@ -72,13 +73,21 @@ export default class AddNotionTargetCommand extends Command {
 					// Multiple pages were selected.
 
 					onConfirmWindowLoaded.then( () => {
-						confirmWnd.webContents.send( 'confirmationState', { name, notionToken: token, pages } );
+						confirmWnd!.webContents.send( 'confirmationState', { name, notionToken: token, pages } );
 					} );
 				}
 			} catch ( e ) {
-				this.app.send( 'alert', String( e ) );
-				// @todo: set the input for a target name to targetName.
-				openNewWindow( this.app, 'new-notion-target.html' );
+				if ( confirmWnd ) {
+					confirmWnd.destroy();
+				}
+
+				const fallbackWindow = await openNewWindow( this.app, 'new-notion-target.html' );
+
+				fallbackWindow.webContents.on( 'did-finish-load', () => {
+					fallbackWindow.webContents.send( 'alert', String( e ) );
+					// Provide only name without token / pages so that it always fallbacks to the first step.
+					fallbackWindow.webContents.send( 'confirmationState', { name } );
+				} );
 			}
 		}
 	}

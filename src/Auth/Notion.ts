@@ -155,7 +155,6 @@ export async function getPages( token?: string ) : Promise<PageInfo[]> {
 			.then( response => { return response.json(); } )
 			.then( data => {
 					console.log('data retrieved', data);
-					console.log(data.results[ 0 ].properties);
 					return data.results.map( ( result: any ) => {
 						return {
 							id: result.id,
