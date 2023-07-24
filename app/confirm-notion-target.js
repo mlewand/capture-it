@@ -13,27 +13,120 @@ electronBridge.receive( 'alert', ( message ) => {
 	alert( message );
 } );
 
-electronBridge.receive( 'confirmationState', ( state ) => {
-	window.confirmationState = state;
-	console.log(state);
-	document.getElementById( 'page-loader' ).classList.add( 'hidden' );
-	document.getElementById( 'app-new-target-tab' ).classList.remove( 'hidden' );
-	document.getElementById( 'targetName' ).value = state.name;
+electronBridge.receive( 'confirmationState', applyState );
 
-	const pagePickerContainer = document.getElementById( 'playground' );
+function addListeners() {
+	const targetNameInput = document.getElementById( 'targetName' );
+	const saveButton = document.getElementById( 'save-button' );
+	const signInLink = document.getElementById( 'sign-in-link' );
 
-	const sortedPages = state.pages.sort( ( a, b ) => {
-		if ( !a.knownWorkspace && b.knownWorkspace ) {
-			return -1;
-		} else if ( a.knownWorkspace && !b.knownWorkspace ) {
-			return 1;
-		} else {
-			return 0;
+	targetNameInput.addEventListener( 'input', () => checkValidity() );
+	targetNameInput.addEventListener( 'change', () => checkValidity() );
+
+	saveButton && saveButton.addEventListener( 'click', async () => {
+		checkValidity();
+		if ( targetNameInput.reportValidity() !== true ) {
+			return;
 		}
+
+		const pageRadioInputs = Array.from( document.querySelectorAll( 'input[type="radio"][name="page_id"]' ) );
+		const checkedPageRadio = pageRadioInputs.find( ( { checked } ) => checked );
+
+		if ( !checkedPageRadio ) {
+			alert( 'Please select a database or page.' );
+		}
+
+		const state = window.confirmationState;
+
+		electronBridge.invoke( 'executeCommand', 'addNotionTarget', {
+			name: targetNameInput.value,
+			notionToken: state.notionToken,
+			[ checkedPageRadio.dataset[ 'idProperty' ] ]: checkedPageRadio.value,
+		} );
+		window.close();
 	} );
 
-	for (const page of sortedPages ) {
-		addPage( page );
+	signInLink && signInLink.addEventListener( 'click', async () => {
+		checkValidity();
+		if ( targetNameInput.reportValidity() !== true ) {
+			return;
+		}
+
+		electronBridge.invoke( 'executeCommand', 'addNotionTarget', { name: targetNameInput.value } );
+		window.close();
+	} );
+
+	function checkValidity() {
+		const { value } = targetNameInput;
+		targetNameInput.setCustomValidity( validateTargetName( value ) );
+	}
+
+	function validateTargetName( targetName ) {
+		targetName = String( targetName );
+
+		if ( !targetName.trim().length ) {
+			return 'Target name can\'t be empty.';
+		}
+
+		if ( targetName == 'test' ) {
+			return 'Target name can\'t be "test".';
+		}
+
+		// Empty string means no issues are present.
+		return '';
+	}
+}
+
+if ( location.search.length > 1 ) {
+	const parsed = new URLSearchParams( location.search );
+
+	if ( parsed.has( 'state' ) ) {
+		applyState( JSON.parse( parsed.get( 'state' ) ) );
+	}
+
+	if ( parsed.has( 'synchronous' ) && parsed.get( 'synchronous' ) == '1' ) {
+		hideSpinner();
+	}
+}
+
+function hideSpinner() {
+	document.getElementById( 'page-loader' ).classList.add( 'hidden' );
+	document.getElementById( 'app-new-target-tab' ).classList.remove( 'hidden' );
+}
+
+function applyState( state ) {
+	window.confirmationState = state;
+	console.log(state);
+	hideSpinner();
+	document.getElementById( 'targetName' ).value = state.name || '';
+
+	const pagePickerContainer = document.getElementById( 'page-picker-container' );
+
+	if ( 'pages' in state ) {
+		document.getElementById( 'confirmation-save' ).classList.remove( 'hidden' );
+		document.getElementById( 'page-picker-container' ).classList.remove( 'hidden' );
+		document.getElementById( 'new-save' ).classList.add( 'hidden' );
+	} else {
+		document.getElementById( 'confirmation-save' ).classList.add( 'hidden' );
+		document.getElementById( 'page-picker-container' ).classList.add( 'hidden' );
+		document.getElementById( 'new-save' ).classList.remove( 'hidden' );
+
+	}
+
+	if ( state.pages ) {
+		const sortedPages = state.pages.sort( ( a, b ) => {
+			if ( !a.knownWorkspace && b.knownWorkspace ) {
+				return -1;
+			} else if ( a.knownWorkspace && !b.knownWorkspace ) {
+				return 1;
+			} else {
+				return 0;
+			}
+		} );
+
+		for (const page of sortedPages ) {
+			addPage( page );
+		}
 	}
 
 	function addPage( page ) {
@@ -58,62 +151,5 @@ electronBridge.receive( 'confirmationState', ( state ) => {
 				<input type="radio" name="page_id" id="${ checkboxId }" value="${ id }" data-id-property="${ page.idPropertyName }" ${ knownWorkspace ? ' disabled="true"' : '' }>
 				<label for="${ checkboxId }">${ title } (${ object + workspaceDescription })</label>
 			</div>` );
-	}
-} );
-
-function addListeners() {
-	const targetNameInput = document.getElementById( 'targetName' );
-
-	targetNameInput.addEventListener( 'input', () => checkValidity() );
-
-	// Force adding validity check synchronously.
-	checkValidity();
-
-	document.getElementById( 'save-button' ).addEventListener( 'click', async () => {
-		if ( targetNameInput.reportValidity() !== true ) {
-			return;
-		}
-
-		const pageRadioInputs = Array.from( document.querySelectorAll( 'input[type="radio"][name="page_id"]' ) );
-		const checkedPageRadio = pageRadioInputs.find( ( { checked } ) => checked );
-
-		if ( !checkedPageRadio ) {
-			alert( 'Please select a database or page.' );
-		}
-
-		const state = window.confirmationState;
-
-		// console.log( 'calling executeCommand', {
-		// 	name: targetNameInput.value,
-		// 	notionToken: state.notionToken,
-		// 	[ checkedPageRadio.dataset[ 'idProperty' ] ]: checkedPageRadio.value,
-		// } );
-
-		electronBridge.invoke( 'executeCommand', 'addNotionTarget', {
-			name: targetNameInput.value,
-			notionToken: state.notionToken,
-			[ checkedPageRadio.dataset[ 'idProperty' ] ]: checkedPageRadio.value,
-		} );
-		window.close();
-	} );
-
-	function checkValidity() {
-		const { value } = targetNameInput;
-		targetNameInput.setCustomValidity( validateTargetName( value ) );
-	}
-
-	function validateTargetName( targetName ) {
-		targetName = String( targetName );
-
-		if ( !targetName.trim().length ) {
-			return 'Target name can\'t be empty.';
-		}
-
-		if ( targetName == 'test' ) {
-			return 'Target name can\'t be "test".';
-		}
-
-		// Empty string means no issues are present.
-		return '';
 	}
 }

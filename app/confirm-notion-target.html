@@ -31,16 +31,25 @@
 				</div>
 			</div>
 
-			<p>Select a database/page that you want to associate with your workspace. Currently only one entry per workspace is allowed.</p>
-
-			<div id="playground">
+			<div id="page-picker-container" class="hidden">
+				<p class="description">Select a database/page that you want to associate with your workspace. Currently only one entry per workspace is allowed.</p>
 				<!-- <div class="item">
 					<input type="radio" name="page_id" value="page-uid-value-abcd"> page name (type)
 				</div> -->
 			</div>
 
-			<div>
+			<div id="confirmation-save" class="hidden">
 				<button id="save-button">Save</button>
+			</div>
+
+			<div id="new-save">
+				<div>
+					<p>
+						After clicking the link below you'll have to pick what database you want to add entries to with Capture It.<br>
+						For now Capture It supports only one database/page per target.
+					</p>
+				</div>
+				<a href="#" id="sign-in-link">Sign in to Notion</a>
 			</div>
 		</section>
 		<script src="./confirm-notion-target.js"></script>

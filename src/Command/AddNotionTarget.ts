@@ -27,7 +27,7 @@ export default class AddNotionTargetCommand extends Command {
 		const name = targetInfo?.name || null;
 		console.log( `Command AddNotionTarget executed with targetName: ${name}` );
 		if ( !name ) {
-			openNewWindow( this.app, 'new-notion-target.html' );
+			openNewWindow( this.app, 'confirm-notion-target.html', { synchronous: '1' } );
 		} else if ( name && targetInfo?.notionToken && ( targetInfo?.pageId || targetInfo?.dataBaseId ) ) {
 			// All the necessary info is given, we can add it.
 			const newWorkspace: WorkspaceInfo = {
@@ -81,12 +81,13 @@ export default class AddNotionTargetCommand extends Command {
 					confirmWnd.destroy();
 				}
 
-				const fallbackWindow = await openNewWindow( this.app, 'new-notion-target.html' );
+				const fallbackWindow = await openNewWindow( this.app, 'confirm-notion-target.html', {
+					// Provide only name without token / pages so that it always fallbacks to the first step.
+					state: JSON.stringify( { name } )
+				} );
 
 				fallbackWindow.webContents.on( 'did-finish-load', () => {
 					fallbackWindow.webContents.send( 'alert', String( e ) );
-					// Provide only name without token / pages so that it always fallbacks to the first step.
-					fallbackWindow.webContents.send( 'confirmationState', { name } );
 				} );
 			}
 		}
@@ -122,7 +123,7 @@ export function unifyNotionPageId( id : string ) {
 	return id.replace( /-/g, '' ).toLowerCase();
 }
 
-async function openNewWindow( app: CaptureIt, htmlFileName: string ) {
+async function openNewWindow( app: CaptureIt, htmlFileName: string, query?: { [ key: string ]: string } ) {
 	// Create a new window for the OAuth2 login
 	const authWindow = new BrowserWindow( {
 		modal: true,
@@ -133,7 +134,11 @@ async function openNewWindow( app: CaptureIt, htmlFileName: string ) {
 			contextIsolation: true
 		}
 	} );
-	authWindow.loadFile( path.join( app.rootPath, 'app', htmlFileName ) );
+
+	authWindow.loadFile( path.join( app.rootPath, 'app', htmlFileName ), {
+		query: query || undefined
+	} );
+
 	authWindow.show();
 
 	authWindow.once( 'close', () => {

@@ -7,7 +7,7 @@
 	--cls-speed: 2.5s; /* time halved for flip-flop and signal animation */
 }
 
-#playground .item-known label {
+#page-picker-container .item-known label {
 	opacity: 0.6;
 }
 
