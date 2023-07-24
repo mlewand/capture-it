@@ -1,6 +1,7 @@
 :root {
 	--spacing-medium: 4px;
 	--spacing-large: calc(var(--spacing-medium) * 3);
+	--dark-blue: #0b64b3;
 	--blue: #0d85eb;
 	--grey: #888;
 	--red: #e00;
@@ -131,10 +132,36 @@ p {
 }
 
 #workspaces-bar {
+	margin-bottom: var(--spacing-large)
+}
+
+#workspaces-bar, #tabs {
 	display: flex;
 	flex-direction: row;
 	gap: var(--spacing-large);
-	margin-bottom: var(--spacing-large)
+}
+
+#tabs {
+	overflow-y: hidden;
+	overflow-x: auto;
+	padding: 2px;
+}
+
+#workspaces-bar {
+	width: 100%;
+	justify-content: space-between;
+}
+
+#add-workspace {
+	width: 28px;
+	margin-left: 14px;
+	background: var(--blue);
+	color: var(--white);
+	text-align: center;
+}
+
+#add-workspace:hover, #add-workspace:focus {
+	background: var(--dark-blue);
 }
 
 #workspaces-bar a {

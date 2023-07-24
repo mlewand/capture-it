@@ -14,6 +14,7 @@ import CommandSet from './Command/CommandSet';
 import Config from './Config';
 import type { WorkspaceInfo } from './Config';
 import { v4 as uuid4 } from 'uuid';
+import { cloneDeep } from 'lodash';
 
 import { getPages } from './Auth/Notion';
 
@@ -62,7 +63,9 @@ export default class CaptureIt {
 
 
 		ipcMain.handle( 'getConfig', async () => {
-			return this.config || null;
+			console.log(JSON.parse( JSON.stringify( this.config ) ));
+			return JSON.parse( JSON.stringify( this.config ) );
+			// return cloneDeep( this.config ) || null;
 		} );
 
 		await Promise.all( [

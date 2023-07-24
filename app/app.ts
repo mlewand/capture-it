@@ -166,7 +166,7 @@ function addListeners() {
 		submitNote( text, clickEvent.altKey && !clickEvent.shiftKey, clickEvent.altKey && clickEvent.shiftKey );
 	} );
 
-	document.getElementById( 'sign-in-link' )!.addEventListener( 'click', async () => {
+	document.getElementById( 'add-workspace' )!.addEventListener( 'click', async () => {
 		electronBridge.invoke( 'executeCommand', 'addNotionTarget' );
 	} );
 }
@@ -267,6 +267,8 @@ function initializeWorkspacesBar() {
 			electronBridge.invoke( 'executeCommand', 'setWorkspace', parseInt( workspaceKey ) );
 		}
 	} );
+
+	updateWorkspacesBar();
 }
 
 function updateWorkspacesBar() {
@@ -285,5 +287,5 @@ function updateWorkspacesBar() {
 		innerHTML += `<a href="#" data-workspace-key="${ index }" class="${ isActive ? 'active' : '' }">${ name }</a>`;
 	}
 
-	document.getElementById( 'workspaces-bar' )!.innerHTML = innerHTML;
+	document.getElementById( 'tabs' )!.innerHTML = innerHTML;
 }
