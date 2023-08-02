@@ -91,7 +91,7 @@ if ( location.search.length > 1 ) {
 
 function hideSpinner() {
 	document.getElementById( 'page-loader' ).classList.add( 'hidden' );
-	document.getElementById( 'app-new-target-tab' ).classList.remove( 'hidden' );
+	document.getElementById( 'main-tab' ).classList.remove( 'hidden' );
 }
 
 function applyState( state ) {
@@ -100,18 +100,12 @@ function applyState( state ) {
 	hideSpinner();
 	document.getElementById( 'targetName' ).value = state.name || '';
 
+	const mainTab = document.getElementById( 'main-tab' );
+
 	const pagePickerContainer = document.getElementById( 'page-picker-container' );
+	const isConfirmView = 'pages' in state;
 
-	if ( 'pages' in state ) {
-		document.getElementById( 'confirmation-save' ).classList.remove( 'hidden' );
-		document.getElementById( 'page-picker-container' ).classList.remove( 'hidden' );
-		document.getElementById( 'new-save' ).classList.add( 'hidden' );
-	} else {
-		document.getElementById( 'confirmation-save' ).classList.add( 'hidden' );
-		document.getElementById( 'page-picker-container' ).classList.add( 'hidden' );
-		document.getElementById( 'new-save' ).classList.remove( 'hidden' );
-
-	}
+	mainTab.dataset[ 'tabType' ] = isConfirmView ? 'confirm' : 'new';
 
 	if ( state.pages ) {
 		const sortedPages = state.pages.sort( ( a, b ) => {

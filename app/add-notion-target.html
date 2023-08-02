@@ -5,6 +5,7 @@
 		<meta charset="UTF-8">
 		<title>Capture It - Adding Notion target</title>
 		<link rel="stylesheet" href="./styles.css">
+		<link rel="stylesheet" href="./notion-authentication.css">
 		<link rel="stylesheet" href="../node_modules/css-loading-spinners/css-loading-spinners.css">
 	</head>
 
@@ -16,10 +17,13 @@
 			<p>Fetching authentication data…</p>
 		</div>
 
-		<section id="app-new-target-tab" class="new-notion-target hidden">
-			<h1>Confirm Notion target</h1>
+		<section id="main-tab" class="new-notion-target hidden" data-tab-type="new">
+			<h1>
+				<span class="new-tab-only">New Notion target</span>
+				<span class="confirm-tab-only">Confirm Notion target</span>
+			</h1>
 
-			<p>You're just one step away from adding the workspace!</p>
+			<p class="confirm-tab-only">You're just one step away from adding the workspace!</p>
 
 			<div>
 				<div>
@@ -31,25 +35,24 @@
 				</div>
 			</div>
 
-			<div id="page-picker-container" class="hidden">
+			<div id="page-picker-container" class="confirm-tab-only">
 				<p class="description">Select a database/page that you want to associate with your workspace. Currently only one entry per workspace is allowed.</p>
 				<!-- <div class="item">
 					<input type="radio" name="page_id" value="page-uid-value-abcd"> page name (type)
 				</div> -->
 			</div>
 
-			<div id="confirmation-save" class="hidden">
-				<button id="save-button">Save</button>
+			<div class="confirm-tab-only">
+				<p>
+					After clicking the link below you'll have to pick what database you want to add entries to with Capture It.<br>
+					For now Capture It supports only one database/page per target.
+				</p>
 			</div>
 
-			<div id="new-save">
-				<div>
-					<p>
-						After clicking the link below you'll have to pick what database you want to add entries to with Capture It.<br>
-						For now Capture It supports only one database/page per target.
-					</p>
-				</div>
-				<a href="#" id="sign-in-link">Sign in to Notion</a>
+			<div id="save-area">
+				<button id="save-button" class="new-tab-only">Save</button>
+
+				<a href="#" id="sign-in-link" class="confirm-tab-only">Sign in to Notion</a>
 			</div>
 		</section>
 		<script src="./add-notion-target.js"></script>
