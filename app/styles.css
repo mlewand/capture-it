@@ -1,6 +1,7 @@
 :root {
 	--spacing-medium: 4px;
 	--spacing-large: calc(var(--spacing-medium) * 3);
+	--spacing-extra-large: calc(var(--spacing-large) * 2);
 	--border-radius: 5px;
 	--dark-blue: #0b64b3;
 	--blue: #0d85eb;
@@ -131,6 +132,7 @@ p {
 	justify-content: space-between;
 }
 
+.add-workspace,
 #add-workspace {
 	width: 28px;
 	margin-left: 14px;
@@ -139,18 +141,37 @@ p {
 	text-align: center;
 }
 
-#add-workspace:hover, #add-workspace:focus {
+.add-workspace:hover,
+.add-workspace:focus,
+#add-workspace:hover,
+#add-workspace:focus {
 	background: var(--dark-blue);
 }
 
-#workspaces-bar a {
+#workspaces-bar a,
+.add-workspace {
 	outline: 2px solid var(--tab-text-color);
 	padding: 3px;
 	text-decoration: none;
 	color: var(--tab-text-color);
 }
 
+a.add-workspace {
+	background: var(--plain-white);
+}
+
+a.add-workspace:focus,
+a.add-workspace:hover
+{
+	color: var(--white-text);
+}
+
 #workspaces-bar a.active {
 	color: var(--white-text);
 	background-color: var(--tab-text-color);
+}
+
+.add-workspace-container {
+	margin-top: var(--spacing-extra-large);
+	text-align: center;
 }

@@ -166,9 +166,13 @@ function addListeners() {
 		submitNote( text, clickEvent.altKey && !clickEvent.shiftKey, clickEvent.altKey && clickEvent.shiftKey );
 	} );
 
-	document.getElementById( 'add-workspace' )!.addEventListener( 'click', async () => {
-		electronBridge.invoke( 'executeCommand', 'addNotionWorkspace' );
-	} );
+	const addWorkspaceButtons = document.querySelectorAll( '.add-workspace, #add-workspace' );
+
+	for ( const button of Array.from( addWorkspaceButtons ) ) {
+		button.addEventListener( 'click', async () => {
+			electronBridge.invoke( 'executeCommand', 'addNotionWorkspace' );
+		} );
+	}
 }
 
 function setupInitialFocus(): void {
