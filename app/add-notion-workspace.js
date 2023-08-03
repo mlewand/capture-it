@@ -86,7 +86,23 @@ if ( location.search.length > 1 ) {
 
 	if ( parsed.has( 'synchronous' ) && parsed.get( 'synchronous' ) == '1' ) {
 		hideSpinner();
+		ensureFocus();
 	}
+}
+
+/*
+ * Function to set focus on the main input field if no explicit focus is set.
+ */
+function ensureFocus() {
+	const titleInput = document.getElementById( 'targetName' );
+
+	if ( document.activeElement === document.body && isVisible( titleInput ) ) {
+		titleInput.focus();
+	}
+}
+
+function isVisible( element ) {
+	return element.offsetParent !== null;
 }
 
 function hideSpinner() {
@@ -98,6 +114,7 @@ function applyState( state ) {
 	window.confirmationState = state;
 	console.log(state);
 	hideSpinner();
+	ensureFocus();
 	document.getElementById( 'targetName' ).value = state.name || '';
 
 	const mainTab = document.getElementById( 'main-tab' );
