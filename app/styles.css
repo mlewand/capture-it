@@ -1,6 +1,7 @@
 :root {
 	--spacing-medium: 4px;
 	--spacing-large: calc(var(--spacing-medium) * 3);
+	--border-radius: 5px;
 	--dark-blue: #0b64b3;
 	--blue: #0d85eb;
 	--grey: #888;
@@ -9,6 +10,7 @@
 	--black: #010101;
 	--light-black: #222222;
 	--white: #f1f1f1;
+	--plain-white: #fff;
 	--tab-text-color: var(--light-black);
 	--white-text: var(--white);
 }

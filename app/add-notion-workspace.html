@@ -23,36 +23,41 @@
 				<span class="confirm-tab-only">Confirm Notion workspace</span>
 			</h1>
 
-			<p class="confirm-tab-only">You're just one step away from adding the workspace!</p>
+			<div class="spacing-medium">
+				<p class="info no-margin-top confirm-tab-only">You're just one step away from adding a workspace! 🎉</p>
 
-			<div>
-				<div>
-					<label for="targetName">Workspace name:</label>
-					<input type="text" id="targetName">
+				<div class="form-section">
+					<div>
+						<label for="targetName">Workspace name:</label>
+						<input type="text" id="targetName">
+					</div>
+					<div class="description">
+						This is the text that will be displayed in the tab (in case there's more than one workspace tab).
+					</div>
 				</div>
-				<div class="description">
-					This is the text that will be displayed in the tab (in case there's more than one workspace tab).
+
+				<div id="page-picker-container" class="form-section confirm-tab-only">
+					<label>Select a database/page:</label>
+					<div class="description">Select a entity that you want to associate with your workspace. Currently only one entry per workspace is allowed.</div>
+					<!-- <div class="item">
+						<input type="radio" name="page_id" value="page-uid-value-abcd"> page name (type)
+					</div> -->
 				</div>
-			</div>
 
-			<div id="page-picker-container" class="confirm-tab-only">
-				<p class="description">Select a database/page that you want to associate with your workspace. Currently only one entry per workspace is allowed.</p>
-				<!-- <div class="item">
-					<input type="radio" name="page_id" value="page-uid-value-abcd"> page name (type)
-				</div> -->
-			</div>
+				<div class="new-tab-only">
+					<p class="no-margin-top">
+						💡 After clicking the link below you'll have to pick what database you want to add entries to with Capture It.<br>
+						For now Capture It supports only one database/page per workspace.
+					</p>
+				</div>
 
-			<div class="confirm-tab-only">
-				<p>
-					After clicking the link below you'll have to pick what database you want to add entries to with Capture It.<br>
-					For now Capture It supports only one database/page per workspace.
-				</p>
-			</div>
+				<div id="save-area-spacer"></div>
 
-			<div id="save-area">
-				<button id="save-button" class="new-tab-only">Save</button>
+				<div id="save-area">
+					<button id="save-button" class="confirm-tab-only">Save</button>
 
-				<a href="#" id="sign-in-link" class="confirm-tab-only">Sign in to Notion</a>
+					<a href="#" id="sign-in-link" class="new-tab-only">Sign in to Notion</a>
+				</div>
 			</div>
 		</section>
 		<script src="./add-notion-workspace.js"></script>
