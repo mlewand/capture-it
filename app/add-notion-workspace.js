@@ -1,5 +1,3 @@
-// A copy of new notion target - @todo: unify.
-
 // Alias for compatibility across the files.
 window.electronBridge = window.electron;
 
