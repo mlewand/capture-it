@@ -11,6 +11,10 @@ export function getTray( app: CaptureIt, rootPath: string ): Tray {
 	// Create context menu for the tray
 	const contextMenu = Menu.buildFromTemplate( [
 		{
+			label: 'Add Notion workspace',
+			click: () => app.commands.execute( 'addNotionWorkspace' )
+		},
+		{
 			label: 'Configuration',
 			click: () => app.commands.execute( 'openConfig' )
 		},
