@@ -150,7 +150,7 @@ p {
 
 #workspaces-bar a,
 .add-workspace {
-	outline: 2px solid var(--tab-text-color);
+	outline: 2px solid var(--light-black);
 	padding: 3px;
 	text-decoration: none;
 	color: var(--tab-text-color);
@@ -158,12 +158,14 @@ p {
 
 a.add-workspace {
 	background: var(--plain-white);
+	outline-color: var(--grey);
 }
 
 a.add-workspace:focus,
 a.add-workspace:hover
 {
 	color: var(--white-text);
+	outline-color: var(--light-black);
 }
 
 #workspaces-bar a.active {
