@@ -63,9 +63,7 @@ export default class CaptureIt {
 
 
 		ipcMain.handle( 'getConfig', async () => {
-			console.log(JSON.parse( JSON.stringify( this.config ) ));
-			return JSON.parse( JSON.stringify( this.config ) );
-			// return cloneDeep( this.config ) || null;
+			return this.config ? JSON.parse( JSON.stringify( this.config ) ) : null;
 		} );
 
 		await Promise.all( [

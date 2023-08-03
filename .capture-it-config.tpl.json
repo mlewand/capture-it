@@ -1,7 +1,7 @@
 {
 	"workspaces": [
 		{
-			"name": "?private",
+			"name": "private",
 			"pageId": "",
 			"dataBaseId": "",
 			"notionToken": "secret_abcd",
@@ -12,7 +12,7 @@
 			}
 		},
 		{
-			"name": "?office",
+			"name": "office",
 			"pageId": "",
 			"dataBaseId": "",
 			"notionToken": "secret_abcd",
