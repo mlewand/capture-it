@@ -167,7 +167,7 @@ function addListeners() {
 	} );
 
 	document.getElementById( 'add-workspace' )!.addEventListener( 'click', async () => {
-		electronBridge.invoke( 'executeCommand', 'addNotionTarget' );
+		electronBridge.invoke( 'executeCommand', 'addNotionWorkspace' );
 	} );
 }
 

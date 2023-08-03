@@ -38,7 +38,7 @@ function addListeners() {
 
 		const state = window.confirmationState;
 
-		electronBridge.invoke( 'executeCommand', 'addNotionTarget', {
+		electronBridge.invoke( 'executeCommand', 'addNotionWorkspace', {
 			name: targetNameInput.value,
 			notionToken: state.notionToken,
 			[ checkedPageRadio.dataset[ 'idProperty' ] ]: checkedPageRadio.value,
@@ -52,7 +52,7 @@ function addListeners() {
 			return;
 		}
 
-		electronBridge.invoke( 'executeCommand', 'addNotionTarget', { name: targetNameInput.value } );
+		electronBridge.invoke( 'executeCommand', 'addNotionWorkspace', { name: targetNameInput.value } );
 		window.close();
 	} );
 

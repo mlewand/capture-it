@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>Capture It - Adding Notion target</title>
+		<title>Capture It - Adding Notion workspace</title>
 		<link rel="stylesheet" href="./styles.css">
 		<link rel="stylesheet" href="./notion-authentication.css">
 		<link rel="stylesheet" href="../node_modules/css-loading-spinners/css-loading-spinners.css">
@@ -19,19 +19,19 @@
 
 		<section id="main-tab" class="new-notion-target hidden" data-tab-type="new">
 			<h1>
-				<span class="new-tab-only">New Notion target</span>
-				<span class="confirm-tab-only">Confirm Notion target</span>
+				<span class="new-tab-only">New Notion workspace</span>
+				<span class="confirm-tab-only">Confirm Notion workspace</span>
 			</h1>
 
 			<p class="confirm-tab-only">You're just one step away from adding the workspace!</p>
 
 			<div>
 				<div>
-					<label for="targetName">Target name:</label>
+					<label for="targetName">Workspace name:</label>
 					<input type="text" id="targetName">
 				</div>
 				<div class="description">
-					This is the text that will be displayed in the tab (in case there's more than one target tab).
+					This is the text that will be displayed in the tab (in case there's more than one workspace tab).
 				</div>
 			</div>
 
@@ -45,7 +45,7 @@
 			<div class="confirm-tab-only">
 				<p>
 					After clicking the link below you'll have to pick what database you want to add entries to with Capture It.<br>
-					For now Capture It supports only one database/page per target.
+					For now Capture It supports only one database/page per workspace.
 				</p>
 			</div>
 
@@ -55,7 +55,7 @@
 				<a href="#" id="sign-in-link" class="confirm-tab-only">Sign in to Notion</a>
 			</div>
 		</section>
-		<script src="./add-notion-target.js"></script>
+		<script src="./add-notion-workspace.js"></script>
 	</body>
 
 </html>

@@ -1,6 +1,6 @@
 import Command from './Command';
 import type { CommandConstructorOptions } from './Command';
-import { unifyNotionPageId } from './AddNotionTarget';
+import { unifyNotionPageId } from './AddNotionWorkspace';
 
 import { escapeRegExp } from 'lodash';
 

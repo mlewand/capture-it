@@ -14,10 +14,10 @@ type PageInfoExtended = PageInfo & {
 	idPropertyName: 'dataBaseId' | 'pageId'
 };
 
-export default class AddNotionTargetCommand extends Command {
+export default class AddNotionWorkspaceCommand extends Command {
 	constructor( options: CommandConstructorOptions ) {
 
-		options.name = 'addNotionTarget';
+		options.name = 'addNotionWorkspace';
 
 		super( options );
 	}
@@ -25,9 +25,9 @@ export default class AddNotionTargetCommand extends Command {
 	// todo, should take an object with potential id
 	public async execute( targetInfo? : NotionTarget ): Promise<any> {
 		const name = targetInfo?.name || null;
-		console.log( `Command AddNotionTarget executed with targetName: ${name}` );
+		console.log( `Command AddNotionWorkspace executed with targetName: ${name}` );
 		if ( !name ) {
-			openNewWindow( this.app, 'add-notion-target.html', { synchronous: '1' } );
+			openNewWindow( this.app, 'add-notion-workspace.html', { synchronous: '1' } );
 		} else if ( name && targetInfo?.notionToken && ( targetInfo?.pageId || targetInfo?.dataBaseId ) ) {
 			// All the necessary info is given, we can add it.
 			const newWorkspace: WorkspaceInfo = {
@@ -49,7 +49,7 @@ export default class AddNotionTargetCommand extends Command {
 					notionToken: token
 				};
 
-				confirmWnd = await openNewWindow( this.app, 'add-notion-target.html' );
+				confirmWnd = await openNewWindow( this.app, 'add-notion-workspace.html' );
 
 				const onConfirmWindowLoaded = new Promise( ( resolve, reject ) => {
 					confirmWnd!.webContents.on( 'did-finish-load', resolve );
@@ -81,7 +81,7 @@ export default class AddNotionTargetCommand extends Command {
 					confirmWnd.destroy();
 				}
 
-				const fallbackWindow = await openNewWindow( this.app, 'add-notion-target.html', {
+				const fallbackWindow = await openNewWindow( this.app, 'add-notion-workspace.html', {
 					// Provide only name without token / pages so that it always fallbacks to the first step.
 					state: JSON.stringify( { name } )
 				} );

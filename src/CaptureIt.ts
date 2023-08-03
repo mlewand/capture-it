@@ -9,7 +9,7 @@ import OpenNotionPageCommand from './Command/OpenNotionPage';
 import OpenBrowserCommand from './Command/OpenBrowser';
 import SetWorkspaceCommand from './Command/SetWorkspace';
 import CaptureItemCommand from './Command/CaptureItem';
-import AddNotionTargetCommand from './Command/AddNotionTarget';
+import AddNotionWorkspaceCommand from './Command/AddNotionWorkspace';
 import CommandSet from './Command/CommandSet';
 import Config from './Config';
 import type { WorkspaceInfo } from './Config';
@@ -239,7 +239,7 @@ export default class CaptureIt {
 		this.commands.add( new OpenBrowserCommand( { app: this } ) );
 		this.commands.add( new SetWorkspaceCommand( { app: this } ) );
 		this.commands.add( new CaptureItemCommand( { app: this } ) );
-		this.commands.add( new AddNotionTargetCommand( { app: this } ) );
+		this.commands.add( new AddNotionWorkspaceCommand( { app: this } ) );
 
 		this.addPromisedIpcHandler( 'executeCommandAsync', ( event: any, commandName: string, ...args: Array<any> ) =>{
 			return this.commands.execute( commandName, ...args );
