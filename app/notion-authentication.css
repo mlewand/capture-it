@@ -105,7 +105,17 @@ label:not([for^="page_value"]) {
 	margin-right: var(--spacing-large);
 	background: var(--green);
 	border-radius: var(--border-radius);
+	border: 0px;
 	color: var(--white);
+}
+
+#save-area button:hover {
+	cursor: pointer;
+}
+
+#save-area button:hover,
+#save-area button:focus {
+	background: var(--dark-green);
 }
 
 #save-area-spacer {
