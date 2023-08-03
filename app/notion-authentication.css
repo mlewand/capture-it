@@ -59,6 +59,11 @@ h1 {
 	margin: 0;
 }
 
+#main-tab input[type=text] {
+	font-size: 18px;
+	padding: var(--spacing-medium);
+}
+
 .spacing-medium {
 	padding: var(--spacing-medium);
 }
@@ -103,9 +108,6 @@ label:not([for^="page_value"]) {
 	color: var(--white);
 }
 
-/* html {
-	padding-bottom: calc(var(--save-area-height) * 5);
-} */
 #save-area-spacer {
 	height: calc(var(--save-area-height) * 1.5);
 	visibility: hidden;

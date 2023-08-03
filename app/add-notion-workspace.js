@@ -18,7 +18,7 @@ electronBridge.receive( 'confirmationState', applyState );
 function addListeners() {
 	const targetNameInput = document.getElementById( 'targetName' );
 	const saveButton = document.getElementById( 'save-button' );
-	const signInLink = document.getElementById( 'sign-in-link' );
+	const signInLink = document.getElementById( 'sign-in-button' );
 
 	targetNameInput.addEventListener( 'input', () => checkValidity() );
 	targetNameInput.addEventListener( 'change', () => checkValidity() );
