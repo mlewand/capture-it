@@ -46,10 +46,22 @@
 			<p>The config should be saved as <code>.capture-it-config.json</code> file in user home directory.</p>
 
 			<p>
-				<button id="create-missing-config-button">Click here to create the config</button>
+				<button class="create-missing-config-button">Click here to create the config</button>
 			</p>
 
 			<p>Then please, reset the app using ctrl/cmd+q or Quit option in system tray icon.</p>
+		</section>
+
+		<section id="no-workspaces-tab" style="display: none;">
+			<h1>Let's add the first workspace 👶</h1>
+
+			<p>Congratulations, you have your config! What you need to start working is a Notion database or page to add entries to.</p>
+
+			<section class="add-workspace-container">
+				Use a button below to grant Capture It permission to database(s) of your choice: <a href="#" class="add-workspace" title="Add new Notion workspace">➕ Add a new workspace</a>
+			</section>
+
+			<p>Alternatively if you're a super pro you can always add them manually to <a href="#" class="create-missing-config-button">config file</a>.</p>
 		</section>
 
 		<script src="../dist/app/app.js"></script>

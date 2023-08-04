@@ -8,7 +8,7 @@ export default class AppMainWindow extends BrowserWindow {
 
 	constructor( options: AppMainWindowOptions, productionBuild: boolean ) {
 		super( Object.assign( {}, {
-			width: 800,
+			width: 820,
 			height: 270,
 			webPreferences: {
 				preload: path.join( options.rootPath, 'src', 'preload.js' ),

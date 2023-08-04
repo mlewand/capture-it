@@ -32,12 +32,15 @@ electronBridge.receive( 'alert', ( message: string ) => {
 	alert( message );
 } );
 
-electronBridge.receive( 'configChanged', ( newConfig: any ) => {
+electronBridge.receive( 'configChanged', handleConfigChange );
+
+function handleConfigChange( newConfig: any) {
 	console.log( 'configChanged', newConfig );
 	config = newConfig;
 
 	updateWorkspacesBar();
-} );
+	updateVisibleTab();
+}
 
 electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number ) => {
 	activeWorkspaceIndex = index;
@@ -54,32 +57,55 @@ function getActiveWorkspace(): WorkspaceInfo | undefined {
 	}
 }
 
+/**
+ *
+ * @returns {string|null} Explanation message or null if default view is visible.
+ */
+function updateVisibleTab(): string | null {
+	let containerIdToBeShown: string = 'app-tab';
+	let retValue: string | null = null;
+
+	if ( !config ) {
+		retValue = 'The .capture-it-config.json configuration file is missing or invalid.';
+		containerIdToBeShown = 'config-missing-tab';
+	} else if ( !hasWorkspaces( config ) ) {
+		retValue = 'No workspaces defined.';
+		containerIdToBeShown = 'no-workspaces-tab';
+	}
+
+	for ( const tabSection of Array.from( document.querySelectorAll( 'body > section[id$="-tab"]' ) ) ) {
+		console.log(tabSection.id, containerIdToBeShown);
+		( tabSection as HTMLElement ).style.display = tabSection.id == containerIdToBeShown ? 'block' : 'none';
+	}
+
+	if (retValue) {
+		console.error( 'updateVisibleTab(): ' + retValue );
+	}
+
+	return retValue || null;
+
+	function hasWorkspaces( cfg: any ) {
+		return cfg.workspaces && cfg.workspaces.length;
+	}
+}
+
 async function asyncInitialization(): Promise<boolean> {
 	let containerToBeShown: HTMLElement | null = document.getElementById('app-tab');
 	let errorContent: string | null = null;
 
 	config = (await electronBridge.invoke('getConfig')) as any;
 
-	if ( config ) {
+	if ( updateVisibleTab() === null ) {
 		window.requestIdleCallback( () => {
 			setupInitialFocus();
 			initializeProTips();
 			initializeWorkspacesBar();
 		} );
-	} else {
-		errorContent = 'The .capture-it-config.json configuration file is missing or invalid.';
-		containerToBeShown = document.getElementById('config-missing-tab');
+
+		return true;
 	}
 
-	if (containerToBeShown) {
-		containerToBeShown.style.display = 'block';
-	}
-
-	if (errorContent) {
-		console.error(errorContent);
-	}
-
-	return errorContent === null;
+	return false;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -119,9 +145,12 @@ function addListeners() {
 		}
 	} );
 
-	document.getElementById( 'create-missing-config-button' )?.addEventListener( 'click', () => {
-		electronBridge.invoke( 'executeCommand', 'openConfig' );
-	} );
+	for ( const button of Array.from( document.querySelectorAll( '.create-missing-config-button' ) ) ) {
+		button.addEventListener( 'click', event => {
+			electronBridge.invoke( 'executeCommand', 'openConfig' );
+			event.preventDefault();
+		} );
+	}
 
 	document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
 		const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
@@ -259,10 +288,6 @@ function addNotification( text: string, type: 'success' | 'error' | 'loading', e
 function initializeWorkspacesBar() {
 	const workspacesBar = document.getElementById( 'workspaces-bar' )!;
 
-	const cssClassMethod = config!.workspaces.length <= 1 ? 'add' : 'remove';
-	document.getElementById('workspaces-bar')!.classList[ cssClassMethod ]('hidden');
-
-
 	workspacesBar.addEventListener( 'click', event => {
 		const target = event.target as HTMLElement;
 		const workspaceKey = target.dataset.workspaceKey;
@@ -280,8 +305,11 @@ function updateWorkspacesBar() {
 	const workspaces = config!.workspaces;
 	let innerHTML = '';
 
-	const cssClassMethod = workspaces.length <= 1 ? 'add' : 'remove';
-	document.getElementById('workspaces-bar')!.classList[ cssClassMethod ]('hidden');
+	const appTab = document.getElementById( 'app-tab' )!;
+
+	appTab.classList.toggle( 'has-workspaces', workspaces.length > 0 );
+	appTab.classList.toggle( 'has-one-workspace', workspaces.length == 1 );
+	appTab.classList.toggle( 'has-many-workspaces', workspaces.length > 1 );
 
 	for (let index = 0; index < workspaces.length; index++) {
 		const curWorkspace = workspaces[ index ];

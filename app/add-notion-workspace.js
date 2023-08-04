@@ -66,10 +66,6 @@ function addListeners() {
 			return 'Target name can\'t be empty.';
 		}
 
-		if ( targetName == 'test' ) {
-			return 'Target name can\'t be "test".';
-		}
-
 		// Empty string means no issues are present.
 		return '';
 	}
