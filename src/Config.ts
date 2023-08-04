@@ -2,6 +2,7 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { promises as fs, watch as watchFs } from 'fs';
 import { debounce } from 'lodash';
+import { parse as JSONParse } from 'comment-json';
 
 import { EventEmitter } from 'events';
 
@@ -73,7 +74,7 @@ export default class Config extends EventEmitter implements ConfigFileInterface 
 			throw new Error( 'Configuration file not found in ' + configPath );
 		}
 
-		const parsedData = JSON.parse( await fs.readFile(  configPath, 'utf-8' ) );
+		const parsedData = JSONParse( await fs.readFile(  configPath, 'utf-8' ) ) as any;
 
 		if ( !parsedData.workspaces ) {
 			throw new Error( 'Configuration file is missing workspaces' );

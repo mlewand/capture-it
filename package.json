@@ -28,6 +28,7 @@
   "author": "Marek Lewandowski",
   "license": "UNLICENSED",
   "dependencies": {
+    "comment-json": "^4.2.3",
     "css-loading-spinners": "^0.2.0",
     "dotenv": "^16.3.1",
     "electron-store": "^8.1.0",

@@ -3,6 +3,7 @@ import * as path from 'path';
 import { homedir } from 'os';
 import { promises as fs, readFileSync, existsSync } from 'fs';
 import type CaptureIt from './CaptureIt';
+import { parse as JSONParse } from 'comment-json';
 
 export function getTray( app: CaptureIt, rootPath: string ): Tray {
 	let tray = new Tray( path.join( rootPath, 'assets', 'icon.png' ) );
@@ -43,7 +44,7 @@ export function getConfig( rootPath: string ) : any {
 		return null;
 	}
 
-	return JSON.parse( readFileSync( configPath, 'utf-8' ) );
+	return JSONParse( readFileSync( configPath, 'utf-8' ) );
 }
 
 export function getConfigPath( rootPath: string ) : string {

@@ -1,5 +1,28 @@
 {
-	"workspaces": [],
+	// ⚠ Be careful, even though this file supports comments, these comments will be removed any time you change the configuration in app.
+	// In other words don't store anything important as a comment.
+	"workspaces": [
+		/*
+		Eventually this array will contain objects describing workspaces.
+
+		You can add them from app using the ➕ button.
+
+		Alternatively you can add them manually, they need to follow this syntax:
+
+		{
+			"name": "Tab name",
+			"dataBaseId": "123456780901afffeeeaafff", // You should use **either** dataBaseId or pageId.
+			"pageId": "123456780901afffeeeaafff", // You should use **either** dataBaseId or pageId.
+			"notionToken": "secret_hash", // Notion API key.
+			"tags": { // Optional. You can use tags to quickly add tags to your entries.
+				"@stand": "standup",
+				"@standup": "standup",
+				"@a11y": "accessibility",
+				"@captureit": "project:capture-it"
+			}
+		},
+		*/
+	],
 	"invocationHotKey": "CommandOrControl+Shift+M",
 	"forceOpenLinksInNotionApp": false
 }
