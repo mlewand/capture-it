@@ -40,6 +40,8 @@ function handleConfigChange( newConfig: any) {
 
 	updateWorkspacesBar();
 	updateVisibleTab();
+	// This change can cause a different tab to become visible, so focus needs to follow.
+	ensureReasonableFocus();
 }
 
 electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number ) => {
@@ -48,7 +50,7 @@ electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number ) => {
 } );
 
 electronBridge.receive('globalHotkeyFocus', () => {
-	setupInitialFocus();
+	ensureReasonableFocus();
 } );
 
 function getActiveWorkspace(): WorkspaceInfo | undefined {
@@ -97,7 +99,7 @@ async function asyncInitialization(): Promise<boolean> {
 
 	if ( updateVisibleTab() === null ) {
 		window.requestIdleCallback( () => {
-			setupInitialFocus();
+			ensureReasonableFocus();
 			initializeProTips();
 			initializeWorkspacesBar();
 		} );
@@ -117,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 	console.log('initialization went fine');
 
-	setupInitialFocus();
+	ensureReasonableFocus();
 } );
 
 function addListeners() {
@@ -204,11 +206,18 @@ function addListeners() {
 	}
 }
 
-function setupInitialFocus(): void {
-	const textInput = document.getElementById('textInput');
+function ensureReasonableFocus(): void {
+	if ( document.activeElement !== document.body ) {
+		// This has to be set only if there's no good focus.
+		const selectors = [ '#textInput', '#config-missing-tab .create-missing-config-button', '#no-workspaces-tab .add-workspace' ];
+		const focusCandidates = document.querySelectorAll( selectors.join( ', ' ) ) as NodeListOf<HTMLElement>;
 
-	if (textInput) {
-		(textInput as HTMLInputElement).focus();
+		for (const focusCandidate of focusCandidates) {
+			if ( focusCandidate.offsetParent ) {
+				focusCandidate.focus();
+				break;
+			}
+		}
 	}
 }
 
