@@ -20,7 +20,6 @@ if ( !process.env.NOTION_AUTH_CLIENT_ID ) {
 }
 
 const clientId = process.env.NOTION_AUTH_CLIENT_ID;
-const clientSecret = process.env.NOTION_AUTH_CLIENT_SECRET;
 const redirectUri = process.env.NOTION_AUTH_REDIRECT_URL;
 
 export async function authenticate( parentWindow?: BrowserWindowType ) {
@@ -93,20 +92,17 @@ export async function exchangeCodeForToken( code : string ) {
 		redirect_uri: redirectUri
 	};
 
-	const clientIdAndSecretEncoded = Buffer.from( `${clientId}:${clientSecret}` ).toString( 'base64' );
 	const requestOptions = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Basic "${ clientIdAndSecretEncoded }"`
 		},
 		body: JSON.stringify( body )
 	};
 
-	console.log('sending POST', requestOptions );
-
-	const response = await fetch( 'https://api.notion.com/v1/oauth/token', requestOptions );
-
+	// Using a proxy to avoid exposing NOTION_AUTH_CLIENT_SECRET which would otherwise needed to be shared
+	// in client side code.
+	const response = await fetch( 'https://capture-it-notion-token.smietniczek.workers.dev/', requestOptions );
 	const data = await response.json();
 
 	if ( data.error ) {
