@@ -94,24 +94,18 @@ export async function exchangeCodeForToken( code : string ) {
 	};
 
 	const clientIdAndSecretEncoded = Buffer.from( `${clientId}:${clientSecret}` ).toString( 'base64' );
-
-	console.log('sending POST', {
+	const requestOptions = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': `Basic "${ clientIdAndSecretEncoded }"`
 		},
 		body: JSON.stringify( body )
-	} );
+	};
 
-	const response = await fetch( 'https://api.notion.com/v1/oauth/token', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Basic "${ clientIdAndSecretEncoded }"`
-		},
-		body: JSON.stringify( body )
-	} );
+	console.log('sending POST', requestOptions );
+
+	const response = await fetch( 'https://api.notion.com/v1/oauth/token', requestOptions );
 
 	const data = await response.json();
 
