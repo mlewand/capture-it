@@ -7,8 +7,8 @@
     "start": "tsc && electron .",
     "start:dev": "tsc && cross-env NODE_ENV=development electron .",
     "build": "tsc",
-    "pack": "npm run build && cross-env NODE_ENV=development electron-builder --dir",
-    "dist": "npm run build && cross-env NODE_ENV=development electron-builder",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
