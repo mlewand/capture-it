@@ -1,6 +1,6 @@
 {
   "name": "capture-it",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple app to instantly add notes to your todo list.",
   "main": "dist/src/main.js",
   "scripts": {

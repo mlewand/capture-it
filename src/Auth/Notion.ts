@@ -15,13 +15,9 @@ export interface PageInfo {
 
 const store = new Store();
 
-if ( !process.env.NOTION_AUTH_CLIENT_ID ) {
-	throw new Error( 'NOTION_AUTH_CLIENT_ID not set - you\'re probably missing .env file.' );
-}
-
-const clientId = process.env.NOTION_AUTH_CLIENT_ID;
-const clientSecret = process.env.NOTION_AUTH_CLIENT_SECRET;
-const redirectUri = process.env.NOTION_AUTH_REDIRECT_URL;
+const clientId = '1e8d4f0b-9ac2-408d-b815-9da5ca359360';
+const captureItRedirectLocation = 'https://capture-it.org/';
+const redirectUri = `${ captureItRedirectLocation }?oauth`;
 
 export async function authenticate( parentWindow?: BrowserWindowType ) {
 	// Generate the URL for the OAuth2 flow
@@ -47,9 +43,8 @@ export async function authenticate( parentWindow?: BrowserWindowType ) {
 	authWindow.show();
 
 	const filter = {
-		// urls: [ `${redirectUri}*` ]
-		// @todo: change!! @todo: change!! @todo: change!! @todo: change!! @todo: change!! @todo: change!! @todo: change!!
-		urls: [ `https://capture-it.org/*` ]
+		// Eventually the filter could be more specific but it will do for now.
+		urls: [ captureItRedirectLocation + '*' ]
 	};
 	const session = authWindow.webContents.session;
 	const responseDetails = await new Promise( ( resolve, reject ) => {
@@ -65,7 +60,6 @@ export async function authenticate( parentWindow?: BrowserWindowType ) {
 	const url = (responseDetails as any).url;
 
 	console.log( 'details retrieved', responseDetails );
-
 
 	const urlParts = new URL( url );
 	const code = urlParts.searchParams.get( 'code' );
@@ -93,26 +87,17 @@ export async function exchangeCodeForToken( code : string ) {
 		redirect_uri: redirectUri
 	};
 
-	const clientIdAndSecretEncoded = Buffer.from( `${clientId}:${clientSecret}` ).toString( 'base64' );
-
-	console.log('sending POST', {
+	const requestOptions = {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Basic "${ clientIdAndSecretEncoded }"`
 		},
 		body: JSON.stringify( body )
-	} );
+	};
 
-	const response = await fetch( 'https://api.notion.com/v1/oauth/token', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Basic "${ clientIdAndSecretEncoded }"`
-		},
-		body: JSON.stringify( body )
-	} );
-
+	// Using a proxy to avoid exposing NOTION_AUTH_CLIENT_SECRET which would otherwise needed to be shared
+	// in client side code.
+	const response = await fetch( 'https://capture-it-notion-token.smietniczek.workers.dev/', requestOptions );
 	const data = await response.json();
 
 	if ( data.error ) {
