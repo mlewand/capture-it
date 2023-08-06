@@ -19,6 +19,7 @@ import { cloneDeep } from 'lodash';
 import { getPages } from './Auth/Notion';
 
 import { authenticate, exchangeCodeForToken } from './Auth/Notion';
+import { electron } from 'process';
 
 export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
 
@@ -89,6 +90,11 @@ export default class CaptureIt {
 				this.setActiveWorkspace( 0 );
 
 				this.config!.on( 'changed', this._handleConfigChange.bind( this ) );
+				this.mainWindow.on( 'show', () => {
+					if ( process.platform === 'darwin' ) {
+						electronApp.dock.show();
+					}
+				} );
 			} );
 	}
 
@@ -219,6 +225,8 @@ export default class CaptureIt {
 			electronApp.on( 'window-all-closed', () => {
 				if ( process.platform !== 'darwin' ) {
 					electronApp.quit();
+				} else {
+					electronApp.dock.hide();
 				}
 			} );
 
