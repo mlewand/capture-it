@@ -88,11 +88,7 @@ export default class CaptureIt {
 				this.send( 'configChanged', this.config );
 				this.setActiveWorkspace( 0 );
 
-				this.config!.on( 'changed', () => {
-					console.log( '--------------- config changed---------------' );
-					// Poor man's solution to sanitize object of unserialable data 🙈
-					this.send( 'configChanged', JSON.parse( JSON.stringify( this.config ) ) );
-				} );
+				this.config!.on( 'changed', this._handleConfigChange.bind( this ) );
 			} );
 	}
 
@@ -107,6 +103,11 @@ export default class CaptureIt {
 			} else if ( index < 0 ) {
 				index = workspaces.length - 1;
 			}
+		}
+
+		if ( index === -1 ) {
+			// No handling for this so far.
+			return;
 		}
 
 		if ( currentIndex == index ) {
@@ -258,7 +259,23 @@ export default class CaptureIt {
 
 	}
 
-	_addTrayItem() : void {
+	private _handleConfigChange() {
+		console.log( '--------------- config changed---------------' );
+		// Poor man's solution to sanitize object of unserialable data 🙈
+		this.send( 'configChanged', JSON.parse( JSON.stringify( this.config ) ) );
+
+		// Active workspace object needs to be changed, because it has a reference to workspace object from previous config state.
+		// However, it's possible that the active workspace got changed, like its tags mapping, etc. So it has to be reloaded.
+		const workspaces = this.config!.workspaces;
+		const firstWorkspaceIndex = workspaces.length ? 0 : -1;
+		const matchedWorkspaceIndex = workspaces.findIndex( ( workspace : WorkspaceInfo ) => {
+			return workspace.name === this.activeWorkspace?.name;
+		} );
+
+		this.setActiveWorkspace( matchedWorkspaceIndex !== -1 ? matchedWorkspaceIndex : firstWorkspaceIndex );
+	}
+
+	private _addTrayItem() : void {
 		getTray( this, this.rootPath );
 	}
 

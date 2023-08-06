@@ -13,6 +13,9 @@ export interface WorkspaceInfo {
 	notionToken: string;
 	tagFieldName?: string;
 	tags?: { [key: string]: string };
+	default?: {
+		tags?: string[];
+	};
 }
 
 export interface ConfigFileInterface {

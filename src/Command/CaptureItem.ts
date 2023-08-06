@@ -32,8 +32,8 @@ export default class CaptureItemCommand extends Command {
 		console.log('found tags: ', Array.from( tags ) );
 
 		const insertPromise = activeWorkspace.dataBaseId ?
-			appendPageToDatabase( sanitizedText, activeWorkspace, tags)
-			: appendParagraphToNotionPage(pageId!, notionToken, sanitizedText, tags);
+			appendPageToDatabase( sanitizedText, activeWorkspace, tags )
+			: appendParagraphToNotionPage( sanitizedText, activeWorkspace );
 
 
 		const ret = ( await insertPromise ) as any;
@@ -68,13 +68,13 @@ function extractTags( noteText: string, tagsMapping?: { [ key: string ]: string 
 	return { sanitizedText, tags };
 }
 
-function appendParagraphToNotionPage(pageId: string, notionToken: string, paragraphText: string, tags: Set<string> ): Promise<void> {
-	const url = `https://api.notion.com/v1/blocks/${pageId}/children`;
+function appendParagraphToNotionPage( paragraphText: string, workspace: WorkspaceInfo ): Promise<void> {
+	const url = `https://api.notion.com/v1/blocks/${ workspace.pageId }/children`;
 	const requestOptions: RequestInit = {
 		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${notionToken}`,
+			'Authorization': `Bearer ${ workspace.notionToken }`,
 			'Notion-Version': '2021-05-13'
 		},
 		body: JSON.stringify({
@@ -134,6 +134,12 @@ async function appendPageToDatabase( pageText: string, workspace: WorkspaceInfo,
 			}
 		}
 	};
+
+	if ( workspace.default && workspace.default.tags ) {
+		for (const defaultTag of workspace.default.tags) {
+			tags.add( defaultTag );
+		}
+	}
 
 	if ( tags.size > 0 ) {
 		( responseBody.properties as any )[ workspace.tagFieldName || 'Tags' ] = {
