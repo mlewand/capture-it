@@ -207,7 +207,7 @@ function addListeners() {
 }
 
 function ensureReasonableFocus(): void {
-	if ( document.activeElement !== document.body ) {
+	if ( document.activeElement === document.body ) {
 		// This has to be set only if there's no good focus.
 		const selectors = [ '#textInput', '#config-missing-tab .create-missing-config-button', '#no-workspaces-tab .add-workspace' ];
 		const focusCandidates = document.querySelectorAll( selectors.join( ', ' ) ) as NodeListOf<HTMLElement>;

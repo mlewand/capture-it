@@ -11,6 +11,7 @@
 
 		{
 			"name": "Tab name",
+			// "tagFieldName": "Flags", // It's assumed that Notion property is called "Tags" but you can customize it.
 			"dataBaseId": "123456780901afffeeeaafff", // You should use **either** dataBaseId or pageId.
 			"pageId": "123456780901afffeeeaafff", // You should use **either** dataBaseId or pageId.
 			"notionToken": "secret_hash", // Notion API key.

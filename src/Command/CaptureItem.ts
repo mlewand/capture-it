@@ -1,6 +1,7 @@
 import Command from './Command';
 import type { CommandConstructorOptions } from './Command';
 import { unifyNotionPageId } from './AddNotionWorkspace';
+import { WorkspaceInfo } from '../Config';
 
 import { escapeRegExp } from 'lodash';
 
@@ -19,7 +20,7 @@ export default class CaptureItemCommand extends Command {
 			throw new Error( 'Configuration not loaded or no active workspace is set' );
 		}
 
-		const { pageId, dataBaseId, notionToken } = activeWorkspace;
+		const { pageId, notionToken } = activeWorkspace;
 
 		if ( noteText.trim() === '' ) {
 			throw new Error( "Can't send an empty item." );
@@ -30,8 +31,9 @@ export default class CaptureItemCommand extends Command {
 		const { sanitizedText, tags } = extractTags( noteText, tagsMapping );
 		console.log('found tags: ', Array.from( tags ) );
 
-		const insertPromise = dataBaseId ? appendPageToDatabase(dataBaseId, notionToken, sanitizedText, tags)
-			: appendParagraphToNotionPage(pageId!, notionToken, sanitizedText, tags);
+		const insertPromise = activeWorkspace.dataBaseId ?
+			appendPageToDatabase( sanitizedText, activeWorkspace, tags )
+			: appendParagraphToNotionPage( sanitizedText, activeWorkspace );
 
 
 		const ret = ( await insertPromise ) as any;
@@ -66,13 +68,13 @@ function extractTags( noteText: string, tagsMapping?: { [ key: string ]: string 
 	return { sanitizedText, tags };
 }
 
-function appendParagraphToNotionPage(pageId: string, notionToken: string, paragraphText: string, tags: Set<string> ): Promise<void> {
-	const url = `https://api.notion.com/v1/blocks/${pageId}/children`;
+function appendParagraphToNotionPage( paragraphText: string, workspace: WorkspaceInfo ): Promise<void> {
+	const url = `https://api.notion.com/v1/blocks/${ workspace.pageId }/children`;
 	const requestOptions: RequestInit = {
 		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${notionToken}`,
+			'Authorization': `Bearer ${ workspace.notionToken }`,
 			'Notion-Version': '2021-05-13'
 		},
 		body: JSON.stringify({
@@ -91,13 +93,7 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 						]
 					}
 				}
-			],
-			properties: {
-				Tags: {
-					type: 'multi_select',
-					multi_select: tagsToNotionFormat( tags )
-				}
-			}
+			]
 		})
 	};
 
@@ -121,35 +117,46 @@ function appendParagraphToNotionPage(pageId: string, notionToken: string, paragr
 		} );
 }
 
-async function appendPageToDatabase(databaseId: string, apiToken: string, pageText: string, tags: Set<string> ): Promise<void> {
-	const response = await fetch('https://api.notion.com/v1/pages', {
+async function appendPageToDatabase( pageText: string, workspace: WorkspaceInfo, tags: Set<string> ): Promise<void> {
+	const responseBody = {
+		parent: {
+			database_id: workspace.dataBaseId
+		},
+		properties: {
+			Name: {
+				title: [
+					{
+						text: {
+							content: pageText
+						}
+					}
+				]
+			}
+		}
+	};
+
+	if ( workspace.default && workspace.default.tags ) {
+		for (const defaultTag of workspace.default.tags) {
+			tags.add( defaultTag );
+		}
+	}
+
+	if ( tags.size > 0 ) {
+		( responseBody.properties as any )[ workspace.tagFieldName || 'Tags' ] = {
+			type: 'multi_select',
+			multi_select: tagsToNotionFormat( tags )
+		};
+	}
+
+	const response = await fetch( 'https://api.notion.com/v1/pages', {
 		method: 'POST',
 		headers: {
-			'Authorization': `Bearer ${apiToken}`,
+			'Authorization': `Bearer ${ workspace.notionToken }`,
 			'Content-Type': 'application/json',
 			'Notion-Version': '2021-05-13'
 		},
-		body: JSON.stringify({
-			parent: {
-				database_id: databaseId
-			},
-			properties: {
-				Name: {
-					title: [
-						{
-							text: {
-								content: pageText
-							}
-						}
-					]
-				},
-				Tags: {
-					type: 'multi_select',
-					multi_select: tagsToNotionFormat( tags )
-				}
-			}
-		})
-	});
+		body: JSON.stringify( responseBody )
+	} );
 
 	const data = await response.json();
 
