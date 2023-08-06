@@ -165,9 +165,6 @@ function addListeners() {
 		if ( event.key === 'Escape' && noModifierKeysPressed ) {
 			// Esc key should hide the window.
 			commandToCall = 'hide';
-		} else if ( event.key === 'q' && metaOrCtrlIsPressed ) {
-			// Ctrl + Q should quit the app.
-			commandToCall = 'quit';
 		} else if ( event.key == 'Tab' && event.ctrlKey ) {
 			commandToCall = 'setWorkspace';
 
