@@ -1,4 +1,4 @@
-import { Tray, Menu } from 'electron';
+import { Tray, Menu, nativeImage, NativeImage  } from 'electron';
 import * as path from 'path';
 import { homedir } from 'os';
 import { promises as fs, readFileSync, existsSync } from 'fs';
@@ -6,7 +6,17 @@ import type CaptureIt from './CaptureIt';
 import { parse as JSONParse } from 'comment-json';
 
 export function getTray( app: CaptureIt, rootPath: string ): Tray {
-	let tray = new Tray( path.join( rootPath, 'assets', 'icon.png' ) );
+
+	let image: string | NativeImage = path.join( rootPath, 'assets', 'icon.png' );
+
+	if ( process.platform === 'darwin' ) {
+		const nativeImg = nativeImage.createFromPath( path.join( rootPath, 'assets', 'macTrayIconTemplate.png' ) );
+		nativeImg.setTemplateImage( true );
+		image = nativeImg;
+	}
+
+	const tray = new Tray( image );
+
 	tray.setToolTip( 'Capture It' );
 
 	// Create context menu for the tray

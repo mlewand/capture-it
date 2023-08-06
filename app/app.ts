@@ -22,6 +22,8 @@ const electronBridge: ElectronBridge = ( window as any ).electron;
 let config: ConfigFileInterface | undefined;
 let activeWorkspaceIndex: number | undefined;
 
+const isOsX = navigator.userAgent.includes( 'OS X' );
+
 const configPromise = new Promise<ConfigFileInterface>( (resolve, reject) => {
 	electronBridge.invoke( 'getConfig' )
 		.then( resolve )
@@ -156,16 +158,14 @@ function addListeners() {
 
 	document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
 		const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
+		const metaOrCtrlIsPressed = isOsX ? event.metaKey : event.ctrlKey;
 		let commandToCall = null;
 		let extraArgs: any[] = [];
 
 		if ( event.key === 'Escape' && noModifierKeysPressed ) {
 			// Esc key should hide the window.
 			commandToCall = 'hide';
-		} else if ( event.key === 'q' && event.ctrlKey ) {
-			// Ctrl + Q should quit the app.
-			commandToCall = 'quit';
-		} else if ( event.key == 'Tab' && ( event.ctrlKey || event.metaKey ) ) {
+		} else if ( event.key == 'Tab' && event.ctrlKey ) {
 			commandToCall = 'setWorkspace';
 
 			extraArgs.push( event.shiftKey ? 'previous' : 'next' );
