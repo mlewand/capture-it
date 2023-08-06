@@ -4,3 +4,5 @@ node_modules
 yarn-error.log
 .capture-it-config.json
 .env
+*.DS_Store
+*.provisionprofile
