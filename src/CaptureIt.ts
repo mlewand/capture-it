@@ -209,6 +209,12 @@ export default class CaptureIt {
 			this.mainWindow = undefined;
 		});
 
+		mainWindow.on( 'hide', () => {
+			if ( process.platform === 'darwin' ) {
+				electronApp.dock.hide();
+			}
+		} );
+
 		return new Promise( ( resolve, reject ) => {
 			mainWindow.webContents.once( 'dom-ready', () => {
 				resolve( mainWindow );
