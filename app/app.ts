@@ -22,6 +22,8 @@ const electronBridge: ElectronBridge = ( window as any ).electron;
 let config: ConfigFileInterface | undefined;
 let activeWorkspaceIndex: number | undefined;
 
+const isOsX = navigator.userAgent.includes( 'OS X' );
+
 const configPromise = new Promise<ConfigFileInterface>( (resolve, reject) => {
 	electronBridge.invoke( 'getConfig' )
 		.then( resolve )
@@ -156,7 +158,7 @@ function addListeners() {
 
 	document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
 		const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
-		const metaOrCtrlIsPressed = process.platform === 'darwin' ? event.metaKey : event.ctrlKey;
+		const metaOrCtrlIsPressed = isOsX ? event.metaKey : event.ctrlKey;
 		let commandToCall = null;
 		let extraArgs: any[] = [];
 
