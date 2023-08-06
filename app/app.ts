@@ -156,16 +156,17 @@ function addListeners() {
 
 	document.addEventListener( 'keyup', ( event: KeyboardEvent ) => {
 		const noModifierKeysPressed = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey;
+		const metaOrCtrlIsPressed = process.platform === 'darwin' ? event.metaKey : event.ctrlKey;
 		let commandToCall = null;
 		let extraArgs: any[] = [];
 
 		if ( event.key === 'Escape' && noModifierKeysPressed ) {
 			// Esc key should hide the window.
 			commandToCall = 'hide';
-		} else if ( event.key === 'q' && event.ctrlKey ) {
+		} else if ( event.key === 'q' && metaOrCtrlIsPressed ) {
 			// Ctrl + Q should quit the app.
 			commandToCall = 'quit';
-		} else if ( event.key == 'Tab' && ( event.ctrlKey || event.metaKey ) ) {
+		} else if ( event.key == 'Tab' && event.ctrlKey ) {
 			commandToCall = 'setWorkspace';
 
 			extraArgs.push( event.shiftKey ? 'previous' : 'next' );
