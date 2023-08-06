@@ -290,6 +290,7 @@ export default class CaptureIt {
 	private _registerHotkeys( mainWindow: AppMainWindow ) {
 		// Global hotkeys.
 		const INVOCATION_HOT_KEY = ( this.config && this.config.invocationHotKey ) || 'CommandOrControl+Shift+M';
+		const QUIT_HOT_KEY = 'CommandOrControl+Q';
 
 		const ret = globalShortcut.register( INVOCATION_HOT_KEY, () => {
 			if ( mainWindow ) {
@@ -302,16 +303,28 @@ export default class CaptureIt {
 			}
 		} );
 
-		if ( ret ) {
-			electronApp.on( 'will-quit', () => {
+		const quitHotKey = globalShortcut.register( QUIT_HOT_KEY, () => {
+			if ( mainWindow && mainWindow.isFocused() ) {
+				this.commands.execute( 'quit' );
+			}
+		} );
+
+		electronApp.on( 'will-quit', () => {
+			if ( ret ) {
 				// Unregister the shortcut.
 				globalShortcut.unregister( INVOCATION_HOT_KEY );
+			}
 
-				// Unregister all shortcuts.
-				globalShortcut.unregisterAll();
-			} );
-		} else {
-			console.log( 'Global shortcut registration failed' );
+			if ( quitHotKey ) {
+				globalShortcut.unregister( QUIT_HOT_KEY );
+			}
+
+			// Unregister all shortcuts.
+			globalShortcut.unregisterAll();
+		} );
+
+		if ( !ret || !quitHotKey ) {
+			console.log( 'Some global shortcuts registration failed' );
 		}
 	}
 }
