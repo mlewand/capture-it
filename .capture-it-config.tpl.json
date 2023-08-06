@@ -15,6 +15,9 @@
 			"dataBaseId": "123456780901afffeeeaafff", // You should use **either** dataBaseId or pageId.
 			"pageId": "123456780901afffeeeaafff", // You should use **either** dataBaseId or pageId.
 			"notionToken": "secret_hash", // Notion API key.
+			// "default": {
+			// 	"tags": [ "work", "standup" ] // It's also possible to set default tags for any item added using this workspace.
+			// },
 			"tags": { // Optional. You can use tags to quickly add tags to your entries.
 				"@stand": "standup",
 				"@standup": "standup",
