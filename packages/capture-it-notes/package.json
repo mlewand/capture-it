@@ -1,0 +1,10 @@
+{
+  "name": "capture-it-notes",
+  "version": "0.0.2",
+  "main": "dist/index.js",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
+
