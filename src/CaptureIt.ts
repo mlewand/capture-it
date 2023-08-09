@@ -1,7 +1,7 @@
 import { app as electronApp, globalShortcut, ipcMain } from 'electron';
 import * as path from 'path';
 import AppMainWindow from './AppMainWindow';
-import { getTray } from './helpers';
+import { getTray, menuCustomizations } from './helpers';
 import QuitCommand from './Command/Quit';
 import HideCommand from './Command/Hide';
 import OpenConfigCommand from './Command/OpenConfig';
@@ -267,6 +267,7 @@ export default class CaptureIt {
 		const { mainWindow } = this;
 
 		if ( mainWindow ) {
+			menuCustomizations( this );
 			this._addTrayItem();
 			this._registerHotkeys( mainWindow );
 		}
