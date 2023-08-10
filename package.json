@@ -9,6 +9,7 @@
     "build": "tsc",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --x64 --arm64",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
