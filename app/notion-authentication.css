@@ -9,29 +9,6 @@ body, html { padding: 0; margin: 0; height: 100% }
 	opacity: 0.6;
 }
 
-.loader {
-	width: var(--notification-spinner-size);
-	height: var(--notification-spinner-size);
-	border: 4px solid var(--grey);
-	border-bottom-color: transparent;
-	border-radius: 50%;
-	display: inline-block;
-	box-sizing: border-box;
-	animation: rotation 1s linear infinite;
-	margin-right: var(--spacing-medium);
-}
-
-@keyframes rotation {
-	0% {
-		transform: rotate(0deg);
-	}
-
-	100% {
-		transform: rotate(360deg);
-	}
-}
-
-
 #page-loader {
 	text-align: center;
 }

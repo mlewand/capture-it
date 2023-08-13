@@ -165,6 +165,10 @@ function addListeners() {
 		if ( event.key === 'Escape' && noModifierKeysPressed ) {
 			// Esc key should hide the window.
 			commandToCall = 'hide';
+		} else if ( event.key === 'q' && event.ctrlKey && !isOsX ) {
+			// Ctrl + Q should quit the app.
+			// For macOS there's a separate handling, see https://github.com/mlewand/capture-it/issues/31.
+			commandToCall = 'quit';
 		} else if ( event.key == 'Tab' && event.ctrlKey ) {
 			commandToCall = 'setWorkspace';
 

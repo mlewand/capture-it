@@ -1,6 +1,6 @@
 {
   "name": "capture-it",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A simple app to instantly add notes to your todo list.",
   "main": "dist/src/main.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "build": "tsc",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --x64 --arm64",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {

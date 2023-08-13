@@ -4,6 +4,18 @@ A simple app to instantly add notes to your todo list.
 
 ![Capture It screenshot](assets/screenshot.png)
 
+Main goals of the app:
+
+* Lighting fast, above all - it has to pop up and disappear in a blink of an eye.
+* Easy - start with limited set of features.
+* Quick to develop - new ideas should be implemented fast and easy.
+
+It wasn't mean to be a state of art app, so the source code has shortcuts and is messy in many places.
+
+## Installation
+
+Just grab a suitable distribution from [the releases page](https://github.com/mlewand/capture-it/releases).
+
 ## Configuration
 
 During the first run you'll have to provide the configuration.
@@ -11,20 +23,6 @@ During the first run you'll have to provide the configuration.
 The app will ask you to do that and allow guide you though creating a file.
 
 In case it doesn't, just copy the [.capture-it-config.tpl.json](.capture-it-config.tpl.json) file to `~/.capture-it-config.json` and fill in the placeholder values.
-
-### `notionToken`
-
-You need to provide Notion's token first. Luckily, you need to create integration only once as it's much more complicated than it should be.
-
-1. Go to https://www.notion.so/my-integrations
-1. Click "New integration" button.
-1. Name it "Capture It (local)".
-1. Click "Submit".
-1. Click "Show" to see the token.
-1. Click "Copy" to copy it to your clipboard.
-1. Paste it as a `notionToken` property.
-
-From here be sure to add "Capture It (local)" integration to any database / Notion page you want the app to interact with.
 
 ## Dev
 
