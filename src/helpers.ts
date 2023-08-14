@@ -1,15 +1,21 @@
-import { Tray, Menu, MenuItem, nativeImage, NativeImage  } from 'electron';
+import { Tray, Menu, MenuItem, nativeImage, NativeImage, shell  } from 'electron';
 import * as path from 'path';
 import { homedir } from 'os';
 import { promises as fs, readFileSync, existsSync } from 'fs';
 import type CaptureIt from './CaptureIt';
 import { parse as JSONParse } from 'comment-json';
+import getDefaultMenu from 'electron-default-menu';
 
 export function menuCustomizations( app: CaptureIt ) {
 	if ( process.platform !== 'darwin' ) {
-		// This magic is only needed for macOS, see https://github.com/mlewand/capture-it/issues/31.
+		// This magic is only needed for macOS, see https://github.com/mlewand/capture-it/issues/31 and
+		// https://github.com/mlewand/capture-it/issues/37.
 		return;
 	}
+
+	const defaultTemplate = getDefaultMenu( app.electronApp!, shell );
+	// No need for view menu, there's the inspector, refresh command, etc.
+	const output = defaultTemplate.filter( item => item.label != 'View' );
 
 	const mainSubmenuTemplate = getCommonMenuTemplate( app );
 	const quitOption = mainSubmenuTemplate.find( item => item.label === 'Quit' ) as any | null;
@@ -18,14 +24,9 @@ export function menuCustomizations( app: CaptureIt ) {
 		quitOption.accelerator = 'CmdOrCtrl+Q';
 	}
 
-	const template = [
-		{
-			label: 'Capture It',
-			submenu: mainSubmenuTemplate
-		}
-	];
+	output[ 0 ].submenu = mainSubmenuTemplate;
 
-	Menu.setApplicationMenu( Menu.buildFromTemplate( template ) );
+	Menu.setApplicationMenu( Menu.buildFromTemplate( output ) );
 }
 
 export function getTray( app: CaptureIt, rootPath: string ): Tray {
