@@ -17,7 +17,10 @@
     "appId": "org.capture-it",
     "mac": {
       "category": "public.app-category.productivity",
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "type": "distribution"
@@ -51,6 +54,7 @@
     "comment-json": "^4.2.3",
     "css-loading-spinners": "^0.2.0",
     "dotenv": "^16.3.1",
+    "electron-default-menu": "^1.0.2",
     "electron-store": "^8.1.0",
     "lodash": "^4.17.21",
     "open": "8.1.0",
