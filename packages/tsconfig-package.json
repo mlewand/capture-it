@@ -7,9 +7,10 @@
 		  "outDir": "./dist",
 		  "strict": true,
 		  "esModuleInterop": true,
-		  "typeRoots": [
-			  "node_modules/@types",
-			  "typings"
-		  ]
+		//   likely not needed anymore:
+		//   "typeRoots": [
+		// 	  "node_modules/@types",
+		// 	  "typings"
+		//   ]
 	  }
   }

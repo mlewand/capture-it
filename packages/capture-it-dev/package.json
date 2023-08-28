@@ -1,13 +1,13 @@
 {
-  "name": "@mlewand/capture-it-notes",
+  "name": "@mlewand/capture-it-dev",
   "version": "0.0.2",
   "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --build"
   },
   "devDependencies": {
+    "@types/node": "^20.5.7",
     "typescript": "^5.1.6"
   }
 }
