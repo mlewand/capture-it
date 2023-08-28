@@ -16,6 +16,22 @@
 		"app/app.ts"
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"packages/**/tests/**",
+		"packages/**/dist/**"
 	],
+	"references": [
+		{
+			"path": "./packages/capture-it-cli"
+		},
+		{
+			"path": "./packages/capture-it-core"
+		},
+		// {
+		// 	"path": "./packages/capture-it-mobile-app"
+		// },
+		{
+			"path": "./packages/capture-it-notes"
+		},
+	]
 }
