@@ -1,7 +1,7 @@
 {
   "name": "capture-it-cli",
   "version": "0.0.2",
-  "main": "dist/cli.js",
+  "main": "dist/src/cli.js",
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsc"
