@@ -1,0 +1,2 @@
+
+export { WorkspaceInfo } from './WorkspaceInfo';
