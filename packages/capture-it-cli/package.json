@@ -4,7 +4,7 @@
   "main": "dist/src/cli.js",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --build"
   },
   "devDependencies": {
     "typescript": "^5.1.6",

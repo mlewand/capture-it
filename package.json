@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsc && electron .",
     "start:dev": "tsc && cross-env NODE_ENV=development electron .",
-    "build": "tsc",
+    "build": "tsc --build",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "dist:mac": "npm run build && electron-builder --x64 --arm64",

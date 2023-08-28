@@ -1,0 +1,15 @@
+{
+	// A common base for tsconfig of subpackages.
+	"compilerOptions": {
+		  "target": "ES2018",
+		  "composite": true,
+		  "module": "commonjs",
+		  "outDir": "./dist",
+		  "strict": true,
+		  "esModuleInterop": true,
+		  "typeRoots": [
+			  "node_modules/@types",
+			  "typings"
+		  ]
+	  }
+  }
