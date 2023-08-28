@@ -6,9 +6,13 @@
   "scripts": {
     "build": "tsc --build"
   },
+  "dependencies": {
+    "@mlewand/capture-it-core": "^0.0.2",
+    "@mlewand/capture-it-notes": "^0.0.2",
+    "@mlewand/capture-it-notion": "^0.0.2"
+  },
   "devDependencies": {
-    "typescript": "^5.1.6",
-    "@mlewand/capture-it-notes": "^0.0.2"
+    "typescript": "^5.1.6"
   }
 }
 
