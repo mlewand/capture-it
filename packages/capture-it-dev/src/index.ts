@@ -6,16 +6,14 @@ import { promises as fs } from 'fs';
 const ROOT_DIR = path.resolve( [ path.dirname( path.resolve( __filename ) ), '..', '..', '..', '..' ].join( path.sep ) );
 
 export async function main() {
-	console.log( 'test - working fine' );
-
-	console.log( ROOT_DIR );
+	console.log( `Using following root directory: ${ ROOT_DIR }` );
 
 	const packageName = process.argv[ 2 ] as string;
 	const fullPath = getFullPackagePath( packageName );
 
-	console.log( packageName );
-
 	await validatePackageName( packageName, fullPath );
+
+	console.log( `Creating ${ packageName } package...` );
 
 	await fs.mkdir( fullPath );
 
@@ -26,12 +24,12 @@ export async function main() {
 		createSourceCode( packageName, fullPath )
 	] );
 
-	console.log( 'youre gooood to go!! 🎉' );
+	console.log( `Package created in ${ fullPath } directory, happy coding 🎉` );
 }
 
 async function validatePackageName( name: string | undefined, fullPath: string ) {
 	if ( !name ) {
-		throw new Error( 'Package name can not be empty.' );
+		throw new Error( 'Package name can not be empty. Pass it as a first positional CLI argument.' );
 	}
 
 	try {
