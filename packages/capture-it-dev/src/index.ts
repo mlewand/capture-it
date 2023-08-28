@@ -22,6 +22,7 @@ export async function main() {
 	await Promise.all( [
 		createPackageJson( packageName, fullPath ),
 		createTsconfigJson( packageName, fullPath ),
+		createReadMe( packageName, fullPath ),
 		createSourceCode( packageName, fullPath )
 	] );
 
@@ -75,6 +76,10 @@ async function createSourceCode( packageName: string, packageFullPath: string ) 
 	return fs.writeFile( path.join( packageFullPath, 'src', 'index.ts' ), `export function main() {
 	console.log( 'hello world, this is ${ packageName } package.' );
 } ` );
+}
+
+function createReadMe( packageName : string, packageFullPath : string ) {
+	return fs.writeFile( path.join( packageFullPath, 'README.md' ), `# capture-it-${ packageName }\n\n` );
 }
 
 function getFullPackagePath( packageName: string = '') {
