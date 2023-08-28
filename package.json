@@ -4,8 +4,8 @@
   "description": "A simple app to instantly add notes to your todo list.",
   "main": "dist/src/main.js",
   "scripts": {
-    "start": "tsc && electron .",
-    "start:dev": "tsc && cross-env NODE_ENV=development electron .",
+    "start": "tsc --build && electron .",
+    "start:dev": "tsc --build && cross-env NODE_ENV=development electron .",
     "build": "tsc --build",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
