@@ -1,0 +1,15 @@
+{
+  "name": "@mlewand/capture-it-notion",
+  "version": "0.0.2",
+  "main": "dist/src/index.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "dependencies": {
+    "@mlewand/capture-it-core": "^0.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
