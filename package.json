@@ -10,7 +10,8 @@
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "dist:mac": "npm run build && electron-builder --x64 --arm64",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "dev:create-package": "yarn workspace @mlewand/capture-it-dev build && node ./packages/capture-it-dev/dist/src/index.js"
   },
   "build": {
     "productName": "Capture It",
