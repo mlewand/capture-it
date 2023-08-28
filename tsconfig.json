@@ -21,9 +21,9 @@
 		"packages/**/dist/**"
 	],
 	"references": [
-		{
-			"path": "./packages/capture-it-cli"
-		},
+		// {
+		// 	"path": "./packages/capture-it-cli"
+		// },
 		{
 			"path": "./packages/capture-it-core"
 		},
