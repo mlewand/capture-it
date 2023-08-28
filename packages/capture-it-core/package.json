@@ -1,5 +1,5 @@
 {
-  "name": "capture-it-core",
+  "name": "@mlewand/capture-it-core",
   "version": "0.0.2",
   "main": "dist/src/index.js",
   "license": "UNLICENSED",

@@ -1,5 +1,5 @@
 {
-  "name": "capture-it-notes",
+  "name": "@mlewand/capture-it-notes",
   "version": "0.0.2",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",

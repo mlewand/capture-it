@@ -1,5 +1,5 @@
 {
-  "name": "capture-it",
+  "name": "@mlewand/capture-it",
   "version": "0.0.4",
   "description": "A simple app to instantly add notes to your todo list.",
   "main": "dist/src/main.js",

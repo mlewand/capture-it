@@ -1,5 +1,5 @@
 
-import { addNote } from 'capture-it-notes';
+import { addNote } from '@mlewand/capture-it-notes';
 
 function main() {
 	console.log( 'test - working fine' );

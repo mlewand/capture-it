@@ -1,5 +1,5 @@
 {
-  "name": "capture-it-cli",
+  "name": "@mlewand/capture-it-cli",
   "version": "0.0.2",
   "main": "dist/src/cli.js",
   "license": "UNLICENSED",
@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "typescript": "^5.1.6",
-    "capture-it-notes": "^0.0.2"
+    "@mlewand/capture-it-notes": "^0.0.2"
   }
 }
 
