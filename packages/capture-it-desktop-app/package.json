@@ -1,6 +1,6 @@
 {
   "name": "@mlewand/capture-it-desktop-app",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A simple app to instantly add notes to your todo list.",
   "main": "dist/src/main.js",
   "author": "Marek Lewandowski",
@@ -51,9 +51,9 @@
     }
   },
   "dependencies": {
-    "@mlewand/capture-it-core": "^0.0.2",
-    "@mlewand/capture-it-notes": "^0.0.2",
-    "@mlewand/capture-it-notion": "^0.0.2",
+    "@mlewand/capture-it-core": "^0.0.4",
+    "@mlewand/capture-it-notes": "^0.0.4",
+    "@mlewand/capture-it-notion": "^0.0.4",
     "@electron/osx-sign": "^1.0.4",
     "comment-json": "^4.2.3",
     "css-loading-spinners": "^0.2.0",

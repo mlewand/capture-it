@@ -1,6 +1,6 @@
 {
   "name": "@mlewand/capture-it-core",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "main": "dist/src/index.js",
   "license": "UNLICENSED",
   "devDependencies": {
