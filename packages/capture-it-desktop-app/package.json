@@ -17,6 +17,7 @@
   "build": {
     "productName": "Capture It",
     "appId": "org.capture-it",
+    "files": "!*.tgz",
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
