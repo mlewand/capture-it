@@ -51,10 +51,8 @@
     }
   },
   "dependencies": {
-    "@mlewand/capture-it-core": "^0.0.4",
-    "@mlewand/capture-it-notes": "^0.0.4",
-    "@mlewand/capture-it-notion": "^0.0.4",
     "@electron/osx-sign": "^1.0.4",
+    "@mlewand/capture-it-notion": "^0.0.4",
     "comment-json": "^4.2.3",
     "css-loading-spinners": "^0.2.0",
     "dotenv": "^16.3.1",
@@ -62,6 +60,7 @@
     "electron-store": "^8.1.0",
     "lodash": "^4.17.21",
     "open": "8.1.0",
+    "typescript": "^5.2.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
