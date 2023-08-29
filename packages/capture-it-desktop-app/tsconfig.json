@@ -1,6 +1,34 @@
 {
-	"extends": "../tsconfig-package.json",
 	"compilerOptions": {
-		"outDir": "./dist", // Needed due to https://github.com/microsoft/TypeScript/issues/29172.
-	}
+		"target": "ES2018",
+		"module": "commonjs",
+		"outDir": "./dist",
+		"strict": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"typeRoots": [
+			"node_modules/@types",
+			"typings"
+		]
+	},
+	"include": [
+		"src/main.ts",
+		"app/app.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"tests/**",
+		"dist/**"
+	],
+	"references": [
+		{
+			"path": "../capture-it-core"
+		},
+		{
+			"path": "../capture-it-notes"
+		},
+		{
+			"path": "../capture-it-notion"
+		}
+	],
 }

@@ -1,4 +1,5 @@
 dist
+packages/**/dist
 release
 node_modules
 yarn-error.log
