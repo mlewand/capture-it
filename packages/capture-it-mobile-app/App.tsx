@@ -27,6 +27,11 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import {appendPageToDatabase} from '@mlewand/capture-it-notion';
+import type {WorkspaceInfo} from '@mlewand/capture-it-core';
+
+const config = require('./workspaces.secret.json').items as WorkspaceInfo[];
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -36,6 +41,12 @@ function Section({children, title}: SectionProps): JSX.Element {
 
   const handlePress = () => {
     console.log('lorem ipsum');
+
+    appendPageToDatabase(
+      'hello world from react native',
+      config[0],
+      new Set<string>(),
+    );
   };
 
   return (

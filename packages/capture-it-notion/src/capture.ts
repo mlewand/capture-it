@@ -47,7 +47,8 @@ export async function appendPageToDatabase( pageText: string, workspace: Workspa
 	const data = await response.json();
 
 	if (response.ok) {
-		console.log('Page appended successfully:', data);
+		console.log('Page appended successfully:');
+		console.log( data);
 	} else {
 		throw `Error (${ response.status }, ${ data.code }): ${ data.message }`;
 	}
@@ -101,7 +102,8 @@ export function appendParagraphToNotionPage( paragraphText: string, workspace: W
 			return data;
 		} )
 		.then( data => {
-			console.log( 'Paragraph appended successfully:', data );
+			console.log( 'Paragraph appended successfully:');
+			console.log( data );
 
 			// Unfortunately this kind of operation doesn't return the page URL so we need to do it manually.
 			data.redirect_url = 'https://www.notion.so/' + unifyNotionPageId( data.id );

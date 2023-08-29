@@ -11,8 +11,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@mlewand/capture-it-core": "^0.0.2",
+    "@mlewand/capture-it-notion": "^0.0.2",
     "react": "18.2.0",
-    "react-native": "0.72.3"
+    "react-native": "^0.72.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
