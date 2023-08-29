@@ -1,6 +1,5 @@
-dist
-packages/**/dist
-release
+packages/*/dist
+**/release
 node_modules
 yarn-error.log
 .capture-it-config.json
@@ -8,4 +7,4 @@ yarn-error.log
 *.DS_Store
 *.secret.json
 *.provisionprofile
-packages/**/dist
+packages/capture-it-desktop-app/mlewand-capture-it-desktop-app-*.tgz
