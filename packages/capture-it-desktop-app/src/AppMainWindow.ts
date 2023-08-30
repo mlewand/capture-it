@@ -20,7 +20,8 @@ export default class AppMainWindow extends BrowserWindow {
 			Menu.setApplicationMenu( null );
 		}
 
-		this.loadFile( path.join( options.rootPath, 'app', 'index.html' ) );
+		// this.loadFile( path.join( options.rootPath, 'app', 'index.html' ) );
+		this.loadFile( path.join( options.rootPath, '..', 'capture-it-desktop-app-frontend', 'build', 'index.html' ) );
 
 		this.on( 'close', ( event: any ) => {
 			if ( event && !this._finalClosing ) {
