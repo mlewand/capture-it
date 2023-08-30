@@ -203,8 +203,6 @@ export default class CaptureIt {
 	private async _createMainWindow() : Promise<AppMainWindow> {
 		const mainWindow = new AppMainWindow( { rootPath: this.rootPath }, this.productionBuild );
 
-		mainWindow.loadFile( path.join( this.rootPath, 'app', 'index.html' ) );
-
 		mainWindow.on('closed', () => {
 			this.mainWindow = undefined;
 		});
