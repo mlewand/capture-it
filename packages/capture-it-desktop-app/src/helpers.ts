@@ -14,8 +14,8 @@ export function menuCustomizations( app: CaptureIt ) {
 	}
 
 	const defaultTemplate = getDefaultMenu( app.electronApp!, shell );
-	// No need for view menu, there's the inspector, refresh command, etc.
-	const output = defaultTemplate.filter( item => item.label != 'View' );
+	// No need for view menu, there's the inspector, refresh command, etc in production version.
+	const output = defaultTemplate.filter( item => !app.productionBuild || item.label != 'View' );
 
 	const mainSubmenuTemplate = getCommonMenuTemplate( app );
 	const quitOption = mainSubmenuTemplate.find( item => item.label === 'Quit' ) as any | null;
