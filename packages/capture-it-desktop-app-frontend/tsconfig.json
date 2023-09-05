@@ -22,5 +22,16 @@
   },
   "include": [
     "src"
-  ]
+  ],
+  "references": [
+		{
+			"path": "../capture-it-core"
+		},
+		{
+			"path": "../capture-it-notes"
+		},
+		{
+			"path": "../capture-it-notion"
+		}
+	],
 }
