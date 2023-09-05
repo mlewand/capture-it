@@ -2,9 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { createSelector } from '@reduxjs/toolkit';
 
-const configState = ( state: any ) => state.config;
 export const selectWorkspaces = createSelector(
-	[ configState ],
+	[ ( state: any ) => state.config ],
 	( config ) => {
 		return config.value?.workspaces || [];
 	}
