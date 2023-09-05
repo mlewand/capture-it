@@ -1,6 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-
-import { createSelector } from '@reduxjs/toolkit';
+import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit';
+import type { WorkspaceInfo } from '@mlewand/capture-it-core';
 
 export const selectWorkspaces = createSelector(
 	[ ( state: any ) => state.config ],
@@ -15,7 +14,11 @@ export const workspacesSlice = createSlice( {
 		value: [],
 	},
 	reducers: {
+		// These reducers are handled in config slice.
+		addWorkspace: ( state, action: PayloadAction<WorkspaceInfo> ) => { },
+		removeWorkspace: ( state, action: PayloadAction<number> ) => { },
 	},
 } );
 
 export default workspacesSlice.reducer;
+export const { addWorkspace, removeWorkspace } = workspacesSlice.actions;
