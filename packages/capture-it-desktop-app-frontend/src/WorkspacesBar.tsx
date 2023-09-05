@@ -1,6 +1,6 @@
 
 import './WorkspacesBar.css';
-import { selectWorkspaces, addWorkspace } from './workspaces/workspacesSlice';
+import { selectWorkspaces, addWorkspace, selectActiveWorkspace } from './workspaces/workspacesSlice';
 import { useAppDispatch } from './hooks';
 import { useSelector } from 'react-redux';
 
@@ -9,6 +9,7 @@ import { WorkspaceInfo } from '@mlewand/capture-it-core';
 export default function WorkspacesBar() {
 	const dispatch = useAppDispatch();
 	const workspaces = useSelector( selectWorkspaces );
+	const activeWorkspace = useSelector( selectActiveWorkspace );
 
 	function workspaceClickHandler() {
 		const newWorkspace: WorkspaceInfo = {
@@ -29,7 +30,12 @@ export default function WorkspacesBar() {
 			<div id="tabs">
 				<span>Workspaces: {workspaces.length}</span>
 				{workspaces.map( ( workspace: any ) => {
-					return ( <span>tab {workspace.name}</span> );
+					return ( <span>
+						{workspace === activeWorkspace &&
+							<span className="active">➤</span>
+						}
+						tab {workspace.name}
+					</span> );
 				} )}
 			</div>
 			<a href="#" id="add-workspace" title="Add workspace" onClick={workspaceClickHandler}>➕</a>

@@ -1,4 +1,7 @@
 
+import { setActiveWorkspaceIndex } from "./workspaces/workspacesSlice";
+import store from "./store";
+
 const mocks = {
 	configChanged: {
 		"_events": {},
@@ -38,19 +41,37 @@ const mocks = {
 			"@foo": "foobar",
 			"@gtg": "getting things done",
 		}
+	},
+	activeWorkspaceIndexChanged: 1
+};
+
+const callbacksMocks = {
+	setWorkspace: ( newIndex: number | string ) => {
+		const currentValue = store.getState().workspaces._activeWorkspaceIndex || 0;
+
+		console.log( 'nextTab command mock, polled index', currentValue, newIndex );
+
+		if ( newIndex === 'next' ) {
+			newIndex = currentValue + 1;
+		} else if ( newIndex === 'prev' ) {
+			newIndex = currentValue - 1;
+		}
+
+		if ( typeof newIndex === 'number' ) {
+			store.dispatch( setActiveWorkspaceIndex( newIndex ) );
+		}
 	}
 };
 
 export default function addDevelopmentStub() {
-	console.log('yes adding');
 	( window as any ).electron = {
 		receive: ( channel: string, func: any ) => {
 			// ipcRenderer.on( channel, ( event, ...args ) => func( ...args ) );
 
-			if ( ( mocks as any )[ channel ] ) {
-				setTimeout(() => {
+			if ( channel in ( mocks as any ) ) {
+				setTimeout( () => {
 					func( ( mocks as any )[ channel ] );
-				}, 400);
+				}, 400 );
 			} else {
 				console.error( 'ipcRenderer#receive has no mock handling for channel: ' + channel );
 			}
@@ -60,13 +81,14 @@ export default function addDevelopmentStub() {
 
 			console.warn( 'ipcRenderer#send stub is unsupported, requested with channel: ' + channel );
 		},
-		// invoke: ( channel, data, ...args ) => {
-		// 	// let validChannels = [ 'renderer-ready' ];
-		// 	// if ( !validChannels.includes( channel ) ) {
-		// 	// 	return;
-		// 	// }
-		// 	return ipcRenderer.invoke( channel, data, ...args );
-		// },
+		invoke: ( channel: string, data: string, ...args: any[] ) => {
+			if ( channel === 'executeCommand' && data in callbacksMocks ) {
+				( callbacksMocks as any )[ data ]( ...args );
+			} else {
+				console.warn( 'ipcRenderer#invoke stub is unsupported, requested with channel: ' + channel );
+			}
+
+		},
 
 		// A custom implementation of invoke, that returns a promise.
 		// This promise will resolve if main's process promise resolved or get rejected accordingly.
