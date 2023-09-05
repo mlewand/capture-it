@@ -1,5 +1,5 @@
 
-export { WorkspaceInfo } from './WorkspaceInfo';
-export { ConfigFileInterface } from './ConfigFileInterface';
+export type { WorkspaceInfo } from './WorkspaceInfo';
+export type { ConfigFileInterface } from './ConfigFileInterface';
 
 export default null;
