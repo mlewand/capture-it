@@ -1,11 +1,12 @@
 
 import './WorkspacesBar.css';
-import { increment, decrement } from './workspaces/workspacesSlice';
-import { useAppDispatch, useAppSelector, type RootState } from './hooks';
+import { selectWorkspaces } from './workspaces/workspacesSlice';
+import { useAppDispatch } from './hooks';
+import { useSelector } from 'react-redux';
 
 export default function WorkspacesBar() {
 	const dispatch = useAppDispatch();
-	const workspaces = useAppSelector( ( state: RootState ) => state.workspaces.value );
+	const workspaces = useSelector( selectWorkspaces );
 
 	return (
 		<section id="workspaces-bar">
@@ -15,7 +16,7 @@ export default function WorkspacesBar() {
 					return ( <span>tab {workspace.name}</span> );
 				} )}
 			</div>
-			<a href="#" id="add-workspace" title="Add workspace" onClick={() => dispatch( increment() )}>➕</a>
+			<a href="#" id="add-workspace" title="Add workspace">➕</a>
 		</section>
 	);
 }
