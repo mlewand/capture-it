@@ -1,5 +1,5 @@
 {
-  "name": "capture-it-desktop-app-frontend",
+  "name": "@mlewand/capture-it-desktop-app-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
