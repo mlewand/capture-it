@@ -2,41 +2,6 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: green;
-  min-height: 60vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* ----- */
 
 :root {
@@ -83,4 +48,40 @@ p {
 #reports-container {
 	margin-top: var(--spacing-medium);
 	text-align: center;
+}
+
+.add-workspace,
+#add-workspace {
+	width: 28px;
+	margin-left: 14px;
+	background: var(--blue);
+	color: var(--white);
+	text-align: center;
+}
+
+.add-workspace:hover,
+.add-workspace:focus,
+#add-workspace:hover,
+#add-workspace:focus {
+	background: var(--dark-blue);
+}
+
+#workspaces-bar a,
+.add-workspace {
+	outline: 2px solid var(--light-black);
+	padding: 3px;
+	text-decoration: none;
+	color: var(--tab-text-color);
+}
+
+a.add-workspace {
+	background: var(--plain-white);
+	outline-color: var(--grey);
+}
+
+a.add-workspace:focus,
+a.add-workspace:hover
+{
+	color: var(--white-text);
+	outline-color: var(--light-black);
 }

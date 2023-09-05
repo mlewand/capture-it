@@ -1,0 +1,31 @@
+#workspaces-bar {
+	margin-bottom: var(--spacing-large)
+}
+
+#workspaces-bar, #tabs {
+	display: flex;
+	flex-direction: row;
+	gap: var(--spacing-large);
+}
+
+#tabs {
+	overflow-y: hidden;
+	overflow-x: auto;
+	padding: 2px;
+}
+
+#workspaces-bar {
+	/* @todo: handle dynamically, based on workspaces count in state */
+	/* display: none; */
+	width: 100%;
+	justify-content: space-between;
+}
+
+.has-many-workspaces #workspaces-bar {
+	display: flex;
+}
+
+#workspaces-bar a.active {
+	color: var(--white-text);
+	background-color: var(--tab-text-color);
+}

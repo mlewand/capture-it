@@ -22,7 +22,7 @@ function ProTipCarousel() {
 	}, [] );
 
 	return (
-		<section id="pro-tip-container">
+		<section className="pro-tip-container">
 			{tips[ currentTipIndex ] || ''}
 		</section>
 	);
