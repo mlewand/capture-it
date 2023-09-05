@@ -1,11 +1,11 @@
 
 import './WorkspacesBar.css';
 import { increment, decrement } from './workspaces/workspacesSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector, type RootState } from './hooks';
 
 export default function WorkspacesBar() {
-	const dispatch = useDispatch();
-	const workspaces = useSelector( ( state: any ) => state.workspaces.value );
+	const dispatch = useAppDispatch();
+	const workspaces = useAppSelector( ( state: RootState ) => state.workspaces.value );
 
 	return (
 		<section id="workspaces-bar">
