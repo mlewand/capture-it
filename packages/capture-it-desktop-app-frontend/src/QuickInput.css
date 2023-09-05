@@ -1,0 +1,20 @@
+#quick-input-container {
+	display: flex;
+	flex-direction: row;
+	gap: var(--spacing-large);
+}
+
+#quick-input-container input,
+#quick-input-container button {
+	font-size: 24px;
+	padding: var(--spacing-medium);
+}
+
+#quick-input-container input:focus,
+#quick-input-container button:focus {
+	box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--blue);
+}
+
+#quick-input-container input {
+	flex-grow: 1;
+}

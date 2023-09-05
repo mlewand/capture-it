@@ -1,0 +1,13 @@
+#no-workspaces-tab {
+	/* display: none; */
+}
+
+#no-workspaces-tab .add-workspace-container {
+	margin-top: var(--spacing-medium);
+	padding: 0;
+	text-align: left;
+}
+
+#no-workspaces-tab .add-workspace {
+	margin-left: 0;
+}
