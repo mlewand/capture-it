@@ -39,53 +39,9 @@ p {
 	outline-color: var(--light-black);
 }
 
-#quick-input-container {
-	display: flex;
-	flex-direction: row;
-	gap: var(--spacing-large);
-}
-
-#quick-input-container input,
-#quick-input-container button {
-	font-size: 24px;
-	padding: var(--spacing-medium);
-}
-
-#quick-input-container input:focus,
-#quick-input-container button:focus {
-  	box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--blue);
-}
-
-#quick-input-container input {
-	flex-grow: 1;
-}
-
-#pro-tip-container {
-	text-align: center;
-	color: #888;
-	font-size: 0.8em;
-}
-
-#pro-tip-container p {
-	display: none;
-}
-
-#pro-tip-container .visible {
-	display: block;
-}
-
 #reports-container {
 	margin-top: var(--spacing-medium);
 	text-align: center;
-}
-
-#config-missing-tab {
-	text-align: center;
-	font-size: 1.2em;
-}
-
-#config-missing-tab h1 {
-	margin: 0
 }
 
 #notification-area-container .notification {
@@ -134,73 +90,6 @@ p {
 	}
 }
 
-#workspaces-bar {
-	margin-bottom: var(--spacing-large)
-}
-
-#workspaces-bar, #tabs {
-	display: flex;
-	flex-direction: row;
-	gap: var(--spacing-large);
-}
-
-#tabs {
-	overflow-y: hidden;
-	overflow-x: auto;
-	padding: 2px;
-}
-
-#workspaces-bar {
-	display: none;
-	width: 100%;
-	justify-content: space-between;
-}
-
-.has-many-workspaces #workspaces-bar {
-	display: flex;
-}
-
-.add-workspace,
-#add-workspace {
-	width: 28px;
-	margin-left: 14px;
-	background: var(--blue);
-	color: var(--white);
-	text-align: center;
-}
-
-.add-workspace:hover,
-.add-workspace:focus,
-#add-workspace:hover,
-#add-workspace:focus {
-	background: var(--dark-blue);
-}
-
-#workspaces-bar a,
-.add-workspace {
-	outline: 2px solid var(--light-black);
-	padding: 3px;
-	text-decoration: none;
-	color: var(--tab-text-color);
-}
-
-a.add-workspace {
-	background: var(--plain-white);
-	outline-color: var(--grey);
-}
-
-a.add-workspace:focus,
-a.add-workspace:hover
-{
-	color: var(--white-text);
-	outline-color: var(--light-black);
-}
-
-#workspaces-bar a.active {
-	color: var(--white-text);
-	background-color: var(--tab-text-color);
-}
-
 .add-workspace-container {
 	margin-top: var(--spacing-extra-large);
 	text-align: center;
@@ -209,14 +98,4 @@ a.add-workspace:hover
 
 .has-many-workspaces .add-workspace-container {
 	display: none;
-}
-
-#no-workspaces-tab .add-workspace-container {
-	margin-top: var(--spacing-medium);
-	padding: 0;
-	text-align: left;
-}
-
-#no-workspaces-tab .add-workspace {
-	margin-left: 0;
 }

@@ -122,7 +122,7 @@ export default class CaptureIt {
 
 		this.activeWorkspace = workspaces[ index ];
 
-		this.send( 'activeWorkspaceChanged', this.activeWorkspace );
+		// this.send( 'activeWorkspaceChanged', this.activeWorkspace );
 		this.send( 'activeWorkspaceIndexChanged', index );
 	}
 
