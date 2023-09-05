@@ -1,15 +1,14 @@
 import MissingConfigTab from './MissingConfigTab';
 import NoWorkspacesTab from './NoWorkspacesTab';
 import MainCaptureItTab from './MainCaptureItTab';
-import store from './store';
-import { Provider } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-
+import { setConfig } from './config/configSlice';
 import addDevelopmentStub from './electronBridgeDevStub';
 
-import './App.css';
+import type { ConfigFileInterface } from '@mlewand/capture-it-core';
 
-import type { WorkspaceInfo, ConfigFileInterface } from '@mlewand/capture-it-core';
+import './App.css';
 
 interface ElectronBridge {
   receive: ( channel: string, func: ( ...args: any[] ) => void ) => void;
@@ -19,6 +18,8 @@ interface ElectronBridge {
 }
 
 function App() {
+  const dispatch = useDispatch();
+
   useEffect( () => {
     if ( !( window as any ).electron ) {
       console.log( 'missing electron bridge - adding a dev stub' );
@@ -35,21 +36,21 @@ function App() {
     if ( electronBridge ) {
       const handleConfigChange = ( newConfig: ConfigFileInterface | null | undefined ) => {
         console.log( 'configChanged', newConfig );
-        // config = newConfig;
+        dispatch( setConfig( newConfig ) );
       }
 
       electronBridge.receive( 'configChanged', handleConfigChange );
     }
 
     return () => { };
-  }, [] );
+  } );
 
   return (
-    <Provider store={store}>
+    <>
       <MainCaptureItTab />
       <MissingConfigTab />
       <NoWorkspacesTab />
-    </Provider>
+    </>
   );
 }
 

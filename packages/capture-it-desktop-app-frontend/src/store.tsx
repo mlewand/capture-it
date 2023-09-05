@@ -1,9 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import workspacesReducer from './workspaces/workspacesSlice'
+import configReducer from './config/configSlice';
+
 
 const store = configureStore( {
 	reducer: {
 		workspaces: workspacesReducer,
+		config: configReducer,
 	},
 } );
 

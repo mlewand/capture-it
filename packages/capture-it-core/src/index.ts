@@ -1,9 +1,5 @@
 
-import { WorkspaceInfo } from './WorkspaceInfo';
+export { WorkspaceInfo } from './WorkspaceInfo';
+export { ConfigFileInterface } from './ConfigFileInterface';
 
-export { WorkspaceInfo };
-export interface ConfigFileInterface {
-	workspaces: WorkspaceInfo[];
-	invocationHotKey: string;
-	forceOpenLinksInNotionApp: boolean;
-  }
+export default null;
