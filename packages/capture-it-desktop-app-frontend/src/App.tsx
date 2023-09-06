@@ -6,9 +6,11 @@ import { useEffect } from 'react';
 import { setConfig, selectConfig } from './config/configSlice';
 import { setActiveWorkspaceIndex, selectWorkspaces } from './workspaces/workspacesSlice';
 import { globalHotkeysHandler, globalLinkHandler, getElectronBridge } from './appHelpers';
+import { ToastContainer, Slide } from 'react-toastify';
 
 import type { ConfigFileInterface } from '@mlewand/capture-it-core';
 
+import 'react-toastify/dist/ReactToastify.min.css';
 import './App.css';
 
 function App() {
@@ -46,6 +48,12 @@ function App() {
       {!config && <MissingConfigTab />}
       {config && !workspaces.length && <NoWorkspacesTab />}
       {config && workspaces.length > 0 && <MainCaptureItTab />}
+      <ToastContainer
+        position="bottom-center"
+        newestOnTop={true}
+        transition={Slide}
+        pauseOnFocusLoss
+        pauseOnHover />
     </>
   );
 }

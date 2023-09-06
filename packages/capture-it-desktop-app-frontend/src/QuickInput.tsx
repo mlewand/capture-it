@@ -3,12 +3,18 @@ import './QuickInput.css';
 import { getElectronBridge } from './appHelpers';
 import { setNoteInput, clearNoteInput } from './note/noteSlice';
 import { useAppDispatch, useAppSelector } from './hooks';
+import { toast } from 'react-toastify';
 
 export default function QuickInput() {
 	const dispatch = useAppDispatch();
 	const noteInputValue = useAppSelector( state => state.note.input );
 
 	function submitHandler( clickEvent: React.MouseEvent ) {
+		if ( !noteInputValue ) {
+			toast.error( 'Can\'t submit empty note.' );
+			return;
+		}
+
 		submitNote(
 			noteInputValue,
 			clickEvent.altKey && !clickEvent.shiftKey,
@@ -31,7 +37,8 @@ export default function QuickInput() {
 				altKey: event.altKey,
 				ctrlKey: event.ctrlKey,
 				metaKey: event.metaKey,
-				shiftKey: event.shiftKey
+				shiftKey: event.shiftKey,
+				bubbles: true,
 			} );
 
 			document.getElementById( 'submitButton' )!.dispatchEvent( clickEvent );
@@ -52,16 +59,17 @@ export default function QuickInput() {
 	);
 }
 
-function addNotification( ...args: any[] ) {
-}
-
 function submitNote( text: string, openPage = false, copyToClipboard = false ): Promise<void> {
+	// const mockPromise = new Promise( ( resolve, reject ) => setTimeout( () => reject( 'reject reason' ), 1000 ) ) as Promise<void>;
+	// const mockPromise = new Promise( ( resolve, reject ) => setTimeout( () => resolve(), 1000 ) ) as Promise<void>;
+	// const insertPromise = mockPromise;
+
 	const electronBridge = getElectronBridge();
 	const insertPromise = electronBridge.promisedInvoke( 'executeCommandAsync', 'captureItem', text );
-	const notification = addNotification( text, 'loading' );
+	const toastId = toast.loading( `Adding "${text}"…` );
 
 	insertPromise.then( ( data: any ) => {
-		addNotification( text, 'success', notification );
+		toast.update( toastId, { render: `"${ text }" added!`, type: 'success', isLoading: false, autoClose: 5000 } );
 
 		if ( data.redirect_url && copyToClipboard ) {
 			navigator.clipboard.writeText( data.redirect_url );
@@ -70,7 +78,7 @@ function submitNote( text: string, openPage = false, copyToClipboard = false ): 
 		}
 	} )
 		.catch( error => {
-			addNotification( `${text} - ${error}`, 'error', notification );
+			toast.update( toastId, { render: `"${text}" failed, because: ${error}`, type: 'error', isLoading: false, autoClose: false } );
 			console.error( error );
 		} );
 
