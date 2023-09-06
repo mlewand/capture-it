@@ -60,12 +60,6 @@ export default function QuickInput() {
 }
 
 function submitNote( text: string, openPage = false, copyToClipboard = false ): Promise<void> {
-	// const mockPromise = new Promise( ( resolve, reject ) => setTimeout( () => reject( 'reject reason' ), 1000 ) ) as Promise<void>;
-	// const mockPromise = new Promise( ( resolve, reject ) => setTimeout( () => resolve(), 1000 ) ) as Promise<void>;
-	// const insertPromise = mockPromise;
-
-	toast.loading('test');
-
 	const electronBridge = getElectronBridge();
 	const insertPromise = electronBridge.promisedInvoke( 'executeCommandAsync', 'captureItem', text );
 	const toastId = toast.loading( `Adding "${text}"…` );
