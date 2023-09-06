@@ -22,7 +22,7 @@ During the first run you'll have to provide the configuration.
 
 The app will ask you to do that and allow guide you though creating a file.
 
-In case it doesn't, just copy the [.capture-it-config.tpl.json](.capture-it-config.tpl.json) file to `~/.capture-it-config.json` and fill in the placeholder values.
+In case it doesn't, just copy the [.capture-it-config.tpl.jsonc](.capture-it-config.tpl.jsonc) file to `~/.capture-it-config.json` and fill in the placeholder values.
 
 ## Dev
 
