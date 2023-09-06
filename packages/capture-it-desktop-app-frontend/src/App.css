@@ -29,6 +29,13 @@ html { width: 820px !important; max-width: 820px !important; outline: 2px solid 
 
 	/* third party */
 	--toastify-toast-width: 94%;
+	--toastify-toast-min-height: 22px;
+}
+
+.Toastify__toast {
+	margin: var(--spacing-medium) auto 0 auto;
+	padding: 0;
+	box-shadow: 0 1px 4px 0 rgba(0,0,0,.1), 0 2px 8px 0 rgba(0,0,0,.05);
 }
 
 .hidden {
