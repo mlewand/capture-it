@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@electron/osx-sign": "^1.0.4",
+    "@mlewand/capture-it-core": "^0.0.4",
     "@mlewand/capture-it-notion": "^0.0.4",
     "comment-json": "^4.2.3",
     "css-loading-spinners": "^0.2.0",

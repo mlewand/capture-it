@@ -21,6 +21,8 @@ import { getPages } from './Auth/Notion';
 import { authenticate, exchangeCodeForToken } from './Auth/Notion';
 import { electron } from 'process';
 
+import { SHARED_DEFAULTS } from '@mlewand/capture-it-core';
+
 export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
 
 /**
@@ -294,7 +296,7 @@ export default class CaptureIt {
 
 	private _registerHotkeys( mainWindow: AppMainWindow ) {
 		// Global hotkeys.
-		const INVOCATION_HOT_KEY = ( this.config && this.config.invocationHotKey ) || 'CommandOrControl+Shift+M';
+		const INVOCATION_HOT_KEY = ( this.config && this.config.invocationHotKey ) || SHARED_DEFAULTS.INVOCATION_HOT_KEY;
 
 		const ret = globalShortcut.register( INVOCATION_HOT_KEY, () => {
 			if ( mainWindow ) {

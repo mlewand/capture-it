@@ -21,9 +21,32 @@ export default function QuickInput() {
 		dispatch( setNoteInput( event.target.value ) );
 	}
 
+	function keyUpHandler( event: React.KeyboardEvent<HTMLInputElement> ) {
+		// The only allowed shift combination is shift + alt for now.
+		if ( event.key === 'Enter' && ( !event.shiftKey || event.altKey ) ) {
+			// CTRL / CMD modifiers are allowed. Typically ctrl+enter means confirm an action.
+			event.preventDefault();
+
+			const clickEvent = new MouseEvent( 'click', {
+				altKey: event.altKey,
+				ctrlKey: event.ctrlKey,
+				metaKey: event.metaKey,
+				shiftKey: event.shiftKey
+			} );
+
+			document.getElementById( 'submitButton' )!.dispatchEvent( clickEvent );
+		}
+	}
+
 	return (
 		<section id="quick-input-container">
-			<input value={noteInputValue} onChange={noteInputHandler} placeholder="What's on your mind?" type="text" id="textInput" />
+			<input
+				value={noteInputValue}
+				onChange={noteInputHandler}
+				onKeyUp={keyUpHandler}
+				placeholder="What's on your mind?"
+				type="text"
+				id="textInput" />
 			<button id="submitButton" onClick={submitHandler}>Add todo</button>
 		</section>
 	);
@@ -32,7 +55,7 @@ export default function QuickInput() {
 function addNotification( ...args: any[] ) {
 }
 
-function submitNote( text: string, openPage = false, copyToClipboard = false ): void {
+function submitNote( text: string, openPage = false, copyToClipboard = false ): Promise<void> {
 	const electronBridge = getElectronBridge();
 	const insertPromise = electronBridge.promisedInvoke( 'executeCommandAsync', 'captureItem', text );
 	const notification = addNotification( text, 'loading' );
@@ -50,4 +73,6 @@ function submitNote( text: string, openPage = false, copyToClipboard = false ): 
 			addNotification( `${text} - ${error}`, 'error', notification );
 			console.error( error );
 		} );
+
+	return insertPromise;
 }
