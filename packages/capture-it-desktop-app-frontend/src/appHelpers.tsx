@@ -54,3 +54,7 @@ export function addElectronBridgeStub() {
 		console.log( ( window as any ).electron );
 	}
 }
+
+export function getElectronBridge(): ElectronBridge {
+	return ( window as any ).electron;
+}

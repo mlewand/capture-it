@@ -81,6 +81,9 @@ const callbackMocks = {
 		if ( typeof newIndex === 'number' ) {
 			store.dispatch( setActiveWorkspaceIndex( newIndex ) );
 		}
+	},
+	openConfig: () => {
+		alert( 'openConfig command mock' );
 	}
 };
 
