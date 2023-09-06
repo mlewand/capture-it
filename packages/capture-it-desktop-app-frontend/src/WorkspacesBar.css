@@ -15,17 +15,14 @@
 }
 
 #workspaces-bar {
-	/* @todo: handle dynamically, based on workspaces count in state */
-	/* display: none; */
 	width: 100%;
 	justify-content: space-between;
 }
 
-.has-many-workspaces #workspaces-bar {
-	display: flex;
+#workspaces-bar .MuiTab-root {
+	padding-bottom: var(--spacing-small) !important;
 }
 
-#workspaces-bar a.active {
-	color: var(--white-text);
-	background-color: var(--tab-text-color);
+.has-many-workspaces #workspaces-bar {
+	display: flex;
 }

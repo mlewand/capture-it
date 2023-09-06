@@ -12,7 +12,7 @@ export const selectWorkspaces = createSelector(
 export const selectActiveWorkspaceIndex = createSelector(
 	[ ( state: any ) => state.workspaces ],
 	( state ) => {
-		return state.activeWorkspace || undefined;
+		return typeof state._activeWorkspaceIndex == 'number' ? state._activeWorkspaceIndex : undefined;
 	}
 );
 
@@ -32,6 +32,7 @@ export const workspacesSlice = createSlice( {
 	name: 'workspaces',
 	initialState: {
 		_activeWorkspaceIndex: undefined as ActiveWorkspaceIndex,
+		// _activeWorkspaceIndex: 0 as ActiveWorkspaceIndex,
 	},
 	reducers: {
 		// These reducers are handled in config slice.
