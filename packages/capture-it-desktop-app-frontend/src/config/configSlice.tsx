@@ -1,15 +1,16 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit';
 import { addWorkspace, removeWorkspace } from '../workspaces/workspacesSlice';
+import { RootState } from '../store';
 
 interface ConfigState {
   value: any; // Ideally, you'd use a more specific type than 'any'
 }
 
 const initialState: ConfigState = {
-  value: {
-    workspaces: [],
-  },
+  value: undefined,
 };
+
+export const selectConfig = ( state: RootState ) => state.config.value;
 
 const configSlice = createSlice( {
   name: 'config',

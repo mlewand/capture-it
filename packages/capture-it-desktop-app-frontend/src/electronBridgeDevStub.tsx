@@ -2,6 +2,11 @@
 import { setActiveWorkspaceIndex } from "./workspaces/workspacesSlice";
 import store from "./store";
 
+// const mockScenario = null;
+// const mockScenario = 'empty_workspaces';
+const mockScenario = 'no_config';
+// const mockScenario = 'missing_workspaces';
+
 const mocks = {
 	configChanged: {
 		"_events": {},
@@ -42,10 +47,26 @@ const mocks = {
 			"@gtg": "getting things done",
 		}
 	},
+	configChanged__empty_workspaces: {
+		"_events": {},
+		"_eventsCount": 1,
+		"workspaces": [],
+		"invocationHotKey": "Control+Shift+M",
+		"forceOpenLinksInNotionApp": true,
+		"tags": {
+			"@foo": "foobar",
+			"@gtg": "getting things done",
+		}
+	},
+	configChanged__missing_workspaces: {
+		"invocationHotKey": "Control+Shift+M",
+		"forceOpenLinksInNotionApp": true
+	},
+	configChanged__no_config: undefined,
 	activeWorkspaceIndexChanged: 1
 };
 
-const callbacksMocks = {
+const callbackMocks = {
 	setWorkspace: ( newIndex: number | string ) => {
 		const currentValue = store.getState().workspaces._activeWorkspaceIndex || 0;
 
@@ -64,30 +85,47 @@ const callbacksMocks = {
 };
 
 export default function addDevelopmentStub() {
+	function pickMock( name: string, mocksResource: any, mockResourceName: string = 'mocks' ) {
+		if ( mockScenario && `${name}__${mockScenario}` in mocksResource ) {
+			return mocksResource[ `${name}__${mockScenario}` ];
+		} else if ( name in mocksResource ) {
+			return mocksResource[ name ];
+		} else {
+			throw new Error( `Couldn\'t find mock resource in ${mockResourceName} for: ${name}` );
+		}
+	}
+
+	function pickCallbackMock( name: string, mocksResource: any ) {
+		return pickMock( name, mocksResource, 'callbacksMocks' );
+	}
+
 	( window as any ).electron = {
 		receive: ( channel: string, func: any ) => {
-			// ipcRenderer.on( channel, ( event, ...args ) => func( ...args ) );
+			try {
+				const mockResponse = pickMock( channel, mocks );
 
-			if ( channel in ( mocks as any ) ) {
 				setTimeout( () => {
-					func( ( mocks as any )[ channel ] );
+					func( mockResponse as any );
 				}, 400 );
-			} else {
-				console.error( 'ipcRenderer#receive has no mock handling for channel: ' + channel );
+			} catch ( e ) {
+				console.error( e );
 			}
-
 		},
 		send: ( channel: string, data: any ) => {
 
 			console.warn( 'ipcRenderer#send stub is unsupported, requested with channel: ' + channel );
 		},
 		invoke: ( channel: string, data: string, ...args: any[] ) => {
-			if ( channel === 'executeCommand' && data in callbacksMocks ) {
-				( callbacksMocks as any )[ data ]( ...args );
-			} else {
-				console.warn( 'ipcRenderer#invoke stub is unsupported, requested with channel: ' + channel );
+			try {
+				if ( channel === 'executeCommand' ) {
+					const commandMock = pickCallbackMock( data, callbackMocks );
+					commandMock( ...args );
+				} else {
+					throw new Error( 'ipcRenderer#invoke stub is unsupported, requested with channel: ' + channel );
+				}
+			} catch ( e ) {
+				console.error( e );
 			}
-
 		},
 
 		// A custom implementation of invoke, that returns a promise.
