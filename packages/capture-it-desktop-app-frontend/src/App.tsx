@@ -41,7 +41,7 @@ function App() {
     <>
       {!config && <MissingConfigTab />}
       {config && !workspaces.length && <NoWorkspacesTab />}
-      {config && workspaces.length && <MainCaptureItTab />}
+      {config && workspaces.length > 0 && <MainCaptureItTab />}
     </>
   );
 }

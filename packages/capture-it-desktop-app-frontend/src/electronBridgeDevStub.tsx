@@ -3,8 +3,8 @@ import { setActiveWorkspaceIndex } from "./workspaces/workspacesSlice";
 import store from "./store";
 
 // const mockScenario = null;
-// const mockScenario = 'empty_workspaces';
-const mockScenario = 'no_config';
+const mockScenario = 'empty_workspaces';
+// const mockScenario = 'no_config';
 // const mockScenario = 'missing_workspaces';
 
 const mocks = {
