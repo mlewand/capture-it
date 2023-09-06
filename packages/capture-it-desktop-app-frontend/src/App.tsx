@@ -22,14 +22,14 @@ function App() {
       dispatch( setConfig( newConfig ) );
     }
 
-    getElectronBridge().receive( 'configChanged', handleConfigChange );
+    const electronBridge = getElectronBridge();
 
-    return () => { };
-  } );
-
-  useEffect( () => {
-    getElectronBridge().receive( 'activeWorkspaceIndexChanged', ( index: number | undefined ) => {
+    electronBridge.receive( 'configChanged', handleConfigChange );
+    electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number | undefined ) => {
       dispatch( setActiveWorkspaceIndex( index ) );
+    } );
+    electronBridge.receive( 'alert', ( message: string ) => {
+      alert( message );
     } );
 
     return () => { };

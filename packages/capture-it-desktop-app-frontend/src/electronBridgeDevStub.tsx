@@ -2,10 +2,12 @@
 import { setActiveWorkspaceIndex } from "./workspaces/workspacesSlice";
 import store from "./store";
 
-// const mockScenario = null;
-const mockScenario = 'empty_workspaces';
+const mockScenario = null;
+// const mockScenario = 'empty_workspaces';
 // const mockScenario = 'no_config';
 // const mockScenario = 'missing_workspaces';
+
+const IGNORE_MOCK = Symbol();
 
 const mocks = {
 	configChanged: {
@@ -47,6 +49,7 @@ const mocks = {
 			"@gtg": "getting things done",
 		}
 	},
+	configChanged__no_config: undefined,
 	configChanged__empty_workspaces: {
 		"_events": {},
 		"_eventsCount": 1,
@@ -62,8 +65,11 @@ const mocks = {
 		"invocationHotKey": "Control+Shift+M",
 		"forceOpenLinksInNotionApp": true
 	},
-	configChanged__no_config: undefined,
-	activeWorkspaceIndexChanged: 1
+	alert: IGNORE_MOCK,
+	activeWorkspaceIndexChanged: 1,
+	activeWorkspaceIndexChanged__no_config: undefined,
+	activeWorkspaceIndexChanged__empty_workspaces: undefined,
+	activeWorkspaceIndexChanged__missing_workspaces: undefined,
 };
 
 const callbackMocks = {
@@ -107,9 +113,11 @@ export default function addDevelopmentStub() {
 			try {
 				const mockResponse = pickMock( channel, mocks );
 
-				setTimeout( () => {
-					func( mockResponse as any );
-				}, 400 );
+				if ( mockResponse !== IGNORE_MOCK ) {
+					setTimeout( () => {
+						func( mockResponse as any );
+					}, 400 );
+				}
 			} catch ( e ) {
 				console.error( e );
 			}
