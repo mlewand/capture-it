@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setConfig, selectConfig } from './config/configSlice';
 import { setActiveWorkspaceIndex, selectWorkspaces } from './workspaces/workspacesSlice';
-import { globalHotkeysHandler, addElectronBridgeStub, ElectronBridge } from './appHelpers';
+import { globalHotkeysHandler, getElectronBridge } from './appHelpers';
 
 import type { ConfigFileInterface } from '@mlewand/capture-it-core';
 
@@ -16,34 +16,21 @@ function App() {
   const config = useSelector( selectConfig );
   const workspaces = useSelector( selectWorkspaces );
 
-  useEffect( addElectronBridgeStub );
-
   useEffect( () => {
-    const electronBridge: ElectronBridge = ( window as any ).electron;
-
-    console.log( 'test log, electron bridge:', electronBridge );
-
-    if ( electronBridge ) {
-      const handleConfigChange = ( newConfig: ConfigFileInterface | null | undefined ) => {
-        console.log( 'configChanged', newConfig );
-        dispatch( setConfig( newConfig ) );
-      }
-
-      electronBridge.receive( 'configChanged', handleConfigChange );
+    const handleConfigChange = ( newConfig: ConfigFileInterface | null | undefined ) => {
+      console.log( 'configChanged', newConfig );
+      dispatch( setConfig( newConfig ) );
     }
+
+    getElectronBridge().receive( 'configChanged', handleConfigChange );
 
     return () => { };
   } );
 
   useEffect( () => {
-    const electronBridge: ElectronBridge = ( window as any ).electron;
-
-    if ( electronBridge ) {
-      electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number | undefined ) => {
-        console.log( 'activeWorkspaceIndexChanged', index );
-        dispatch( setActiveWorkspaceIndex( index ) );
-      } );
-    }
+    getElectronBridge().receive( 'activeWorkspaceIndexChanged', ( index: number | undefined ) => {
+      dispatch( setActiveWorkspaceIndex( index ) );
+    } );
 
     return () => { };
   } );

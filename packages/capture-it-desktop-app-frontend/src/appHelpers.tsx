@@ -47,7 +47,8 @@ export function globalHotkeysHandler() {
 }
 
 export function addElectronBridgeStub() {
-	// This helper will a
+	// This helper will stub electronBridge API. This is useful when running a frontend without electron
+	// backend.
 	if ( !( window as any ).electron ) {
 		console.log( 'missing electron bridge - adding a dev stub' );
 		addDevelopmentStub();
@@ -56,5 +57,8 @@ export function addElectronBridgeStub() {
 }
 
 export function getElectronBridge(): ElectronBridge {
+	// @todo: reliably detect dev environment and engage only then.
+	addElectronBridgeStub();
+
 	return ( window as any ).electron;
 }
