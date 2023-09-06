@@ -70,6 +70,7 @@ const mocks = {
 	activeWorkspaceIndexChanged__no_config: undefined,
 	activeWorkspaceIndexChanged__empty_workspaces: undefined,
 	activeWorkspaceIndexChanged__missing_workspaces: undefined,
+	globalHotkeyFocus: null,
 };
 
 const callbackMocks = {

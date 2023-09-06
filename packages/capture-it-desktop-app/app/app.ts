@@ -30,27 +30,6 @@ const configPromise = new Promise<ConfigFileInterface>( (resolve, reject) => {
 		.catch( reject );
 } );
 
-electronBridge.receive( 'alert', ( message: string ) => {
-	alert( message );
-} );
-
-electronBridge.receive( 'configChanged', handleConfigChange );
-
-function handleConfigChange( newConfig: any) {
-	console.log( 'configChanged', newConfig );
-	config = newConfig;
-
-	updateWorkspacesBar();
-	updateVisibleTab();
-	// This change can cause a different tab to become visible, so focus needs to follow.
-	ensureReasonableFocus();
-}
-
-electronBridge.receive( 'activeWorkspaceIndexChanged', ( index: number ) => {
-	activeWorkspaceIndex = index;
-	updateWorkspacesBar();
-} );
-
 electronBridge.receive('globalHotkeyFocus', () => {
 	ensureReasonableFocus();
 } );
@@ -200,14 +179,6 @@ function addListeners() {
 
 		submitNote( text, clickEvent.altKey && !clickEvent.shiftKey, clickEvent.altKey && clickEvent.shiftKey );
 	} );
-
-	const addWorkspaceButtons = document.querySelectorAll( '.add-workspace, #add-workspace' );
-
-	for ( const button of Array.from( addWorkspaceButtons ) ) {
-		button.addEventListener( 'click', async () => {
-			electronBridge.invoke( 'executeCommand', 'addNotionWorkspace' );
-		} );
-	}
 }
 
 function ensureReasonableFocus(): void {

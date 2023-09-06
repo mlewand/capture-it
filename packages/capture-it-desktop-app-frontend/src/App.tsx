@@ -31,6 +31,9 @@ function App() {
     electronBridge.receive( 'alert', ( message: string ) => {
       alert( message );
     } );
+    electronBridge.receive( 'globalHotkeyFocus', () => {
+      ensureReasonableFocus();
+    } );
 
     return () => { };
   } );
@@ -44,6 +47,22 @@ function App() {
       {config && workspaces.length > 0 && <MainCaptureItTab />}
     </>
   );
+}
+
+/* @todo: change it into something more react way */
+function ensureReasonableFocus(): void {
+	if ( document.activeElement === document.body ) {
+		// This has to be set only if there's no good focus.
+		const selectors = [ '#textInput', '#config-missing-tab .create-missing-config-button', '#no-workspaces-tab .add-workspace' ];
+		const focusCandidates = document.querySelectorAll( selectors.join( ', ' ) ) as NodeListOf<HTMLElement>;
+
+		for (const focusCandidate of focusCandidates) {
+			if ( focusCandidate.offsetParent ) {
+				focusCandidate.focus();
+				break;
+			}
+		}
+	}
 }
 
 export default App;
