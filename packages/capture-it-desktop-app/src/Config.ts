@@ -59,7 +59,7 @@ export default class Config extends EventEmitter implements ConfigFileInterface 
 	}
 
 	public static getUserConfigPath(): string {
-		return join( homedir(), '.capture-it-config.json' );
+		return join( homedir(), '.capture-it-config.jsonc' );
 	}
 
 	public addWorkspace( workspace: WorkspaceInfo ): void {

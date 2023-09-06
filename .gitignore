@@ -2,7 +2,7 @@ packages/*/dist
 **/release
 node_modules
 yarn-error.log
-.capture-it-config.json
+.capture-it-config.jsonc
 .env
 *.DS_Store
 *.secret.json

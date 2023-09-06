@@ -68,7 +68,7 @@ export function getConfig( rootPath: string ) : any {
 }
 
 export function getConfigPath( rootPath: string ) : string {
-	return path.join( homedir(), '.capture-it-config.json' );
+	return path.join( homedir(), '.capture-it-config.jsonc' );
 }
 
 function getCommonMenuTemplate( app: CaptureIt ) {
