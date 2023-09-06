@@ -46,6 +46,26 @@ export function globalHotkeysHandler() {
 	}
 }
 
+export function globalLinkHandler() {
+	// This is needed for Electron as otherwise it will open links in Electron app window. I don't want this.
+	// I want any external links to be opened in a regular browser.
+	// Absolute links should open in a browser.
+
+	function linkHandler( event: MouseEvent ) {
+		if ( ( event.target as Element ).tagName === 'A' && ( event.target as HTMLAnchorElement ).href.startsWith( 'http' ) ) {
+			const electronBridge = getElectronBridge();
+			event.preventDefault();
+			electronBridge.invoke( 'executeCommand', 'openBrowser', ( event.target as HTMLAnchorElement ).href );
+		}
+	}
+
+	document.addEventListener( 'click', linkHandler );
+
+	return () => {
+		document.removeEventListener( 'click', linkHandler );
+	}
+}
+
 export function addElectronBridgeStub() {
 	// This helper will stub electronBridge API. This is useful when running a frontend without electron
 	// backend.

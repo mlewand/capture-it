@@ -11,7 +11,7 @@ export default function MainCaptureItTab() {
 			<QuickInput />
 			<ProTipCarousel />
 
-			{/* to extract */}
+			{/* @todo: to extract */}
 			<section id="notification-area-container"></section>
 
 			<section id="reports-container">

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setConfig, selectConfig } from './config/configSlice';
 import { setActiveWorkspaceIndex, selectWorkspaces } from './workspaces/workspacesSlice';
-import { globalHotkeysHandler, getElectronBridge } from './appHelpers';
+import { globalHotkeysHandler, globalLinkHandler, getElectronBridge } from './appHelpers';
 
 import type { ConfigFileInterface } from '@mlewand/capture-it-core';
 
@@ -39,6 +39,7 @@ function App() {
   } );
 
   useEffect( globalHotkeysHandler );
+  useEffect( globalLinkHandler );
 
   return (
     <>

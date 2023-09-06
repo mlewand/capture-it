@@ -1,6 +1,7 @@
 
 import { setActiveWorkspaceIndex } from "./workspaces/workspacesSlice";
 import store from "./store";
+import { getElectronBridge } from "./appHelpers";
 
 const mockScenario = null;
 // const mockScenario = 'empty_workspaces';
@@ -91,7 +92,13 @@ const callbackMocks = {
 	},
 	openConfig: () => {
 		alert( 'openConfig command mock' );
-	}
+	},
+	openBrowser: ( url: string ) => {
+		alert( `Called command to open a link: "${url}"` );
+	},
+	captureItem: ( ...args: any[] ) => {
+		alert( `Called command captureItem with arguments: "${JSON.stringify( args )}"` );
+	},
 };
 
 export default function addDevelopmentStub() {
@@ -101,7 +108,7 @@ export default function addDevelopmentStub() {
 		} else if ( name in mocksResource ) {
 			return mocksResource[ name ];
 		} else {
-			throw new Error( `Couldn\'t find mock resource in ${mockResourceName} for: ${name}` );
+			throw new Error( `Couldn\'t find mock resource "${name}" in ${mockResourceName} group.` );
 		}
 	}
 
@@ -138,6 +145,17 @@ export default function addDevelopmentStub() {
 			} catch ( e ) {
 				console.error( e );
 			}
+		},
+		promisedInvoke: ( channel: string, ...args: any[] ) => {
+			return new Promise( ( resolve, reject ) => {
+				if ( channel.endsWith( 'Async' ) ) {
+					channel = channel.replace( /Async$/, '' );
+				}
+
+				setTimeout( () => {
+					return getElectronBridge().invoke( channel, ...args )
+				}, 100 );
+			} );
 		},
 
 		// A custom implementation of invoke, that returns a promise.

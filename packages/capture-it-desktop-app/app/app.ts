@@ -24,84 +24,11 @@ let activeWorkspaceIndex: number | undefined;
 
 const isOsX = navigator.userAgent.includes( 'OS X' );
 
-const configPromise = new Promise<ConfigFileInterface>( (resolve, reject) => {
-	electronBridge.invoke( 'getConfig' )
-		.then( resolve )
-		.catch( reject );
-} );
-
-electronBridge.receive('globalHotkeyFocus', () => {
-	ensureReasonableFocus();
-} );
-
 function getActiveWorkspace(): WorkspaceInfo | undefined {
 	if ( activeWorkspaceIndex !== undefined ) {
 		return config!.workspaces[ activeWorkspaceIndex ];
 	}
 }
-
-/**
- *
- * @returns {string|null} Explanation message or null if default view is visible.
- */
-function updateVisibleTab(): string | null {
-	let containerIdToBeShown: string = 'app-tab';
-	let retValue: string | null = null;
-
-	if ( !config ) {
-		retValue = 'The .capture-it-config.json configuration file is missing or invalid.';
-		containerIdToBeShown = 'config-missing-tab';
-	} else if ( !hasWorkspaces( config ) ) {
-		retValue = 'No workspaces defined.';
-		containerIdToBeShown = 'no-workspaces-tab';
-	}
-
-	for ( const tabSection of Array.from( document.querySelectorAll( 'body > section[id$="-tab"]' ) ) ) {
-		console.log(tabSection.id, containerIdToBeShown);
-		( tabSection as HTMLElement ).style.display = tabSection.id == containerIdToBeShown ? 'block' : 'none';
-	}
-
-	if (retValue) {
-		console.error( 'updateVisibleTab(): ' + retValue );
-	}
-
-	return retValue || null;
-
-	function hasWorkspaces( cfg: any ) {
-		return cfg.workspaces && cfg.workspaces.length;
-	}
-}
-
-async function asyncInitialization(): Promise<boolean> {
-	let containerToBeShown: HTMLElement | null = document.getElementById('app-tab');
-	let errorContent: string | null = null;
-
-	config = (await electronBridge.invoke('getConfig')) as any;
-
-	if ( updateVisibleTab() === null ) {
-		window.requestIdleCallback( () => {
-			ensureReasonableFocus();
-			initializeProTips();
-			initializeWorkspacesBar();
-		} );
-
-		return true;
-	}
-
-	return false;
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-	addListeners();
-
-	if( !await asyncInitialization() ) {
-		console.log('initialization failed');
-		return;
-	}
-	console.log('initialization went fine');
-
-	ensureReasonableFocus();
-} );
 
 function addListeners() {
 	const textInput = document.getElementById('textInput');
@@ -163,22 +90,6 @@ function addListeners() {
 			event.preventDefault();
 		}
 	} );
-
-	document.addEventListener('click', (event: MouseEvent) => {
-		// Absolute links should open in a browser.
-		if ((event.target as Element).tagName === 'A' && (event.target as HTMLAnchorElement).href.startsWith('http')) {
-			event.preventDefault();
-			electronBridge.invoke( 'executeCommand', 'openBrowser', (event.target as HTMLAnchorElement).href );
-		}
-	});
-
-	document.getElementById( 'submitButton' )!.addEventListener( 'click', clickEvent => {
-		const textInput = document.getElementById( 'textInput' ) as HTMLInputElement;
-		const text = textInput.value;
-		textInput.value = '';
-
-		submitNote( text, clickEvent.altKey && !clickEvent.shiftKey, clickEvent.altKey && clickEvent.shiftKey );
-	} );
 }
 
 function ensureReasonableFocus(): void {
@@ -194,25 +105,6 @@ function ensureReasonableFocus(): void {
 			}
 		}
 	}
-}
-
-function submitNote( text: string, openPage = false, copyToClipboard = false ) : void {
-	const insertPromise = electronBridge.promisedInvoke( 'executeCommandAsync', 'captureItem', text );
-	const notification = addNotification( text, 'loading' );
-
-	insertPromise.then( (data: any) => {
-			addNotification( text, 'success', notification );
-
-			if ( data.redirect_url && copyToClipboard ) {
-				navigator.clipboard.writeText( data.redirect_url );
-			} else if ( data.redirect_url && openPage ) {
-				electronBridge.invoke( 'executeCommand', 'openNotionPage', data.redirect_url );
-			}
-		} )
-		.catch( error => {
-			addNotification( `${ text } - ${ error }`, 'error', notification );
-			console.error( error );
-		} );
 }
 
 function initializeProTips() {
