@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+/* temp tweaks, to make a rendered page look like default window size */
+html body {  margin: 8px; }
+html { width: 820px !important; max-width: 820px !important; outline: 2px solid red; }
+
 /* ----- */
 
 :root {
