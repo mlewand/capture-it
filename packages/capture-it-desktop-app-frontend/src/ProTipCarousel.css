@@ -3,3 +3,9 @@
 	color: #888;
 	font-size: 0.8em;
 }
+
+.pro-tip-container kbd,
+.pro-tip-container code
+{
+	font-size: inherit;
+}
