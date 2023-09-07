@@ -1,7 +1,8 @@
 
-import { setActiveWorkspaceIndex } from "./workspaces/workspacesSlice";
+import { addWorkspace, setActiveWorkspaceIndex } from "./workspaces/workspacesSlice";
 import store from "./store";
 import { getElectronBridge } from "./appHelpers";
+import { WorkspaceInfo } from '@mlewand/capture-it-core';
 
 const mockScenario = null;
 // const mockScenario = 'empty_workspaces';
@@ -99,6 +100,19 @@ const callbackMocks = {
 	captureItem: ( ...args: any[] ) => {
 		alert( `Called command captureItem with arguments: "${JSON.stringify( args )}"` );
 	},
+	addNotionWorkspace: () => {
+		const newWorkspace: WorkspaceInfo = {
+			name: 'Name ' + Math.random() * 1000,
+			pageId: 'page id',
+			dataBaseId: 'db id',
+			notionToken: 'notion token',
+			tags: {
+				'@test': 'testtt'
+			}
+		};
+
+		store.dispatch( addWorkspace( newWorkspace ) );
+	}
 };
 
 export default function addDevelopmentStub() {

@@ -38,6 +38,10 @@ html { width: 820px !important; max-width: 820px !important; outline: 2px solid 
 	box-shadow: 0 1px 4px 0 rgba(0,0,0,.1), 0 2px 8px 0 rgba(0,0,0,.05);
 }
 
+html .MuiTab-root {
+	color: var(--black);
+}
+
 .hidden {
 	display: none !important;
 }
@@ -64,8 +68,7 @@ p {
 	text-align: center;
 }
 
-.add-workspace,
-#add-workspace {
+.add-workspace {
 	width: 28px;
 	margin-left: 14px;
 	background: var(--blue);
@@ -74,9 +77,7 @@ p {
 }
 
 .add-workspace:hover,
-.add-workspace:focus,
-#add-workspace:hover,
-#add-workspace:focus {
+.add-workspace:focus {
 	background: var(--dark-blue);
 }
 
