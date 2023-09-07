@@ -1,4 +1,4 @@
-import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { addWorkspace, removeWorkspace } from '../workspaces/workspacesSlice';
 import { RootState } from '../store';
 

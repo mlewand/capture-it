@@ -122,7 +122,7 @@ export default function addDevelopmentStub() {
 		} else if ( name in mocksResource ) {
 			return mocksResource[ name ];
 		} else {
-			throw new Error( `Couldn\'t find mock resource "${name}" in ${mockResourceName} group.` );
+			throw new Error( `Couldn't find mock resource "${name}" in ${mockResourceName} group.` );
 		}
 	}
 

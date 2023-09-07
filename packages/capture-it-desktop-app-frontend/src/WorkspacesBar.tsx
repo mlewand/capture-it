@@ -1,6 +1,6 @@
 
 import './WorkspacesBar.css';
-import { selectWorkspaces, addWorkspace, selectActiveWorkspaceIndex, setActiveWorkspaceIndex } from './workspaces/workspacesSlice';
+import { selectWorkspaces, selectActiveWorkspaceIndex, setActiveWorkspaceIndex } from './workspaces/workspacesSlice';
 import { useAppDispatch } from './hooks';
 import { useSelector } from 'react-redux';
 
