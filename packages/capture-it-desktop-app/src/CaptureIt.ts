@@ -14,6 +14,8 @@ import CommandSet from './Command/CommandSet';
 import Config from './Config';
 import type { WorkspaceInfo } from './Config';
 import { v4 as uuid4 } from 'uuid';
+
+import registerProtocolListener, { announceProtocol } from './customProtocolHelper';
 import { cloneDeep } from 'lodash';
 
 import { getPages } from './Auth/Notion';
@@ -24,6 +26,19 @@ import { electron } from 'process';
 import { SHARED_DEFAULTS } from '@mlewand/capture-it-core';
 
 export type SetActiveWorkspaceParameter = number | 'next' | 'previous';
+
+import { protocol } from 'electron';
+
+protocol.registerSchemesAsPrivileged( [
+	{
+		scheme: 'my-app',
+		privileges: {
+			standard: true,
+			secure: true,
+			supportFetchAPI: true
+		}
+	}
+] )
 
 /**
  * The top-level API of the application.
@@ -50,6 +65,7 @@ export default class CaptureIt {
 	constructor( rootPath: string ) {
 		this.rootPath = rootPath;
 		this.commands = new CommandSet();
+		announceProtocol();
 	}
 
 	async start() {
@@ -76,6 +92,8 @@ export default class CaptureIt {
 			.then( async (results) => {
 				this.config = results[ 0 ];
 				this.electronApp = results[ 1 ];
+
+				registerProtocolListener();
 
 				console.log('waiting');
 				await wait( 1000 );
