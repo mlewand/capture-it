@@ -183,10 +183,10 @@ export default class CaptureIt {
 	 * Immediately closes the app.
 	 */
 	public quit() : void {
-		if (this.mainWindow) {
+		if ( this.mainWindow ) {
 			this.mainWindow.forceClose();
-			this.electronApp!.quit();
 		}
+		this.electronApp!.quit();
 	}
 
 	/**
@@ -233,6 +233,16 @@ export default class CaptureIt {
 					electronApp.quit();
 				} else {
 					electronApp.dock.hide();
+				}
+			} );
+
+			// Any app-wide quit intent (Dock "Quit", Activity Monitor, session logout, the
+			// mac menu bar Quit, etc.) fires this before Electron attempts to close windows.
+			// Without this, AppMainWindow's 'close' handler intercepts that close attempt and
+			// just hides the window, so the app never actually quits.
+			electronApp.on( 'before-quit', () => {
+				if ( this.mainWindow ) {
+					this.mainWindow.prepareForQuit();
 				}
 			} );
 

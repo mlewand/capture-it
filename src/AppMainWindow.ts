@@ -34,4 +34,13 @@ export default class AppMainWindow extends BrowserWindow {
 		this._finalClosing = true;
 		this.emit( 'close', { defaultPrevented: false } );
 	}
+
+	/**
+	 * Marks the window so that a subsequent native 'close' event (e.g. triggered by Electron
+	 * as part of an app-wide quit) is allowed to actually close the window instead of being
+	 * intercepted and turned into a hide.
+	 */
+	public prepareForQuit() {
+		this._finalClosing = true;
+	}
 }
