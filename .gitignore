@@ -1,6 +1,7 @@
 dist
 release
 node_modules
+packages
 yarn-error.log
 .capture-it-config.json
 .env

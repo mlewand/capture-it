@@ -15,6 +15,17 @@
   "build": {
     "productName": "Capture It",
     "appId": "org.capture-it",
+    "files": [
+      "**/*",
+      "!packages",
+      "!packages/**",
+      "!.devcontainer",
+      "!.devcontainer/**",
+      "!.vscode",
+      "!.vscode/**",
+      "!src/**/*.ts",
+      "!*.md"
+    ],
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
